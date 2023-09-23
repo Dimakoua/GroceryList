@@ -81,3 +81,12 @@ To learn more about React Native, take a look at the following resources:
 
 -----
 npx react-native init GroceryList
+
+
+
+ Run instructions for Android:
+    • Have an Android emulator running (quickest way to get started), or a device connected.
+    • cd "C:\Users\Dmytro\Documents\project\GroceryList" && npx react-native run-android
+  
+  Run instructions for Windows:
+    • See https://aka.ms/ReactNativeGuideWindows for the latest up-to-date instructions.
