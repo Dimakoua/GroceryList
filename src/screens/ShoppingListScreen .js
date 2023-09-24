@@ -1,40 +1,41 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, TextInput, Button } from 'react-native';
+import { View, Text, FlatList, TextInput, Button, TouchableOpacity, StyleSheet } from 'react-native';
 
 function ShoppingListScreen({ navigation }) {
-  // Створюємо стейт для зберігання списку покупок
   const [shoppingList, setShoppingList] = useState([]);
   const [newItem, setNewItem] = useState('');
 
-  // Функція для додавання нової покупки до списку
   const addItem = () => {
     if (newItem) {
-      setShoppingList([...shoppingList, newItem]);
+      setShoppingList([...shoppingList, { name: newItem, checked: false }]);
       setNewItem('');
     }
   };
 
-  // Функція для видалення покупки зі списку
   const deleteItem = (item) => {
-    const updatedList = shoppingList.filter((shoppingItem) => shoppingItem !== item);
+    const updatedList = shoppingList.filter((shoppingItem) => shoppingItem.name !== item.name);
     setShoppingList(updatedList);
   };
 
-  // Функція для редагування покупки в списку
   const editItem = (oldItem, newItem) => {
     const updatedList = shoppingList.map((shoppingItem) =>
-      shoppingItem === oldItem ? newItem : shoppingItem
+      shoppingItem.name === oldItem.name ? { name: newItem, checked: oldItem.checked } : shoppingItem
+    );
+    setShoppingList(updatedList);
+  };
+
+  const toggleItem = (item) => {
+    const updatedList = shoppingList.map((shoppingItem) =>
+      shoppingItem.name === item.name ? { ...shoppingItem, checked: !shoppingItem.checked } : shoppingItem
     );
     setShoppingList(updatedList);
   };
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
-      <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>
-        Список покупок
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Список покупок</Text>
       <TextInput
-        style={{ borderWidth: 1, borderColor: 'gray', padding: 8, marginBottom: 16 }}
+        style={styles.input}
         placeholder="Додати новий товар"
         value={newItem}
         onChangeText={(text) => setNewItem(text)}
@@ -44,14 +45,17 @@ function ShoppingListScreen({ navigation }) {
         data={shoppingList}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text>{item}</Text>
-            <View style={{ flexDirection: 'row' }}>
+          <View style={styles.itemContainer}>
+            <TouchableOpacity onPress={() => toggleItem(item)}>
+              <View style={[styles.checkbox, { backgroundColor: item.checked ? 'green' : 'transparent' }]} />
+            </TouchableOpacity>
+            <Text style={[styles.itemText, { textDecorationLine: item.checked ? 'line-through' : 'none' }]}>{item.name}</Text>
+            <View style={styles.buttonContainer}>
               <Button title="Видалити" onPress={() => deleteItem(item)} />
               <Button
                 title="Редагувати"
                 onPress={() => {
-                  const editedItem = prompt('Редагувати товар:', item);
+                  const editedItem = prompt('Редагувати товар:', item.name);
                   if (editedItem !== null) {
                     editItem(item, editedItem);
                   }
@@ -64,5 +68,47 @@ function ShoppingListScreen({ navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#f5f5f5',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  input: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 8,
+    borderRadius: 4,
+    marginTop: 8,
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: 'green',
+    marginRight: 8,
+  },
+  itemText: {
+    flex: 1,
+    fontSize: 16,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    marginLeft: 8,
+  },
+});
 
 export default ShoppingListScreen;

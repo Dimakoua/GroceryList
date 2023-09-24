@@ -28,7 +28,6 @@ const AddDishScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Додати страву</Text>
       <TextInput
         value={dishName}
         onChangeText={(text) => setDishName(text)}

@@ -8,8 +8,8 @@ const Tab = createBottomTabNavigator();
 function TabNavigator() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Screen1" component={AddDishScreen} />
-      <Tab.Screen name="Screen2" component={ShoppingListScreen} />
+      <Tab.Screen name="Screen1" component={AddDishScreen}  options={{ headerShown: false }}/>
+      <Tab.Screen name="Screen2" component={ShoppingListScreen}  options={{ headerShown: false }}/>
     </Tab.Navigator>
   );
 }
