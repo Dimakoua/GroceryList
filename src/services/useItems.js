@@ -9,49 +9,45 @@ const CONST_LIST = [
 ];
 
 export function useItems() {
-    // const [items, setItems] = useState([]);
-    // const [items, setItems] = useState([]);
-
-    // useEffect(() => {
-    //     generateIdea();
-    // }, []);
-
-    // list: {
-    //     name: "",
-    //     items: []
-    // }
     const getShoppingLists = async () => {
         const lists = await AsyncStorage.getItem(SHOPPING_ITEMS);
 
-        return lists;
+        return JSON.parse(lists) ?? [];
     };
 
 
     const getDishes = async () => {
         const dishes = await AsyncStorage.getItem(DISHES);
 
-        return dishes;
+        return JSON.parse(dishes) ?? [];
     };
 
     const getItemsByListId = async (listName) => {
         const shoppingLists = await getShoppingLists();
-        const index = ideaList.findIndex(item => item.name === listName);
+        const index = shoppingLists.findIndex(item => item.name === listName);
 
         return shoppingLists[index];
     };
 
     const getItemsByDishId = async (dishName) => {
         const dishesLists = await getDishes();
-        const index = ideaList.findIndex(item => item.name === listName);
+        const index = dishesLists.findIndex(item => item.name === dishName);
 
         return dishesLists[index];
     };
 
     const saveDish = async (dish) => {
         let dishesLists = await getDishes();
+
+        if (!dishesLists) {
+            return;
+        }
+
         const index = dishesLists.findIndex(item => item.name === dish.name);
 
-        if (index !== -1) {
+        if (index === -1) {
+            dishesLists[0] = dish;
+        } else {
             dishesLists[index] = dish;
         }
 
@@ -69,20 +65,9 @@ export function useItems() {
         await save(SHOPPING_ITEMS, shoppingLists);
     };
 
-    const markIsDone = async (idea) => {
-        const ideaList = await getIdeas();
-
-        const ideaIndex = ideaList.findIndex(item => item.id === idea.id);
-        if (ideaIndex !== -1) {
-            ideaList[ideaIndex].done = !ideaList[ideaIndex].done;
-        }
-
-        await saveIdeas(ideaList);
-    };
-
     const save = async (name, payload) => {
         const index = CONST_LIST.findIndex(item => item === name);
-        if(index === -1) {
+        if (index === -1) {
             throw new Error(`${name} is not allowed name`);
         }
 

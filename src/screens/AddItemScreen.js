@@ -1,29 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, Image, Dimensions } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  FlatList,
+  Image,
+  Dimensions,
+} from 'react-native';
+import { useItems } from '../services/useItems';
 
 const AddDishScreen = ({ navigation }) => {
   const [render, setRender] = useState(false);
   const [name, setName] = useState('');
-  const [shoppingLists, setShoppingLists] = useState([{ id: 0, text: '', checked: false }]);
 
+  const [shoppingLists, setShoppingLists] = useState([
+    { id: 0, text: '', checked: false },
+  ]);
+
+  const {saveDish} = useItems()
+
+  const nameInputRef = useRef();
+  const textInputsRefs = useRef([]);
 
   useEffect(() => {
+    
+  }, [render]);
 
-  }, [render])
-
-  const handleEnterPress = () => {
-    const currentDate = (new Date()).getTime().toString();
-    let emptyRow = { id: currentDate, text: '', checked: false }
-    let newList = shoppingLists;
-
-    newList.push(emptyRow);
+  const handleEnterPress = (currentItemIndex) => {
+    const currentDate = new Date().getTime().toString();
+    const emptyRow = { id: currentDate, text: '', checked: false };
+    const newList = [...shoppingLists, emptyRow];
 
     setShoppingLists(newList);
-    setRender(!render);
-  }
+    save();
+
+    // Focus on the next TextInput
+    setTimeout(() => textInputsRefs.current[currentItemIndex + 1].focus(), 100)
+  };
+
 
   const setItemText = (item, text) => {
-    const index = shoppingLists.findIndex(x => x.id === item.id);
+    const index = shoppingLists.findIndex((x) => x.id === item.id);
 
     if (index === -1) {
       return;
@@ -31,50 +50,73 @@ const AddDishScreen = ({ navigation }) => {
 
     shoppingLists[index].text = text;
 
-    setShoppingLists(shoppingLists);
-    setRender(!render);
+    setShoppingLists([...shoppingLists]);
+    save();
+  };
 
+  const removeItem = (item) => {
+    const newShoppingLists = shoppingLists.filter((x) => x.id !== item.id);
 
-    console.log(shoppingLists)
+    setShoppingLists(newShoppingLists);
+    save();
   }
 
   const toggleItem = (item) => {
-    const index = shoppingLists.findIndex(x => x.id === item.id);
+    const index = shoppingLists.findIndex((x) => x.id === item.id);
 
     if (index === -1) {
       return;
     }
 
     shoppingLists[index].checked = !shoppingLists[index].checked;
+    save();
+  };
+
+  const save = async () => {
     setRender(!render);
+    await saveDish({name: name, list: shoppingLists});
   }
 
   return (
     <View style={styles.container}>
-      <TextInput
-        value={name}
-        onChangeText={(text) => setName(text)}
-        placeholder="Назва"
-        style={styles.input}
-      />
+      <View>
+        <Text>header</Text>
+      </View>
+
       <FlatList
         data={shoppingLists}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
+        ListHeaderComponent={
+          <TextInput
+            ref={nameInputRef}
+            value={name}
+            onChangeText={(text) => setName(text)}
+            placeholder="Назва"
+            style={[styles.input, styles.title]}
+            onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
+          />
+        }
+        renderItem={({ item, index }) => (
           <View style={styles.checkboxWrap}>
             <TouchableOpacity onPress={() => toggleItem(item)}>
               <View style={[styles.checkbox, { backgroundColor: item.checked ? 'green' : 'transparent' }]} />
             </TouchableOpacity>
             <TextInput
+              ref={(ref) => (textInputsRefs.current[index] = ref)} // Store the ref in the array
               value={item.text}
               onChangeText={(text) => setItemText(item, text)}
-              onSubmitEditing={handleEnterPress}
+              onSubmitEditing={() => {
+                if (index < shoppingLists.length - 1) {
+                  textInputsRefs.current[index + 1].focus(); // Focus on the next text input
+                } else {
+                  handleEnterPress(index); // Handle Enter press when reaching the last input
+                }
+              }}
               style={styles.input}
             />
-            <TouchableOpacity onPress={() => console.log("aaaaa")}>
+            <TouchableOpacity onPress={() => removeItem(item)}>
               <Image source={require('./../../assets/icons8-close-24.png')} style={styles.closeBtn} />
             </TouchableOpacity>
-
           </View>
         )}
       />
@@ -97,14 +139,18 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingHorizontal: 8,
     width: '80%',
-    maxWidth: maxWidth
+    maxWidth: maxWidth,
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 16
   },
   checkboxWrap: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
     width: '100%',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   checkbox: {
     width: 20,
