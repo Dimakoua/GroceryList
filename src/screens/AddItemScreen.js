@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   StyleSheet,
   FlatList,
   Image,
@@ -25,7 +26,7 @@ const AddDishScreen = ({ navigation }) => {
   const textInputsRefs = useRef([]);
 
   useEffect(() => {
-    
+
   }, [render]);
 
   const handleEnterPress = (currentItemIndex) => {
@@ -37,7 +38,7 @@ const AddDishScreen = ({ navigation }) => {
     save();
 
     // Focus on the next TextInput
-    setTimeout(() => textInputsRefs.current[currentItemIndex + 1].focus(), 100)
+    setTimeout(() => textInputsRefs.current[currentItemIndex + 1].focus(), 200)
   };
 
 
@@ -98,9 +99,9 @@ const AddDishScreen = ({ navigation }) => {
         }
         renderItem={({ item, index }) => (
           <View style={styles.checkboxWrap}>
-            <TouchableOpacity onPress={() => toggleItem(item)}>
+            <TouchableWithoutFeedback onPress={() => toggleItem(item)}>
               <View style={[styles.checkbox, { backgroundColor: item.checked ? 'green' : 'transparent' }]} />
-            </TouchableOpacity>
+            </TouchableWithoutFeedback>
             <TextInput
               ref={(ref) => (textInputsRefs.current[index] = ref)} // Store the ref in the array
               value={item.text}
@@ -114,9 +115,9 @@ const AddDishScreen = ({ navigation }) => {
               }}
               style={styles.input}
             />
-            <TouchableOpacity onPress={() => removeItem(item)}>
+            <TouchableWithoutFeedback onPress={() => removeItem(item)}>
               <Image source={require('./../../assets/icons8-close-24.png')} style={styles.closeBtn} />
-            </TouchableOpacity>
+            </TouchableWithoutFeedback>
           </View>
         )}
       />
@@ -135,7 +136,6 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: 'gray',
     marginBottom: 8,
     paddingHorizontal: 8,
     width: '80%',
