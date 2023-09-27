@@ -1,70 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TextInput, Button, TouchableOpacity, StyleSheet } from 'react-native';
+import { useItems } from '../services/useItems';
+import { useFocusEffect } from '@react-navigation/native';
 
 function ShoppingListScreen({ navigation }) {
-    const [shoppingLists, setShoppingLists] = useState([]);
-    const [currentList, setCurrentList] = useState('');
-    const [newItem, setNewItem] = useState('');
+    const [list, setList] = useState([]);
+    const { getAllLists } = useItems();
 
-    const createNewList = () => {
-        if (currentList.trim() !== '') {
-            setShoppingLists([...shoppingLists, { name: currentList, items: [] }]);
-            setCurrentList('');
+    useEffect(() => {
+        if(list.length === 0){
+            fetchAllLists();
         }
-    };
+    }, [])
 
-    const addItem = () => {
-        if (newItem.trim() !== '') {
-            const updatedLists = shoppingLists.map((list) => {
-                if (list.name === currentList) {
-                    return { ...list, items: [...list.items, { name: newItem, checked: false }] };
-                }
-                return list;
-            });
-            setShoppingLists(updatedLists);
-            setNewItem('');
-        }
-    };
+    const fetchAllLists = () => {
+        getAllLists().then(x => setList(x));
+    }
 
-    const deleteItem = (listName, itemName) => {
-        const updatedLists = shoppingLists.map((list) => {
-            if (list.name === listName) {
-                const updatedItems = list.items.filter((item) => item.name !== itemName);
-                return { ...list, items: updatedItems };
-            }
-            return list;
-        });
-        setShoppingLists(updatedLists);
-    };
-
-    const toggleItem = (listName, itemName) => {
-        const updatedLists = shoppingLists.map((list) => {
-            if (list.name === listName) {
-                const updatedItems = list.items.map((item) =>
-                    item.name === itemName ? { ...item, checked: !item.checked } : item
-                );
-                return { ...list, items: updatedItems };
-            }
-            return list;
-        });
-        setShoppingLists(updatedLists);
-    };
+    useFocusEffect(
+        React.useCallback(() => {
+           console.log("useFocusEffect");
+           fetchAllLists();
+        }, [])
+    );
 
     return (
         <View style={styles.container}>
             <FlatList
-                data={shoppingLists}
-                keyExtractor={(item) => item.name}
+                data={list}
+                keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <View style={styles.shoppingList}>
                         <Text style={styles.listTitle}>{item.name}</Text>
-                        <TextInput
-                            style={styles.itemInput}
-                            placeholder="Додати новий товар"
-                            value={newItem}
-                            onChangeText={(text) => setNewItem(text)}
-                        />
-                        <Button title="Додати" onPress={addItem} />
                     </View>
                 )}
             />
@@ -72,7 +39,7 @@ function ShoppingListScreen({ navigation }) {
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     style={styles.addButton}
-                    onPress={() => { console.log("lldldldllddldldldldldldld") }}
+                    onPress={() => { navigation.navigate("addList") }}
                 >
                     <Text style={styles.buttonText}>+</Text>
                 </TouchableOpacity>

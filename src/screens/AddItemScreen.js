@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
-  Text,
   TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   StyleSheet,
   FlatList,
@@ -11,14 +9,15 @@ import {
   Dimensions,
 } from 'react-native';
 import { useItems } from '../services/useItems';
+import BackButton from '../components/BackBtn';
+import TrashBtn from '../components/TrashBtn';
 
 const AddDishScreen = ({ navigation }) => {
   const [render, setRender] = useState(false);
   const [name, setName] = useState('');
+  const [listId, setListId] = useState(null);
 
-  const [shoppingLists, setShoppingLists] = useState([
-    { id: 0, text: '', checked: false },
-  ]);
+  const [shoppingLists, setShoppingLists] = useState(null);
 
   const {saveDish} = useItems()
 
@@ -26,6 +25,14 @@ const AddDishScreen = ({ navigation }) => {
   const textInputsRefs = useRef([]);
 
   useEffect(() => {
+    const currentDate = new Date().getTime().toString();
+    if(shoppingLists === null){
+      console.log(currentDate)
+      setShoppingLists([{ id: currentDate, text: '', checked: false }])
+    }
+    if(listId === null){
+      setListId(currentDate);
+    }
 
   }, [render]);
 
@@ -41,6 +48,10 @@ const AddDishScreen = ({ navigation }) => {
     setTimeout(() => textInputsRefs.current[currentItemIndex + 1].focus(), 200)
   };
 
+  const setTitle = (title) => {
+    setName(title);
+    save();
+  };
 
   const setItemText = (item, text) => {
     const index = shoppingLists.findIndex((x) => x.id === item.id);
@@ -74,14 +85,15 @@ const AddDishScreen = ({ navigation }) => {
   };
 
   const save = async () => {
+    await saveDish({id: listId, name: name, list: shoppingLists});
     setRender(!render);
-    await saveDish({name: name, list: shoppingLists});
   }
 
   return (
     <View style={styles.container}>
-      <View>
-        <Text>header</Text>
+      <View style={styles.headerRow}>
+        <BackButton/>
+        <TrashBtn/>
       </View>
 
       <FlatList
@@ -91,7 +103,7 @@ const AddDishScreen = ({ navigation }) => {
           <TextInput
             ref={nameInputRef}
             value={name}
-            onChangeText={(text) => setName(text)}
+            onChangeText={(text) => setTitle(text)}
             placeholder="Назва"
             style={[styles.input, styles.title]}
             onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
@@ -165,6 +177,13 @@ const styles = StyleSheet.create({
     height: 20,
     marginLeft: 8,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    width: '100%',
+    justifyContent: 'space-between',
+  }
 });
 
 export default AddDishScreen;

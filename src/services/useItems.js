@@ -9,12 +9,19 @@ const CONST_LIST = [
 ];
 
 export function useItems() {
+    
+    const getAllLists = async () => {
+        const shoppingLists = await getShoppingLists();
+        const dishes = await getDishes();
+
+        return shoppingLists.concat(dishes);
+    };
+
     const getShoppingLists = async () => {
         const lists = await AsyncStorage.getItem(SHOPPING_ITEMS);
 
         return JSON.parse(lists) ?? [];
     };
-
 
     const getDishes = async () => {
         const dishes = await AsyncStorage.getItem(DISHES);
@@ -43,10 +50,10 @@ export function useItems() {
             return;
         }
 
-        const index = dishesLists.findIndex(item => item.name === dish.name);
+        const index = dishesLists.findIndex(item => item.id === dish.id);
 
-        if (index === -1) {
-            dishesLists[0] = dish;
+        if (index === -1) { 
+            dishesLists.push(dish);
         } else {
             dishesLists[index] = dish;
         }
@@ -79,5 +86,5 @@ export function useItems() {
     };
 
 
-    return { getShoppingLists, getDishes, getItemsByListId, getItemsByDishId, saveDish, saveShoppingItem };
+    return { getShoppingLists, getDishes, getItemsByListId, getItemsByDishId, saveDish, saveShoppingItem, getAllLists };
 }
