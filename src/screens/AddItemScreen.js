@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
+  Text,
   TextInput,
   TouchableWithoutFeedback,
+  TouchableOpacity,
   StyleSheet,
   FlatList,
   Image,
@@ -12,29 +14,80 @@ import { useItems } from '../services/useItems';
 import BackButton from '../components/BackBtn';
 import TrashBtn from '../components/TrashBtn';
 
-const AddDishScreen = ({ navigation }) => {
+const AddDishScreen = ({ navigation, route }) => {
+  const {SHOPPING_ITEMS, upsertList} = useItems()
+
   const [render, setRender] = useState(false);
-  const [name, setName] = useState('');
-  const [listId, setListId] = useState(null);
-
-  const [shoppingLists, setShoppingLists] = useState(null);
-
-  const {saveDish} = useItems()
+  const [name, setName] = useState(null);
+  const [id, setId] = useState(null);
+  const [type, setType] = useState(SHOPPING_ITEMS);
+  const [items, setItems] = useState(null);
 
   const nameInputRef = useRef();
   const textInputsRefs = useRef([]);
 
-  useEffect(() => {
-    const currentDate = new Date().getTime().toString();
-    if(shoppingLists === null){
-      console.log(currentDate)
-      setShoppingLists([{ id: currentDate, text: '', checked: false }])
-    }
-    if(listId === null){
-      setListId(currentDate);
-    }
 
-  }, [render]);
+  const params = route.params?.item;
+
+  const EMPTY_ITEM = {
+    id: new Date().getTime().toString(),
+    list: []
+  };
+
+  const initialSetUp = () => {
+    if(!isEmptyList()) return;
+
+    if (params) {
+      setId(params.id);
+      setName(params.name);
+      setItems(params.items);
+      setType(params.type);
+    } else {
+      const id = new Date().getTime().toString();
+      setId(id);
+    }
+  }
+
+  const isEmptyList = () => {
+    if (name === null && items === null) {
+      return true;
+    }
+    return false;
+  }
+
+  useEffect(() => {
+
+    initialSetUp();
+
+    //save the list after each change.
+    if (!isEmptyList()) {
+      save();
+    }
+  }, [render, name]);
+
+  const addNewLine = () => {
+    const list = items ?? [];
+
+    list.push(EMPTY_ITEM);
+    setItems(list);
+  }
+
+  const ListEmptyComponent = () => (
+    <TouchableOpacity onPress={() => addNewLine()}>
+      <Text> + Пункт списку </Text>
+    </TouchableOpacity>
+  )
+
+  const ListHeaderComponent = () => (
+    <TextInput
+      ref={nameInputRef}
+      value={name}
+      onChangeText={(text) => setName(text)}
+      placeholder="Назва"
+      style={[styles.input, styles.title]}
+      onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
+    />
+  )
 
   const handleEnterPress = (currentItemIndex) => {
     const currentDate = new Date().getTime().toString();
@@ -42,15 +95,9 @@ const AddDishScreen = ({ navigation }) => {
     const newList = [...shoppingLists, emptyRow];
 
     setShoppingLists(newList);
-    save();
-
+    setRender(!render);
     // Focus on the next TextInput
-    setTimeout(() => textInputsRefs.current[currentItemIndex + 1].focus(), 200)
-  };
-
-  const setTitle = (title) => {
-    setName(title);
-    save();
+    setTimeout(() => textInputsRefs.current[currentItemIndex + 1].focus(), 200);
   };
 
   const setItemText = (item, text) => {
@@ -63,14 +110,14 @@ const AddDishScreen = ({ navigation }) => {
     shoppingLists[index].text = text;
 
     setShoppingLists([...shoppingLists]);
-    save();
+    setRender(!render);
   };
 
   const removeItem = (item) => {
     const newShoppingLists = shoppingLists.filter((x) => x.id !== item.id);
 
     setShoppingLists(newShoppingLists);
-    save();
+    setRender(!render);
   }
 
   const toggleItem = (item) => {
@@ -81,34 +128,27 @@ const AddDishScreen = ({ navigation }) => {
     }
 
     shoppingLists[index].checked = !shoppingLists[index].checked;
-    save();
+    setRender(!render);
   };
 
-  const save = async () => {
-    await saveDish({id: listId, name: name, list: shoppingLists});
-    setRender(!render);
+  const save = () => {
+    const newList = { id: id, name: name, list: items, type: type };
+    console.log('newList', newList);
+    upsertList(newList);
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <BackButton/>
-        <TrashBtn/>
+        <BackButton />
+        <TrashBtn listId={id} />
       </View>
 
       <FlatList
-        data={shoppingLists}
+        data={items}
         keyExtractor={(item) => item.id}
-        ListHeaderComponent={
-          <TextInput
-            ref={nameInputRef}
-            value={name}
-            onChangeText={(text) => setTitle(text)}
-            placeholder="Назва"
-            style={[styles.input, styles.title]}
-            onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
-          />
-        }
+        ListEmptyComponent={ListEmptyComponent}
+        ListHeaderComponent={ListHeaderComponent}
         renderItem={({ item, index }) => (
           <View style={styles.checkboxWrap}>
             <TouchableWithoutFeedback onPress={() => toggleItem(item)}>

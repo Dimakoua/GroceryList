@@ -4,23 +4,23 @@ import { useItems } from '../services/useItems';
 import { useFocusEffect } from '@react-navigation/native';
 
 function ShoppingListScreen({ navigation }) {
-    const [list, setList] = useState([]);
-    const { getAllLists } = useItems();
-
-    useEffect(() => {
-        if(list.length === 0){
-            fetchAllLists();
-        }
-    }, [])
+    const [list, setList] = useState(null);
+    const { getAllLists, getShoppingLists, getDishesList, getListById, upsertList, deleteListById } = useItems();
 
     const fetchAllLists = () => {
         getAllLists().then(x => setList(x));
     }
+    
+    useEffect(() => {
+        if (list === null) {
+            fetchAllLists();
+        }
+    }, [])
 
     useFocusEffect(
         React.useCallback(() => {
-           console.log("useFocusEffect");
-           fetchAllLists();
+            console.log("useFocusEffect");
+            fetchAllLists();
         }, [])
     );
 
@@ -29,22 +29,28 @@ function ShoppingListScreen({ navigation }) {
             <FlatList
                 data={list}
                 keyExtractor={(item) => item.id}
+                numColumns={2} // Set the number of columns to 2
+                contentContainerStyle={styles.flatListContainer} // Apply styles to the FlatList container
                 renderItem={({ item }) => (
-                    <View style={styles.shoppingList}>
+                    <TouchableOpacity
+                        onPress={() => { navigation.navigate("addList", {item}) }}
+                        style={styles.shoppingList}
+                    >
                         <Text style={styles.listTitle}>{item.name}</Text>
-                    </View>
-                )}
+                    </TouchableOpacity>
+                )
+                }
             />
 
-            <View style={styles.buttonContainer}>
+            < View style={styles.buttonContainer} >
                 <TouchableOpacity
                     style={styles.addButton}
                     onPress={() => { navigation.navigate("addList") }}
                 >
                     <Text style={styles.buttonText}>+</Text>
                 </TouchableOpacity>
-            </View>
-        </View>
+            </View >
+        </View >
     );
 }
 
@@ -69,6 +75,18 @@ const styles = StyleSheet.create({
     },
     shoppingList: {
         marginTop: 16,
+        backgroundColor: 'white', // Card background color
+        borderRadius: 8, // Card border radius
+        padding: 16, // Card padding
+        shadowColor: '#000', // Shadow color
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.2, // Shadow opacity
+        shadowRadius: 2, // Shadow radius
+        elevation: 2, // Android elevation for shadow
+        width: '45%'
     },
     listTitle: {
         fontSize: 18,
@@ -103,24 +121,33 @@ const styles = StyleSheet.create({
     deleteButton: {
         color: 'red',
     },
-
-
-
     addButton: {
-        backgroundColor: 'rgb(222, 178, 150)', // Same button background color as SettingsScreen
-        width: 54, // Set a fixed width and height to make it circular
+        backgroundColor: 'rgb(222, 178, 150)',
+        width: 54,
         height: 54,
-        borderRadius: 32, // Half of the width/height to create a circle
-        justifyContent: 'center', // Center the text vertically
-        alignItems: 'center', // Center the text horizontally
-        position: 'absolute', // Position it absolutely
-        bottom: 16, // Adjust the bottom position for spacing
-        right: 16, // Adjust the left position for spacing
+        borderRadius: 32,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        bottom: 16,
+        right: 16,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.4,
+        shadowRadius: 2,
+        elevation: 4,
     },
     buttonText: {
         color: '#fff',
         fontSize: 24,
     },
+    flatListContainer: {
+        justifyContent: 'space-between',
+    },
 });
+
 
 export default ShoppingListScreen;
