@@ -1,25 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TextInput, Button, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useItems } from '../services/useItems';
 import { useFocusEffect } from '@react-navigation/native';
 
 function ShoppingListScreen({ navigation }) {
     const [list, setList] = useState(null);
-    const { getAllLists, getShoppingLists, getDishesList, getListById, upsertList, deleteListById } = useItems();
+    const { getAllLists } = useItems();
 
-    const fetchAllLists = () => {
-        getAllLists().then(x => setList(x));
-    }
-    
+    const fetchAllLists = async () => {
+        try {
+            const data = await getAllLists();
+            setList(data);
+        } catch (error) {
+            console.error('Error fetching lists:', error);
+        }
+    };
+
     useEffect(() => {
         if (list === null) {
             fetchAllLists();
         }
-    }, [])
+    }, []);
 
     useFocusEffect(
         React.useCallback(() => {
-            console.log("useFocusEffect");
             fetchAllLists();
         }, [])
     );
@@ -29,28 +33,31 @@ function ShoppingListScreen({ navigation }) {
             <FlatList
                 data={list}
                 keyExtractor={(item) => item.id}
-                numColumns={2} // Set the number of columns to 2
-                contentContainerStyle={styles.flatListContainer} // Apply styles to the FlatList container
-                renderItem={({ item }) => (
+                numColumns={2}
+                contentContainerStyle={styles.flatListContainer}
+                renderItem={({ item, index }) => (
                     <TouchableOpacity
-                        onPress={() => { navigation.navigate("addList", {item}) }}
-                        style={styles.shoppingList}
+                        onPress={() => {
+                            navigation.navigate('addList', { item });
+                        }}
+                        style={[styles.shoppingList, index % 2 === 0 ? { marginRight: '5%' } : null,]}
                     >
                         <Text style={styles.listTitle}>{item.name}</Text>
                     </TouchableOpacity>
-                )
-                }
+                )}
             />
 
-            < View style={styles.buttonContainer} >
+            <View style={styles.addButtonContainer}>
                 <TouchableOpacity
                     style={styles.addButton}
-                    onPress={() => { navigation.navigate("addList") }}
+                    onPress={() => {
+                        navigation.navigate('addList');
+                    }}
                 >
                     <Text style={styles.buttonText}>+</Text>
                 </TouchableOpacity>
-            </View >
-        </View >
+            </View>
+        </View>
     );
 }
 
@@ -59,78 +66,43 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 16,
         backgroundColor: '#f5f5f5',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
-    },
-    input: {
-        backgroundColor: 'white',
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 8,
-        borderRadius: 4,
-        marginTop: 8,
+        flexDirection: 'row', // Use row direction
+        flexWrap: 'wrap',     // Allow items to wrap to the next row
+        justifyContent: 'space-between', // Align items evenly between rows
     },
     shoppingList: {
         marginTop: 16,
-        backgroundColor: 'white', // Card background color
-        borderRadius: 8, // Card border radius
-        padding: 16, // Card padding
-        shadowColor: '#000', // Shadow color
+        backgroundColor: 'white',
+        borderRadius: 8,
+        padding: 16,
+        shadowColor: '#000',
         shadowOffset: {
             width: 0,
             height: 2,
         },
-        shadowOpacity: 0.2, // Shadow opacity
-        shadowRadius: 2, // Shadow radius
-        elevation: 2, // Android elevation for shadow
-        width: '45%'
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        elevation: 2,
+        width: '48%', // Adjust item width for two columns
+        marginBottom: 16, // Add margin at the bottom of each item for spacing
     },
     listTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 8,
     },
-    itemInput: {
-        backgroundColor: 'white',
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 8,
-        borderRadius: 4,
-        marginBottom: 8,
-    },
-    itemContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 8,
-    },
-    checkbox: {
-        width: 20,
-        height: 20,
-        borderRadius: 4,
-        borderWidth: 2,
-        borderColor: 'green',
-        marginRight: 8,
-    },
-    itemText: {
-        flex: 1,
-        fontSize: 16,
-    },
-    deleteButton: {
-        color: 'red',
+    addButtonContainer: {
+        position: 'absolute',
+        bottom: 16,
+        right: 16,
     },
     addButton: {
         backgroundColor: 'rgb(222, 178, 150)',
         width: 54,
         height: 54,
-        borderRadius: 32,
+        borderRadius: 27,
         justifyContent: 'center',
         alignItems: 'center',
-        position: 'absolute',
-        bottom: 16,
-        right: 16,
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -144,10 +116,8 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 24,
     },
-    flatListContainer: {
-        justifyContent: 'space-between',
-    },
 });
+
 
 
 export default ShoppingListScreen;
