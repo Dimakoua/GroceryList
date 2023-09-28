@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import BackButton from '../components/BackBtn';
 import TrashBtn from '../components/TrashBtn';
 
 const AddDishScreen = ({ navigation, route }) => {
-  const {SHOPPING_ITEMS, upsertList} = useItems()
+  const { SHOPPING_ITEMS, upsertList } = useItems()
 
   const [render, setRender] = useState(false);
   const [name, setName] = useState(null);
@@ -23,19 +23,18 @@ const AddDishScreen = ({ navigation, route }) => {
   const [type, setType] = useState(SHOPPING_ITEMS);
   const [items, setItems] = useState(null);
 
-  const nameInputRef = useRef();
   const textInputsRefs = useRef([]);
-
 
   const params = route.params?.item;
 
   const EMPTY_ITEM = {
     id: new Date().getTime().toString(),
-    list: []
+    list: [],
+    checked: false
   };
 
   const initialSetUp = () => {
-    if(!isEmptyList()) return;
+    if (!isEmptyList()) return;
 
     if (params) {
       setId(params.id);
@@ -63,76 +62,83 @@ const AddDishScreen = ({ navigation, route }) => {
     if (!isEmptyList()) {
       save();
     }
-  }, [render, name]);
+  }, [render, name, items]);
 
   const addNewLine = () => {
     const list = items ?? [];
 
     list.push(EMPTY_ITEM);
-    setItems(list);
+    setItems([...list]);
   }
 
-  const ListEmptyComponent = () => (
+  const setItemText = (item, text) => {
+    const index = items.findIndex((x) => x.id === item.id);
+    if (index === -1) return;
+
+    items[index].text = text;
+    setItems([...items]);
+  }
+
+
+  const ListEmptyComponent = useMemo(() => (
     <TouchableOpacity onPress={() => addNewLine()}>
       <Text> + Пункт списку </Text>
     </TouchableOpacity>
-  )
+  ))
 
-  const ListHeaderComponent = () => (
+  const ListHeaderComponent = useMemo(() => (
     <TextInput
-      ref={nameInputRef}
       value={name}
       onChangeText={(text) => setName(text)}
       placeholder="Назва"
       style={[styles.input, styles.title]}
       onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
     />
+  ))
+
+  const ItemComponent = ({ item, index }) => (
+    <View style={styles.checkboxWrap}>
+      <TouchableWithoutFeedback onPress={() => toggleItem(item)}>
+        <View style={[styles.checkbox, { backgroundColor: item.checked ? 'green' : 'transparent' }]} />
+      </TouchableWithoutFeedback>
+      <TextInput
+        ref={(ref) => (textInputsRefs.current[index] = ref)} // Store the ref in the array
+        value={item.text}
+        onChangeText={(text) => setItemText(item, text)}
+        onSubmitEditing={() => handleEnterPress(index)}
+        style={styles.input}
+      />
+      <TouchableWithoutFeedback onPress={() => removeItem(item)}>
+        <Image source={require('./../../assets/icons8-close-24.png')} style={styles.closeBtn} />
+      </TouchableWithoutFeedback>
+    </View>
   )
 
-  const handleEnterPress = (currentItemIndex) => {
-    const currentDate = new Date().getTime().toString();
-    const emptyRow = { id: currentDate, text: '', checked: false };
-    const newList = [...shoppingLists, emptyRow];
-
-    setShoppingLists(newList);
-    setRender(!render);
-    // Focus on the next TextInput
-    setTimeout(() => textInputsRefs.current[currentItemIndex + 1].focus(), 200);
-  };
-
-  const setItemText = (item, text) => {
-    const index = shoppingLists.findIndex((x) => x.id === item.id);
-
-    if (index === -1) {
-      return;
+  const handleEnterPress = (index) => {
+    if (index < items.length - 1) {
+      textInputsRefs.current[index + 1].focus(); // Focus on the next text input
+    } else {
+      addNewLine();
+      setTimeout(() => textInputsRefs.current[index + 1].focus(), 200);
     }
-
-    shoppingLists[index].text = text;
-
-    setShoppingLists([...shoppingLists]);
-    setRender(!render);
   };
 
   const removeItem = (item) => {
-    const newShoppingLists = shoppingLists.filter((x) => x.id !== item.id);
+    const newItems = items.filter((x) => x.id !== item.id);
 
-    setShoppingLists(newShoppingLists);
-    setRender(!render);
+    setItems([...newItems]);
   }
 
   const toggleItem = (item) => {
-    const index = shoppingLists.findIndex((x) => x.id === item.id);
+    const index = items.findIndex((x) => x.id === item.id);
 
-    if (index === -1) {
-      return;
-    }
+    items[index].checked = !items[index].checked;
 
-    shoppingLists[index].checked = !shoppingLists[index].checked;
-    setRender(!render);
+    setItems([...items]);
   };
 
   const save = () => {
-    const newList = { id: id, name: name, list: items, type: type };
+    const newList = { id: id, name: name, items: items, type: type };
     console.log('newList', newList);
     upsertList(newList);
   }
@@ -149,29 +155,7 @@ const AddDishScreen = ({ navigation, route }) => {
         keyExtractor={(item) => item.id}
         ListEmptyComponent={ListEmptyComponent}
         ListHeaderComponent={ListHeaderComponent}
-        renderItem={({ item, index }) => (
-          <View style={styles.checkboxWrap}>
-            <TouchableWithoutFeedback onPress={() => toggleItem(item)}>
-              <View style={[styles.checkbox, { backgroundColor: item.checked ? 'green' : 'transparent' }]} />
-            </TouchableWithoutFeedback>
-            <TextInput
-              ref={(ref) => (textInputsRefs.current[index] = ref)} // Store the ref in the array
-              value={item.text}
-              onChangeText={(text) => setItemText(item, text)}
-              onSubmitEditing={() => {
-                if (index < shoppingLists.length - 1) {
-                  textInputsRefs.current[index + 1].focus(); // Focus on the next text input
-                } else {
-                  handleEnterPress(index); // Handle Enter press when reaching the last input
-                }
-              }}
-              style={styles.input}
-            />
-            <TouchableWithoutFeedback onPress={() => removeItem(item)}>
-              <Image source={require('./../../assets/icons8-close-24.png')} style={styles.closeBtn} />
-            </TouchableWithoutFeedback>
-          </View>
-        )}
+        renderItem={ItemComponent}
       />
     </View>
   );
