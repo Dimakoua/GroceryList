@@ -3,22 +3,14 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useItems } from '../services/useItems';
 
-const TrashBtn = ({ listId }) => {
-    const navigation = useNavigation();
-    const { deleteListById } = useItems();
-
-    const handlePress = async () => {
-        await deleteListById(listId);
-        navigation.goBack();
-    };
-
+const ResetBtn = ({ listId, onPress }) => {
     return (
         <View style={styles.backButton}>
             <TouchableOpacity
-                onPress={handlePress}
+                onPress={onPress}
                 style={styles.settingsButton}
             >
-                <Image source={require('./../../assets/icons8-trash-48.png')} style={styles.image} />
+                <Image source={require('./../../assets/icons8-reset-50.png')} style={styles.image} />
             </TouchableOpacity>
         </View>
     );
@@ -31,4 +23,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default TrashBtn;
+export default ResetBtn;

@@ -13,8 +13,9 @@ import {
 import { useItems } from '../services/useItems';
 import BackButton from '../components/BackBtn';
 import TrashBtn from '../components/TrashBtn';
+import ResetBtn from '../components/ResetBtn';
 
-const AddDishScreen = ({ navigation, route }) => {
+const AddDishScreen = ({ route }) => {
   const { SHOPPING_ITEMS, upsertList } = useItems()
 
   const [render, setRender] = useState(false);
@@ -92,7 +93,7 @@ const AddDishScreen = ({ navigation, route }) => {
       onChangeText={(text) => setName(text)}
       placeholder="Назва"
       style={[styles.input, styles.title]}
-      onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
+      // onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
     />
   ))
 
@@ -137,6 +138,11 @@ const AddDishScreen = ({ navigation, route }) => {
     setItems([...items]);
   };
 
+  const handleReset = () => {
+    items.map(item => item.checked = false);
+    setItems([...items]);
+  }
+
   const save = () => {
     const newList = { id: id, name: name, items: items, type: type };
     console.log('newList', newList);
@@ -148,6 +154,7 @@ const AddDishScreen = ({ navigation, route }) => {
       <View style={styles.headerRow}>
         <BackButton />
         <TrashBtn listId={id} />
+        <ResetBtn listId={id} onPress={handleReset} />
       </View>
 
       <FlatList

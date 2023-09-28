@@ -10,7 +10,7 @@ const CONST_LIST = [
 ];
 
 export function useItems() {
-    
+
     const getAllLists = async () => {
         const lists = await AsyncStorage.getItem(ALL_LISTS);
 
