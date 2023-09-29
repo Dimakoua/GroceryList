@@ -38,25 +38,26 @@ function ShoppingListScreen({ navigation }) {
     }
 
     return (
-        <View style={styles.container}>
+        <View>
             <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
-            <FlatList
-                data={list}
-                keyExtractor={(item) => item.id}
-                numColumns={2}
-                contentContainerStyle={styles.flatListContainer}
-                renderItem={({ item, index }) => (
-                    <TouchableOpacity
-                        onPress={() => {
-                            navigation.navigate('addList', { item });
-                        }}
-                        style={[styles.shoppingList, index % 2 === 0 ? { marginRight: '5%' } : null,]}
-                    >
-                        <Text style={styles.listTitle}>{item.name}</Text>
-                    </TouchableOpacity>
-                )}
-            />
-
+            <View style={styles.container}>
+                <FlatList
+                    data={list}
+                    keyExtractor={(item) => item.id}
+                    numColumns={2}
+                    contentContainerStyle={styles.flatListContainer}
+                    renderItem={({ item, index }) => (
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.navigate('addList', { item });
+                            }}
+                            style={[styles.shoppingList, index % 2 === 0 ? { marginRight: '5%' } : null,]}
+                        >
+                            <Text style={styles.listTitle}>{item.name}</Text>
+                        </TouchableOpacity>
+                    )}
+                />
+            </View>
             <View style={styles.addButtonContainer}>
                 <TouchableOpacity
                     style={styles.addButton}
@@ -73,12 +74,12 @@ function ShoppingListScreen({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         padding: 16,
         backgroundColor: '#f5f5f5',
         flexDirection: 'row', // Use row direction
         flexWrap: 'wrap',     // Allow items to wrap to the next row
         justifyContent: 'space-between', // Align items evenly between rows
+        height: '100%'
     },
     shoppingList: {
         marginTop: 4,
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
     },
     addButtonContainer: {
         position: 'absolute',
-        bottom: 16,
+        bottom: "10%",
         right: 16,
     },
     addButton: {

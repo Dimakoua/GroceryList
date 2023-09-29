@@ -63,13 +63,11 @@ const HeaderComponent = ({ onPress, onSearch }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        padding: 16,
         backgroundColor: '#f5f5f5',
         flexDirection: 'row', 
-        flexWrap: 'wrap',
         justifyContent: 'space-evenly',
-        minWidth: 220,
+        alignItems: 'center',
+        height: 50
     },
     buttons: {
         flex: 1,
@@ -80,7 +78,7 @@ const styles = StyleSheet.create({
     },
     searchContainer: {
         position: 'absolute',
-        right: 0,
+        right: 15,
         top: 10
     },
     searchImage: {
@@ -93,7 +91,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         paddingHorizontal: 16,
         alignSelf: 'center',
-        width: '80%',
+        width: '60%',
         height: 40
     },
     hidden: {
