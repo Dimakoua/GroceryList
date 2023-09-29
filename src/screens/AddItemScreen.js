@@ -27,21 +27,25 @@ const AddDishScreen = ({ route }) => {
   const textInputsRefs = useRef([]);
 
   const params = route.params?.item;
+  const paramsType = route.params?.type;
 
   const EMPTY_ITEM = {
     id: new Date().getTime().toString(),
-    list: [],
-    checked: false
+    checked: false,
+    text: ''
   };
 
   const initialSetUp = () => {
     if (!isEmptyList()) return;
 
+    if(paramsType){
+      setType(paramsType);
+    }
+
     if (params) {
       setId(params.id);
       setName(params.name);
       setItems(params.items);
-      setType(params.type);
     } else {
       const id = new Date().getTime().toString();
       setId(id);
@@ -153,8 +157,8 @@ const AddDishScreen = ({ route }) => {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <BackButton />
-        <TrashBtn listId={id} />
         <ResetBtn listId={id} onPress={handleReset} />
+        <TrashBtn listId={id} />
       </View>
 
       <FlatList

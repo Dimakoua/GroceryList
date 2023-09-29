@@ -17,6 +17,21 @@ export function useItems() {
         return JSON.parse(lists) ?? [];
     };
 
+    const searchLists = async (text) => {
+        const lists = await getAllLists();
+        const shoppingList = lists.filter(list => {
+            if (list.name?.includes(text)) return true;
+
+            const nestedList = list.items.filter(element => {
+                if (element.text?.includes(text)) return true;
+            });
+
+            if(nestedList.length) return true;
+
+        });
+        return shoppingList;
+    }
+
     const getShoppingLists = async () => {
         const lists = await getAllLists();
         const shoppingList = lists.filter(item => item.type === SHOPPING_ITEMS);
@@ -74,5 +89,5 @@ export function useItems() {
     }
 
 
-    return { getAllLists, getShoppingLists, getDishesList, getListById, upsertList, deleteListById, SHOPPING_ITEMS, DISHES };
+    return { getAllLists, getShoppingLists, getDishesList, getListById, upsertList, deleteListById, searchLists, SHOPPING_ITEMS, DISHES };
 }

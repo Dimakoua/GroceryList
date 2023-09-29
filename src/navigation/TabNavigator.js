@@ -8,6 +8,7 @@ function TabNavigator() {
   return (
     <Tab.Navigator>
       <Tab.Screen name="shoppingList" component={ShoppingListScreen}  options={{ headerShown: false }}/>
+      {/* <Tab.Screen name="dishesList" component={ShoppingListScreen}  options={{ headerShown: false }}/> */}
     </Tab.Navigator>
   );
 }

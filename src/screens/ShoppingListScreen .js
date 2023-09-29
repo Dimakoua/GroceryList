@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useItems } from '../services/useItems';
 import { useFocusEffect } from '@react-navigation/native';
+import HeaderComponent from '../components/HeaderComponent';
 
 function ShoppingListScreen({ navigation }) {
+    const { getAllLists, searchLists, SHOPPING_ITEMS, DISHES } = useItems();
     const [list, setList] = useState(null);
-    const { getAllLists } = useItems();
+    const [type, setType] = useState(SHOPPING_ITEMS);
+    const [searchText, setSearchText] = useState(''); // Додавання стану для текстового пошуку
+
 
     const fetchAllLists = async () => {
-        try {
-            const data = await getAllLists();
-            setList(data);
-        } catch (error) {
-            console.error('Error fetching lists:', error);
-        }
+        const data = await getAllLists();
+        setList(data);
     };
 
     useEffect(() => {
@@ -28,8 +28,18 @@ function ShoppingListScreen({ navigation }) {
         }, [])
     );
 
+    const handleHeaderPress = (data) => {
+        console.log(data)
+    }
+
+    const onSearch = async (text) => {
+        const data = await searchLists(text);
+        setList(data);
+    }
+
     return (
         <View style={styles.container}>
+            <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
             <FlatList
                 data={list}
                 keyExtractor={(item) => item.id}
@@ -51,7 +61,7 @@ function ShoppingListScreen({ navigation }) {
                 <TouchableOpacity
                     style={styles.addButton}
                     onPress={() => {
-                        navigation.navigate('addList');
+                        navigation.navigate('addList', { type });
                     }}
                 >
                     <Text style={styles.buttonText}>+</Text>
@@ -71,7 +81,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between', // Align items evenly between rows
     },
     shoppingList: {
-        marginTop: 16,
+        marginTop: 4,
         backgroundColor: 'white',
         borderRadius: 8,
         padding: 16,
@@ -84,7 +94,7 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         elevation: 2,
         width: '48%', // Adjust item width for two columns
-        marginBottom: 16, // Add margin at the bottom of each item for spacing
+        marginBottom: 6, // Add margin at the bottom of each item for spacing
     },
     listTitle: {
         fontSize: 18,
