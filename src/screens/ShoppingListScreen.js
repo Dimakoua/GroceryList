@@ -98,6 +98,16 @@ function ShoppingListScreen({ navigation }) {
                 >
                     <Text style={styles.buttonText}>+</Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => {
+                        navigation.navigate('createMixedList');
+                    }}
+                >
+                    <Text style={styles.buttonText}>+</Text>
+                </TouchableOpacity>
+
+                
             </View>
         </View>
     );

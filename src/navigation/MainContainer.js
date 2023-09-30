@@ -1,9 +1,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import TabNavigator from './TabNavigator'; // Import your tab navigator component
 import AddItemScreen from '../screens/AddItemScreen';
 import ShoppingListScreen from '../screens/ShoppingListScreen';
+import CreateMixedListScreen from '../screens/CreateMixedListScreen';
 
 const Stack = createStackNavigator();
 
@@ -26,7 +26,11 @@ function MainContainer() {
                     component={AddItemScreen}
                     options={{ headerShown: false }}
                 />
-
+                <Stack.Screen
+                    name="createMixedList"
+                    component={CreateMixedListScreen}
+                    options={{ headerShown: false }}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     );

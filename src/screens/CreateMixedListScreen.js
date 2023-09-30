@@ -18,7 +18,7 @@ import PinBtn from '../components/PinBtn';
 import { useSelector } from 'react-redux';
 import { ALL_LISTS, SHOPPING_ITEMS, DISHES } from '../services/types';
 
-const AddDishScreen = ({ navigation, route }) => {
+const CreateMixedListScreen = ({ navigation, route }) => {
   const { getDishesList } = useLists();
   const globalType = useSelector(state => state.filters.type);
   const mealList = getDishesList();
@@ -140,6 +140,12 @@ const AddDishScreen = ({ navigation, route }) => {
     </View>
   )
 
+  const MealListComponent = ({ item, index }) => (
+    <TouchableOpacity onPress={() => addMealToList(item)}>
+      <Text>{item.name}</Text>
+    </TouchableOpacity>
+  )
+
   const handleEnterPress = (index) => {
     if (index < items.length - 1) {
       textInputsRefs.current[index + 1].focus(); // Focus on the next text input
@@ -212,6 +218,13 @@ const AddDishScreen = ({ navigation, route }) => {
         ListHeaderComponent={ListHeaderComponent}
         renderItem={ItemComponent}
       />
+      {type === ALL_LISTS ? (
+        <FlatList
+          data={mealList}
+          keyExtractor={(item) => item.id}
+          renderItem={MealListComponent}
+        />
+      ) : <Text>NO</Text>}
       {ListEmptyComponent}
     </View>
   );
@@ -278,4 +291,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddDishScreen;
+export default CreateMixedListScreen;
