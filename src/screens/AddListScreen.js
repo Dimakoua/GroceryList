@@ -3,11 +3,9 @@ import {
   View,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
   TouchableOpacity,
   StyleSheet,
   FlatList,
-  Image,
   Dimensions,
 } from 'react-native';
 import { useLists } from '../services/useLists';
@@ -17,6 +15,7 @@ import ResetBtn from '../components/ResetBtn';
 import PinBtn from '../components/PinBtn';
 import { useSelector } from 'react-redux';
 import { ALL_LISTS, SHOPPING_ITEMS } from '../services/types';
+import ListRow from '../components/ListRow';
 
 const AddListScreen = ({ navigation, route }) => {
   const globalType = useSelector(state => state.filters.type);
@@ -167,30 +166,6 @@ const AddListScreen = ({ navigation, route }) => {
     />
   ))
 
-  const ItemComponent = ({ item, index }) => (
-    <View style={styles.checkboxWrap}>
-      <TouchableWithoutFeedback onPress={() => toggleItem(item)}>
-        <View style={[styles.checkbox, { backgroundColor: item.checked ? 'green' : 'transparent' }]} />
-      </TouchableWithoutFeedback>
-      <TextInput
-        ref={(ref) => (textInputsRefs.current[index] = ref)} // Store the ref in the array
-        value={item.text}
-        onChangeText={(text) => setItemText(item, text)}
-        onSubmitEditing={() => handleEnterPress(index)}
-        style={[styles.input, { textDecorationLine: item.checked ? 'line-through' : 'none' }]}
-      />
-      <TextInput
-        value={`${item.quantity}`}
-        onChangeText={(quantity) => setItemQuantity(item, quantity)}
-        keyboardType="numeric"
-        style={styles.quantityInput}
-      />
-      <TouchableWithoutFeedback onPress={() => removeItem(item)}>
-        <Image source={require('./../../assets/icons8-close-24.png')} style={styles.closeBtn} />
-      </TouchableWithoutFeedback>
-    </View>
-  )
-
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
@@ -206,7 +181,17 @@ const AddListScreen = ({ navigation, route }) => {
         data={items}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={ListHeaderComponent}
-        renderItem={ItemComponent}
+        renderItem={({ index, item }) => (
+          <ListRow
+            index={index}
+            item={item}
+            textInputsRefs={textInputsRefs}
+            setItemText={setItemText}
+            handleEnterPress={handleEnterPress}
+            setItemQuantity={setItemQuantity}
+            removeItem={removeItem}
+          />
+        )}
       />
       {ListEmptyComponent}
     </View>
@@ -233,26 +218,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16
   },
-  checkboxWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-    width: '100%',
-    justifyContent: 'space-between',
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: 'green',
-    marginRight: 8,
-  },
-  closeBtn: {
-    width: 20,
-    height: 20,
-    marginLeft: 8,
-  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -264,13 +229,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '40%',
-  },
-  quantityInput: {
-    height: 40,
-    marginBottom: 8,
-    paddingHorizontal: 8,
-    width: 40,
-    textAlign: 'center',
   },
 });
 
