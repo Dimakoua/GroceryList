@@ -190,6 +190,7 @@ const AddListScreen = ({ navigation, route }) => {
             handleEnterPress={handleEnterPress}
             setItemQuantity={setItemQuantity}
             removeItem={removeItem}
+            toggleItem={toggleItem}
           />
         )}
       />

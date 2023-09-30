@@ -11,8 +11,8 @@ const MixedListScreenTabNavigator = ({ navigation, route }) => {
 
   return (
     <Tab.Navigator>
-      <Tab.Screen name="List" component={MealsScreen} />
-      <Tab.Screen name="Meals" component={FinalListScreen} />
+      <Tab.Screen name="List" component={FinalListScreen} />
+      <Tab.Screen name="Meals" component={MealsScreen} />
     </Tab.Navigator>
   );
 };

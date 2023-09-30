@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableWithoutFeedback, TextInput, Image, StyleSheet, Dimensions } from 'react-native';
 
-const ListRow = ({ index, item, textInputsRefs, setItemText, handleEnterPress, setItemQuantity, removeItem }) => {
+const ListRow = ({ index, item, textInputsRefs, setItemText, handleEnterPress, setItemQuantity, removeItem, toggleItem }) => {
     return (
         <View style={styles.checkboxWrap}>
             <TouchableWithoutFeedback onPress={() => toggleItem(item)}>

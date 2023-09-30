@@ -31,7 +31,7 @@ export function useLists() {
         return shoppingList;
     };
 
-    const getDishesList = () => {
+    const getMealsList = () => {
         const shoppingList = lists.filter(item => item.type === DISHES);
 
         return shoppingList;
@@ -68,7 +68,7 @@ export function useLists() {
     return {
         getAllLists,
         getShoppingLists,
-        getDishesList,
+        getMealsList,
         getListById,
         upsertList,
         deleteListById,
