@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import AddItemScreen from '../screens/AddItemScreen';
+import AddListScreen from '../screens/AddListScreen';
 import ShoppingListScreen from '../screens/ShoppingListScreen';
 import MixedListScreenTabNavigator from './MixedListScreenTabNavigator';
 
@@ -11,11 +11,6 @@ function MainContainer() {
     return (
         <NavigationContainer>
             <Stack.Navigator>
-                {/* <Stack.Screen
-                    name="Main"
-                    component={TabNavigator}
-                    options={{ headerShown: false }} // Optional: Hide the header
-                /> */}
                 <Stack.Screen
                     name="Main"
                     component={ShoppingListScreen}
@@ -23,7 +18,7 @@ function MainContainer() {
                 />
                 <Stack.Screen
                     name="addList"
-                    component={AddItemScreen}
+                    component={AddListScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen

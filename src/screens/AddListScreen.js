@@ -16,12 +16,10 @@ import TrashBtn from '../components/TrashBtn';
 import ResetBtn from '../components/ResetBtn';
 import PinBtn from '../components/PinBtn';
 import { useSelector } from 'react-redux';
-import { ALL_LISTS, SHOPPING_ITEMS, DISHES } from '../services/types';
+import { ALL_LISTS, SHOPPING_ITEMS } from '../services/types';
 
-const CreateMixedListScreen = ({ navigation, route }) => {
-  const { getDishesList } = useLists();
+const AddListScreen = ({ navigation, route }) => {
   const globalType = useSelector(state => state.filters.type);
-  const mealList = getDishesList();
 
   const { upsertList, deleteListById } = useLists()
   const [id, setId] = useState(null);
@@ -100,52 +98,6 @@ const CreateMixedListScreen = ({ navigation, route }) => {
     setItems(updatedItems);
   };
 
-  const ListEmptyComponent = useMemo(() => (
-    <TouchableOpacity onPress={() => addNewLine()}>
-      <Text> + Пункт списку </Text>
-    </TouchableOpacity>
-  ))
-
-  const ListHeaderComponent = useMemo(() => (
-    <TextInput
-      value={name}
-      onChangeText={(text) => setName(text)}
-      placeholder="Назва"
-      style={[styles.input, styles.title]}
-    // onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
-    />
-  ))
-
-  const ItemComponent = ({ item, index }) => (
-    <View style={styles.checkboxWrap}>
-      <TouchableWithoutFeedback onPress={() => toggleItem(item)}>
-        <View style={[styles.checkbox, { backgroundColor: item.checked ? 'green' : 'transparent' }]} />
-      </TouchableWithoutFeedback>
-      <TextInput
-        ref={(ref) => (textInputsRefs.current[index] = ref)} // Store the ref in the array
-        value={item.text}
-        onChangeText={(text) => setItemText(item, text)}
-        onSubmitEditing={() => handleEnterPress(index)}
-        style={[styles.input, { textDecorationLine: item.checked ? 'line-through' : 'none' }]}
-      />
-      <TextInput
-        value={`${item.quantity}`} // Отобразите количество
-        onChangeText={(quantity) => setItemQuantity(item, quantity)} // Обновите количество
-        keyboardType="numeric" // Установите клавиатуру для ввода чисел
-        style={styles.quantityInput}
-      />
-      <TouchableWithoutFeedback onPress={() => removeItem(item)}>
-        <Image source={require('./../../assets/icons8-close-24.png')} style={styles.closeBtn} />
-      </TouchableWithoutFeedback>
-    </View>
-  )
-
-  const MealListComponent = ({ item, index }) => (
-    <TouchableOpacity onPress={() => addMealToList(item)}>
-      <Text>{item.name}</Text>
-    </TouchableOpacity>
-  )
-
   const handleEnterPress = (index) => {
     if (index < items.length - 1) {
       textInputsRefs.current[index + 1].focus(); // Focus on the next text input
@@ -167,11 +119,9 @@ const CreateMixedListScreen = ({ navigation, route }) => {
         : existingItem
     );
 
-    // Разделите элементы на два массива: checked и unchecked
     const uncheckedItems = updatedItems.filter((item) => !item.checked);
     const checkedItems = updatedItems.filter((item) => item.checked);
 
-    // Объедините их так, чтобы элементы с checked: false были в начале
     const sortedItems = [...uncheckedItems, ...checkedItems];
 
     setItems(sortedItems);
@@ -201,6 +151,46 @@ const CreateMixedListScreen = ({ navigation, route }) => {
     upsertList(newList);
   }
 
+  const ListEmptyComponent = useMemo(() => (
+    <TouchableOpacity onPress={() => addNewLine()}>
+      <Text> + Пункт списку </Text>
+    </TouchableOpacity>
+  ))
+
+  const ListHeaderComponent = useMemo(() => (
+    <TextInput
+      value={name}
+      onChangeText={(text) => setName(text)}
+      placeholder="Назва"
+      style={[styles.input, styles.title]}
+    // onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
+    />
+  ))
+
+  const ItemComponent = ({ item, index }) => (
+    <View style={styles.checkboxWrap}>
+      <TouchableWithoutFeedback onPress={() => toggleItem(item)}>
+        <View style={[styles.checkbox, { backgroundColor: item.checked ? 'green' : 'transparent' }]} />
+      </TouchableWithoutFeedback>
+      <TextInput
+        ref={(ref) => (textInputsRefs.current[index] = ref)} // Store the ref in the array
+        value={item.text}
+        onChangeText={(text) => setItemText(item, text)}
+        onSubmitEditing={() => handleEnterPress(index)}
+        style={[styles.input, { textDecorationLine: item.checked ? 'line-through' : 'none' }]}
+      />
+      <TextInput
+        value={`${item.quantity}`}
+        onChangeText={(quantity) => setItemQuantity(item, quantity)}
+        keyboardType="numeric"
+        style={styles.quantityInput}
+      />
+      <TouchableWithoutFeedback onPress={() => removeItem(item)}>
+        <Image source={require('./../../assets/icons8-close-24.png')} style={styles.closeBtn} />
+      </TouchableWithoutFeedback>
+    </View>
+  )
+
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
@@ -218,13 +208,6 @@ const CreateMixedListScreen = ({ navigation, route }) => {
         ListHeaderComponent={ListHeaderComponent}
         renderItem={ItemComponent}
       />
-      {type === ALL_LISTS ? (
-        <FlatList
-          data={mealList}
-          keyExtractor={(item) => item.id}
-          renderItem={MealListComponent}
-        />
-      ) : <Text>NO</Text>}
       {ListEmptyComponent}
     </View>
   );
@@ -237,7 +220,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff', // Set your desired background color
+    backgroundColor: '#fff',
   },
   input: {
     height: 40,
@@ -286,9 +269,9 @@ const styles = StyleSheet.create({
     height: 40,
     marginBottom: 8,
     paddingHorizontal: 8,
-    width: 40, // Ширина поля ввода количества
-    textAlign: 'center', // Выравнивание по центру
+    width: 40,
+    textAlign: 'center',
   },
 });
 
-export default CreateMixedListScreen;
+export default AddListScreen;

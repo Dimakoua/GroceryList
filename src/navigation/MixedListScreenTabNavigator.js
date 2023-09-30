@@ -1,7 +1,7 @@
 import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import CreateMixedListScreen from '../screens/CreateMixedListScreen';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import MealsScreen from '../screens/MixedList/MealsScreen';
+import FinalListScreen from '../screens/MixedList/FinalListScreen';
 
 // const Tab = createBottomTabNavigator();
 const Tab = createMaterialTopTabNavigator();
@@ -11,8 +11,8 @@ const MixedListScreenTabNavigator = ({ navigation, route }) => {
 
   return (
     <Tab.Navigator>
-      <Tab.Screen name="List" component={CreateMixedListScreen} />
-      <Tab.Screen name="Meals" component={CreateMixedListScreen} />
+      <Tab.Screen name="List" component={MealsScreen} />
+      <Tab.Screen name="Meals" component={FinalListScreen} />
     </Tab.Navigator>
   );
 };
