@@ -10,7 +10,8 @@ function ShoppingListScreen({ navigation }) {
     const lists = useSelector(state => state.lists.lists);
 
     const { searchLists, getListsByType } = useLists();
-    const [list, setList] = useState(null);
+    const [pinnedList, setPinnedList] = useState([]);
+    const [notPinnedList, setNotPinnedList] = useState([]);
 
     useEffect(() => {
         getListsByTypeWrap();
@@ -24,10 +25,13 @@ function ShoppingListScreen({ navigation }) {
 
     const getListsByTypeWrap = () => {
         const data = getListsByType(type);
-        setList(data);
+        const pinnedList = data.filter(x => x.pinned)
+        const notPinnedList = data.filter(x => !x.pinned)
+        setPinnedList(pinnedList);
+        setNotPinnedList(notPinnedList);
     }
 
-    const handleHeaderPress = async (listType) => {
+    const handleHeaderPress = (listType) => {
         getListsByTypeWrap(listType);
     }
 
@@ -37,11 +41,35 @@ function ShoppingListScreen({ navigation }) {
     }
 
     return (
-        <View>
+        <View style={styles.wrap}>
             <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
+            {pinnedList.length ? (
+                <View>
+                    <Text>Pinned</Text>
+                    <View style={styles.container}>
+                        <FlatList
+                            data={pinnedList}
+                            keyExtractor={(item) => item.id}
+                            numColumns={2}
+                            contentContainerStyle={styles.flatListContainer}
+                            renderItem={({ item, index }) => (
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        navigation.navigate('addList', { item });
+                                    }}
+                                    style={[styles.shoppingList, index % 2 === 0 ? { marginRight: '5%' } : null,]}
+                                >
+                                    <Text style={styles.listTitle}>{item.name}</Text>
+                                </TouchableOpacity>
+                            )}
+                        />
+                    </View>
+                </View>
+            ) : null}
+            <Text>Other</Text>
             <View style={styles.container}>
                 <FlatList
-                    data={list}
+                    data={notPinnedList}
                     keyExtractor={(item) => item.id}
                     numColumns={2}
                     contentContainerStyle={styles.flatListContainer}
@@ -57,6 +85,7 @@ function ShoppingListScreen({ navigation }) {
                     )}
                 />
             </View>
+
             <View style={styles.addButtonContainer}>
                 <TouchableOpacity
                     style={styles.addButton}
@@ -78,7 +107,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row', // Use row direction
         flexWrap: 'wrap',     // Allow items to wrap to the next row
         justifyContent: 'space-between', // Align items evenly between rows
-        height: '100%'
+        // height: '100%'
     },
     shoppingList: {
         marginTop: 4,
@@ -103,7 +132,7 @@ const styles = StyleSheet.create({
     },
     addButtonContainer: {
         position: 'absolute',
-        bottom: "10%",
+        bottom: 16,
         right: 16,
     },
     addButton: {
@@ -126,6 +155,9 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 24,
     },
+    wrap: {
+        height: '100%'
+    }
 });
 
 

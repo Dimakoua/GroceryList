@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
-
+import { ALL_LISTS } from '../services/types';
 const initialState = {
-  type: '',
+  type: ALL_LISTS,
   searchText: ''
 }
 

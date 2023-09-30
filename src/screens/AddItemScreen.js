@@ -67,9 +67,18 @@ const AddDishScreen = ({ navigation, route }) => {
     }
   }, [name, items, isPinned]);
 
+  // const addNewLine = () => {
+  //   setItems((prevItems) => [...prevItems, { ...EMPTY_ITEM }]);
+  // }
+
   const addNewLine = () => {
-    setItems((prevItems) => [...prevItems, { ...EMPTY_ITEM }]);
-  }
+    const newLine = { ...EMPTY_ITEM };
+    setItems((prevItems) => {
+      const uncheckedItems = prevItems.filter((item) => !item.checked);
+      const checkedItems = prevItems.filter((item) => item.checked);
+      return [...uncheckedItems, newLine, ...checkedItems];
+    });
+  };
 
   const setItemText = (item, text) => {
     const updatedItems = items.map((existingItem) =>
@@ -134,8 +143,15 @@ const AddDishScreen = ({ navigation, route }) => {
         ? { ...existingItem, checked: !existingItem.checked }
         : existingItem
     );
-
-    setItems(updatedItems);
+  
+    // Разделите элементы на два массива: checked и unchecked
+    const uncheckedItems = updatedItems.filter((item) => !item.checked);
+    const checkedItems = updatedItems.filter((item) => item.checked);
+  
+    // Объедините их так, чтобы элементы с checked: false были в начале
+    const sortedItems = [...uncheckedItems, ...checkedItems];
+  
+    setItems(sortedItems);
   };
 
   const handleReset = () => {
