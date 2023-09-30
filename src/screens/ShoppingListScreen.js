@@ -5,10 +5,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import HeaderComponent from '../components/HeaderComponent';
 
 function ShoppingListScreen({ navigation }) {
-    const { getAllLists, searchLists, SHOPPING_ITEMS, DISHES } = useItems();
+    const { getAllLists, searchLists, getListsByType, SHOPPING_ITEMS } = useItems();
     const [list, setList] = useState(null);
     const [type, setType] = useState(SHOPPING_ITEMS);
-    const [searchText, setSearchText] = useState(''); // Додавання стану для текстового пошуку
 
 
     const fetchAllLists = async () => {
@@ -20,16 +19,22 @@ function ShoppingListScreen({ navigation }) {
         if (list === null) {
             fetchAllLists();
         }
-    }, []);
+    }, [type]);
 
     useFocusEffect(
         React.useCallback(() => {
-            fetchAllLists();
+            getListsByTypeWrap(type);
         }, [])
     );
 
-    const handleHeaderPress = (data) => {
-        console.log(data)
+    const getListsByTypeWrap = async (listType) => {
+        const data = await getListsByType(listType);
+        setList(data);
+    }
+
+    const handleHeaderPress = async (listType) => {
+        setType(listType);
+        getListsByTypeWrap(listType);
     }
 
     const onSearch = async (text) => {

@@ -14,14 +14,16 @@ import { useItems } from '../services/useItems';
 import BackButton from '../components/BackBtn';
 import TrashBtn from '../components/TrashBtn';
 import ResetBtn from '../components/ResetBtn';
+import PinBtn from '../components/PinBtn';
 
 const AddDishScreen = ({ route }) => {
   const { SHOPPING_ITEMS, upsertList } = useItems()
 
   const [render, setRender] = useState(false);
-  const [name, setName] = useState(null);
   const [id, setId] = useState(null);
+  const [name, setName] = useState(null);
   const [type, setType] = useState(SHOPPING_ITEMS);
+  const [isPinned, setIsPinned] = useState(false);
   const [items, setItems] = useState(null);
 
   const textInputsRefs = useRef([]);
@@ -32,13 +34,14 @@ const AddDishScreen = ({ route }) => {
   const EMPTY_ITEM = {
     id: new Date().getTime().toString(),
     checked: false,
-    text: ''
+    text: '',
+    pinned: false
   };
 
   const initialSetUp = () => {
     if (!isEmptyList()) return;
 
-    if(paramsType){
+    if (paramsType) {
       setType(paramsType);
     }
 
@@ -46,10 +49,13 @@ const AddDishScreen = ({ route }) => {
       setId(params.id);
       setName(params.name);
       setItems(params.items);
+      setIsPinned(params.pinned);
     } else {
       const id = new Date().getTime().toString();
       setId(id);
     }
+
+    console.log(type)
   }
 
   const isEmptyList = () => {
@@ -67,7 +73,7 @@ const AddDishScreen = ({ route }) => {
     if (!isEmptyList()) {
       save();
     }
-  }, [render, name, items]);
+  }, [render, name, items, isPinned]);
 
   const addNewLine = () => {
     const list = items ?? [];
@@ -97,7 +103,7 @@ const AddDishScreen = ({ route }) => {
       onChangeText={(text) => setName(text)}
       placeholder="Назва"
       style={[styles.input, styles.title]}
-      // onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
+    // onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
     />
   ))
 
@@ -111,7 +117,7 @@ const AddDishScreen = ({ route }) => {
         value={item.text}
         onChangeText={(text) => setItemText(item, text)}
         onSubmitEditing={() => handleEnterPress(index)}
-        style={styles.input}
+        style={[styles.input, { textDecorationLine: item.checked ? 'line-through' : 'none' }]}
       />
       <TouchableWithoutFeedback onPress={() => removeItem(item)}>
         <Image source={require('./../../assets/icons8-close-24.png')} style={styles.closeBtn} />
@@ -148,8 +154,7 @@ const AddDishScreen = ({ route }) => {
   }
 
   const save = () => {
-    const newList = { id: id, name: name, items: items, type: type };
-    console.log('newList', newList);
+    const newList = { id: id, name: name, items: items, type: type, pinned: isPinned };
     upsertList(newList);
   }
 
@@ -157,8 +162,11 @@ const AddDishScreen = ({ route }) => {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <BackButton />
-        <ResetBtn listId={id} onPress={handleReset} />
-        <TrashBtn listId={id} />
+        <View style={styles.btnHeaderWrap}>
+          <PinBtn isActive={isPinned} onPress={() => setIsPinned(!isPinned)} />
+          <ResetBtn listId={id} onPress={handleReset} />
+          <TrashBtn listId={id} />
+        </View>
       </View>
 
       <FlatList
@@ -218,6 +226,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     width: '100%',
     justifyContent: 'space-between',
+  },
+  btnHeaderWrap: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '40%',
   }
 });
 

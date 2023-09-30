@@ -1,8 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import { useItems } from '../services/useItems';
+
 
 const HeaderComponent = ({ onPress, onSearch }) => {
+    const {SHOPPING_ITEMS, DISHES, ALL_LISTS} = useItems();
+
     const [isEditingSearch, setIsEditingSearch] = useState(false); // Додавання стану для визначення режиму редагування пошуку
+    const [currentButtonPressed, setCurrentButtonPressed] = useState(ALL_LISTS); // Додавання стану для визначення режиму редагування пошуку
     const [searchText, setSearchText] = useState(''); // Додавання стану для текстового пошуку
 
     const searchInputRef = useRef();
@@ -13,23 +18,33 @@ const HeaderComponent = ({ onPress, onSearch }) => {
         }
     };
 
+    const handleButtonPress = (btnName) => {
+        onPress(btnName);
+        setCurrentButtonPressed(btnName);
+    }
+
     return (
         <View style={styles.container}>
             <View style={[styles.buttons, isEditingSearch ? styles.hidden : null,]}>
                 <TouchableOpacity
-                    onPress={() => onPress('1')}
+                    style={[currentButtonPressed === SHOPPING_ITEMS ? styles.active : null,]}
+                    onPress={() => handleButtonPress(SHOPPING_ITEMS)}
                 >
-                    <Text style={styles.listTitle}>1</Text>
+                    <Text style={styles.listTitle}>List</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => onPress('2')}
+                    style={[currentButtonPressed === ALL_LISTS ? styles.active : null,]}
+                    onPress={() => handleButtonPress(ALL_LISTS)}
+
                 >
-                    <Text style={styles.listTitle}>2</Text>
+                    <Text style={styles.listTitle}>All</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => onPress('3')}
+                    style={[currentButtonPressed === DISHES ? styles.active : null,]}
+                    onPress={() => handleButtonPress(DISHES)}
+
                 >
-                    <Text style={styles.listTitle}>3</Text>
+                    <Text style={styles.listTitle}>Meals</Text>
                 </TouchableOpacity>
             </View>
             <View style={[styles.buttons, isEditingSearch ? null : styles.hidden,]}>
@@ -64,7 +79,7 @@ const HeaderComponent = ({ onPress, onSearch }) => {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#f5f5f5',
-        flexDirection: 'row', 
+        flexDirection: 'row',
         justifyContent: 'space-evenly',
         alignItems: 'center',
         height: 50
@@ -96,6 +111,11 @@ const styles = StyleSheet.create({
     },
     hidden: {
         display: 'none'
+    },
+    active: {
+        backgroundColor: 'red',
+        padding: 6,
+        borderRadius: 6
     }
 });
 

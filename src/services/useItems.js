@@ -26,7 +26,7 @@ export function useItems() {
                 if (element.text?.includes(text)) return true;
             });
 
-            if(nestedList.length) return true;
+            if (nestedList.length) return true;
 
         });
         return shoppingList;
@@ -45,6 +45,22 @@ export function useItems() {
 
         return shoppingList;
     };
+
+    const getListsByType = async (type) => {
+        if(type == ALL_LISTS){
+            const lists = await getAllLists();
+            return lists;
+        }
+
+        const typeIndex = CONST_LIST.findIndex(item => item === type);
+        if (typeIndex === -1) {
+            throw new Error(`${type} is not allowed type`);
+        }
+
+        const lists = await getAllLists();
+        const shoppingList = lists.filter(item => item.type === type);
+        return shoppingList;
+    }
 
     const getListById = async (id) => {
         const shoppingLists = await getAllLists();
@@ -68,8 +84,6 @@ export function useItems() {
             list[index] = newList;
         }
 
-        console.log('list', list)
-
         save(list);
     }
 
@@ -89,5 +103,17 @@ export function useItems() {
     }
 
 
-    return { getAllLists, getShoppingLists, getDishesList, getListById, upsertList, deleteListById, searchLists, SHOPPING_ITEMS, DISHES };
+    return {
+        getAllLists,
+        getShoppingLists,
+        getDishesList,
+        getListById,
+        upsertList,
+        deleteListById,
+        searchLists,
+        getListsByType,
+        SHOPPING_ITEMS,
+        DISHES,
+        ALL_LISTS
+    };
 }
