@@ -10,7 +10,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { useItems } from '../services/useItems';
+import { useLists } from '../services/useLists';
 import BackButton from '../components/BackBtn';
 import TrashBtn from '../components/TrashBtn';
 import ResetBtn from '../components/ResetBtn';
@@ -20,11 +20,11 @@ import { useSelector } from 'react-redux';
 const AddDishScreen = ({ navigation, route }) => {
   const type = useSelector(state => state.filters.type);
 
-  const { upsertList, deleteListById } = useItems()
+  const { upsertList, deleteListById } = useLists()
   const [id, setId] = useState(null);
   const [name, setName] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
-  const [items, setItems] = useState(null);
+  const [items, setItems] = useState([]);
 
   const textInputsRefs = useRef([]);
   const params = route.params?.item;
@@ -51,7 +51,7 @@ const AddDishScreen = ({ navigation, route }) => {
   }
 
   const isEmptyList = () => {
-    if (name === null && items === null) {
+    if (name === null && items.length === 0) {
       return true;
     }
     return false;
@@ -68,20 +68,16 @@ const AddDishScreen = ({ navigation, route }) => {
   }, [name, items, isPinned]);
 
   const addNewLine = () => {
-    const list = items ?? [];
-
-    list.push(EMPTY_ITEM);
-    setItems([...list]);
+    setItems((prevItems) => [...prevItems, { ...EMPTY_ITEM }]);
   }
 
   const setItemText = (item, text) => {
-    const index = items.findIndex((x) => x.id === item.id);
-    if (index === -1) return;
+    const updatedItems = items.map((existingItem) =>
+      existingItem.id === item.id ? { ...existingItem, text } : existingItem
+    );
 
-    items[index].text = text;
-    setItems([...items]);
-  }
-
+    setItems(updatedItems);
+  };
 
   const ListEmptyComponent = useMemo(() => (
     <TouchableOpacity onPress={() => addNewLine()}>
@@ -129,24 +125,30 @@ const AddDishScreen = ({ navigation, route }) => {
   const removeItem = (item) => {
     const newItems = items.filter((x) => x.id !== item.id);
 
-    setItems([...newItems]);
+    setItems(newItems);
   }
 
   const toggleItem = (item) => {
-    const index = items.findIndex((x) => x.id === item.id);
+    const updatedItems = items.map((existingItem) =>
+      existingItem.id === item.id
+        ? { ...existingItem, checked: !existingItem.checked }
+        : existingItem
+    );
 
-    items[index].checked = !items[index].checked;
-
-    setItems([...items]);
+    setItems(updatedItems);
   };
 
   const handleReset = () => {
-    items.map(item => item.checked = false);
-    setItems([...items]);
-  }
+    const updatedItems = items.map((item) => ({
+      ...item,
+      checked: false,
+    }));
 
-  const handleRemove = async () => {
-    await deleteListById(id);
+    setItems(updatedItems);
+  };
+
+  const handleRemove = () => {
+    deleteListById(id);
     navigation.goBack();
   }
 
@@ -162,7 +164,7 @@ const AddDishScreen = ({ navigation, route }) => {
         <View style={styles.btnHeaderWrap}>
           <PinBtn isActive={isPinned} onPress={() => setIsPinned(!isPinned)} />
           <ResetBtn onPress={handleReset} />
-          <TrashBtn onPress={handleRemove} listId={id} />
+          <TrashBtn onPress={handleRemove} />
         </View>
       </View>
 

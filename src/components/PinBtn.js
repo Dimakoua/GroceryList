@@ -1,17 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { useItems } from '../services/useItems';
 
 const PinBtn = ({ isActive, onPress }) => {
-    const handlePress = () => {
-        onPress();
-    };
-
     return (
         <View style={styles.backButton}>
             <TouchableOpacity
-                onPress={handlePress}
+                onPress={onPress}
                 style={styles.settingsButton}
             >
                 {isActive ?

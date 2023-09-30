@@ -3,6 +3,6 @@ import ListsReducer from './lists'
 import FilterReducer from './filters'
 
 export default combineReducers({
-  list: ListsReducer,
+  lists: ListsReducer,
   filters: FilterReducer,
 })

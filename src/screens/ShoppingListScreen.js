@@ -1,36 +1,29 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import { useItems } from '../services/useItems';
+import { useLists } from '../services/useLists';
 import { useFocusEffect } from '@react-navigation/native';
 import HeaderComponent from '../components/HeaderComponent';
 import { useSelector } from 'react-redux';
 
 function ShoppingListScreen({ navigation }) {
     const type = useSelector(state => state.filters.type);
+    const lists = useSelector(state => state.lists.lists);
 
-    const { getAllLists, searchLists, getListsByType } = useItems();
+    const { searchLists, getListsByType } = useLists();
     const [list, setList] = useState(null);
 
-
-    const fetchAllLists = async () => {
-        const data = await getAllLists();
-        setList(data);
-    };
-
     useEffect(() => {
-        if (list === null) {
-            fetchAllLists();
-        }
+        getListsByTypeWrap();
     }, []);
 
     useFocusEffect(
         useCallback(() => {
-            getListsByTypeWrap(type);
-        }, [type])
+            getListsByTypeWrap();
+        }, [type, lists])
     );
 
-    const getListsByTypeWrap = async (listType) => {
-        const data = await getListsByType(listType);
+    const getListsByTypeWrap = () => {
+        const data = getListsByType(type);
         setList(data);
     }
 
