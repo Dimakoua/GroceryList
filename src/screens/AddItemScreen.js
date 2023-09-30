@@ -16,14 +16,16 @@ import TrashBtn from '../components/TrashBtn';
 import ResetBtn from '../components/ResetBtn';
 import PinBtn from '../components/PinBtn';
 import { useSelector } from 'react-redux';
+import { ALL_LISTS, SHOPPING_ITEMS } from '../services/types';
 
 const AddDishScreen = ({ navigation, route }) => {
-  const type = useSelector(state => state.filters.type);
+  const globalType = useSelector(state => state.filters.type);
 
   const { upsertList, deleteListById } = useLists()
   const [id, setId] = useState(null);
   const [name, setName] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
+  const [type, setType] = useState(globalType);
   const [items, setItems] = useState([]);
 
   const textInputsRefs = useRef([]);
@@ -33,7 +35,8 @@ const AddDishScreen = ({ navigation, route }) => {
     id: new Date().getTime().toString(),
     checked: false,
     text: '',
-    pinned: false
+    pinned: false,
+    quantity: 1,
   };
 
   const initialSetUp = () => {
@@ -43,6 +46,7 @@ const AddDishScreen = ({ navigation, route }) => {
       setId(params.id);
       setName(params.name);
       setItems(params.items);
+      setType(params.type);
       setIsPinned(params.pinned);
     } else {
       const id = new Date().getTime().toString();
@@ -88,6 +92,14 @@ const AddDishScreen = ({ navigation, route }) => {
     setItems(updatedItems);
   };
 
+  const setItemQuantity = (item, quantity) => {
+    const updatedItems = items.map((existingItem) =>
+      existingItem.id === item.id ? { ...existingItem, quantity: parseInt(quantity, 10) || 1 } : existingItem
+    );
+
+    setItems(updatedItems);
+  };
+
   const ListEmptyComponent = useMemo(() => (
     <TouchableOpacity onPress={() => addNewLine()}>
       <Text> + Пункт списку </Text>
@@ -116,6 +128,12 @@ const AddDishScreen = ({ navigation, route }) => {
         onSubmitEditing={() => handleEnterPress(index)}
         style={[styles.input, { textDecorationLine: item.checked ? 'line-through' : 'none' }]}
       />
+      <TextInput
+        value={`${item.quantity}`} // Отобразите количество
+        onChangeText={(quantity) => setItemQuantity(item, quantity)} // Обновите количество
+        keyboardType="numeric" // Установите клавиатуру для ввода чисел
+        style={styles.quantityInput}
+      />
       <TouchableWithoutFeedback onPress={() => removeItem(item)}>
         <Image source={require('./../../assets/icons8-close-24.png')} style={styles.closeBtn} />
       </TouchableWithoutFeedback>
@@ -143,14 +161,14 @@ const AddDishScreen = ({ navigation, route }) => {
         ? { ...existingItem, checked: !existingItem.checked }
         : existingItem
     );
-  
+
     // Разделите элементы на два массива: checked и unchecked
     const uncheckedItems = updatedItems.filter((item) => !item.checked);
     const checkedItems = updatedItems.filter((item) => item.checked);
-  
+
     // Объедините их так, чтобы элементы с checked: false были в начале
     const sortedItems = [...uncheckedItems, ...checkedItems];
-  
+
     setItems(sortedItems);
   };
 
@@ -169,7 +187,12 @@ const AddDishScreen = ({ navigation, route }) => {
   }
 
   const save = () => {
-    const newList = { id: id, name: name, items: items, type: type, pinned: isPinned };
+    let localType = type;
+    if (localType === ALL_LISTS) {
+      localType = SHOPPING_ITEMS;
+    }
+
+    const newList = { id: id, name: name, items: items, type: localType, pinned: isPinned };
     upsertList(newList);
   }
 
@@ -187,10 +210,10 @@ const AddDishScreen = ({ navigation, route }) => {
       <FlatList
         data={items}
         keyExtractor={(item) => item.id}
-        ListEmptyComponent={ListEmptyComponent}
         ListHeaderComponent={ListHeaderComponent}
         renderItem={ItemComponent}
       />
+      {ListEmptyComponent}
     </View>
   );
 };
@@ -208,7 +231,7 @@ const styles = StyleSheet.create({
     height: 40,
     marginBottom: 8,
     paddingHorizontal: 8,
-    width: '80%',
+    width: '50%',
     maxWidth: maxWidth,
   },
   title: {
@@ -246,7 +269,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '40%',
-  }
+  },
+  quantityInput: {
+    height: 40,
+    marginBottom: 8,
+    paddingHorizontal: 8,
+    width: 40, // Ширина поля ввода количества
+    textAlign: 'center', // Выравнивание по центру
+  },
 });
 
 export default AddDishScreen;

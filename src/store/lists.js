@@ -33,7 +33,8 @@ export const lists = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   upsert,
-  remove
+  remove,
+  addRecentItem
 } = lists.actions
 
 export default lists.reducer

@@ -37,7 +37,10 @@ function ShoppingListScreen({ navigation }) {
 
     const onSearch = async (text) => {
         const data = await searchLists(text, type);
-        setList(data);
+        const pinnedList = data.filter(x => x.pinned)
+        const notPinnedList = data.filter(x => !x.pinned)
+        setPinnedList(pinnedList);
+        setNotPinnedList(notPinnedList);
     }
 
     return (
@@ -90,7 +93,7 @@ function ShoppingListScreen({ navigation }) {
                 <TouchableOpacity
                     style={styles.addButton}
                     onPress={() => {
-                        navigation.navigate('addList', { type });
+                        navigation.navigate('addList');
                     }}
                 >
                     <Text style={styles.buttonText}>+</Text>
