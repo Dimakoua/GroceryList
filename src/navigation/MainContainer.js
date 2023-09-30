@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AddItemScreen from '../screens/AddItemScreen';
 import ShoppingListScreen from '../screens/ShoppingListScreen';
-import CreateMixedListScreen from '../screens/CreateMixedListScreen';
+import MixedListScreenTabNavigator from './MixedListScreenTabNavigator';
 
 const Stack = createStackNavigator();
 
@@ -28,7 +28,7 @@ function MainContainer() {
                 />
                 <Stack.Screen
                     name="createMixedList"
-                    component={CreateMixedListScreen}
+                    component={MixedListScreenTabNavigator}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>
