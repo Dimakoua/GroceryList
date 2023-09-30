@@ -3,7 +3,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useItems } from '../services/useItems';
 
-const ResetBtn = ({ listId, onPress }) => {
+const ResetBtn = ({ onPress }) => {
     return (
         <View style={styles.backButton}>
             <TouchableOpacity

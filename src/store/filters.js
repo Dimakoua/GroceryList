@@ -10,8 +10,7 @@ export const filters = createSlice({
   initialState,
   reducers: {
     setType: (state, value) => {
-      console.log('setType', value)
-      state.type = value;
+      state.type = value.payload;
     },
   }
 })

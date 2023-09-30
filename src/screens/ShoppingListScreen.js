@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useItems } from '../services/useItems';
 import { useFocusEffect } from '@react-navigation/native';
 import HeaderComponent from '../components/HeaderComponent';
-import { useType } from '../services/useType';
+import { useSelector } from 'react-redux';
 
 function ShoppingListScreen({ navigation }) {
-    // const nestedComponents = useSelector(state => state.screen.nestedComponents.filter(widget => !excludeWidgets.includes(widget.name)), shallowEqual);
+    const type = useSelector(state => state.filters.type);
 
-    const {type, setType} = useType();
     const { getAllLists, searchLists, getListsByType } = useItems();
     const [list, setList] = useState(null);
 
@@ -22,14 +21,12 @@ function ShoppingListScreen({ navigation }) {
         if (list === null) {
             fetchAllLists();
         }
-    }, [type]);
+    }, []);
 
     useFocusEffect(
-        React.useCallback(() => {
-        console.log('useCallback', type)
-
+        useCallback(() => {
             getListsByTypeWrap(type);
-        }, [])
+        }, [type])
     );
 
     const getListsByTypeWrap = async (listType) => {
@@ -38,13 +35,11 @@ function ShoppingListScreen({ navigation }) {
     }
 
     const handleHeaderPress = async (listType) => {
-        console.log('handleHeaderPress', listType)
-        setType(listType);
         getListsByTypeWrap(listType);
     }
 
     const onSearch = async (text) => {
-        const data = await searchLists(text);
+        const data = await searchLists(text, type);
         setList(data);
     }
 

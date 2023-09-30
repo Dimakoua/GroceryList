@@ -15,21 +15,19 @@ import BackButton from '../components/BackBtn';
 import TrashBtn from '../components/TrashBtn';
 import ResetBtn from '../components/ResetBtn';
 import PinBtn from '../components/PinBtn';
-import { useType } from '../services/useType';
+import { useSelector } from 'react-redux';
 
-const AddDishScreen = ({ route }) => {
-  const { upsertList } = useItems()
-  const {type, setType} = useType();
+const AddDishScreen = ({ navigation, route }) => {
+  const type = useSelector(state => state.filters.type);
 
+  const { upsertList, deleteListById } = useItems()
   const [id, setId] = useState(null);
   const [name, setName] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
   const [items, setItems] = useState(null);
 
   const textInputsRefs = useRef([]);
-
   const params = route.params?.item;
-  const paramsType = route.params?.type;
 
   const EMPTY_ITEM = {
     id: new Date().getTime().toString(),
@@ -41,10 +39,6 @@ const AddDishScreen = ({ route }) => {
   const initialSetUp = () => {
     if (!isEmptyList()) return;
 
-    if (paramsType) {
-      setType(paramsType);
-    }
-
     if (params) {
       setId(params.id);
       setName(params.name);
@@ -54,8 +48,6 @@ const AddDishScreen = ({ route }) => {
       const id = new Date().getTime().toString();
       setId(id);
     }
-
-    console.log('initialSetUp', type)
   }
 
   const isEmptyList = () => {
@@ -153,6 +145,11 @@ const AddDishScreen = ({ route }) => {
     setItems([...items]);
   }
 
+  const handleRemove = async () => {
+    await deleteListById(id);
+    navigation.goBack();
+  }
+
   const save = () => {
     const newList = { id: id, name: name, items: items, type: type, pinned: isPinned };
     upsertList(newList);
@@ -164,8 +161,8 @@ const AddDishScreen = ({ route }) => {
         <BackButton />
         <View style={styles.btnHeaderWrap}>
           <PinBtn isActive={isPinned} onPress={() => setIsPinned(!isPinned)} />
-          <ResetBtn listId={id} onPress={handleReset} />
-          <TrashBtn listId={id} />
+          <ResetBtn onPress={handleReset} />
+          <TrashBtn onPress={handleRemove} listId={id} />
         </View>
       </View>
 

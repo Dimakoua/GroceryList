@@ -1,9 +1,7 @@
-import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useType } from './useType';
+import { ALL_LISTS, SHOPPING_ITEMS, DISHES, CONST_LIST } from './types';
 
 export function useItems() {
-    const { ALL_LISTS, SHOPPING_ITEMS, DISHES, CONST_LIST, type } = useType();
 
     const getAllLists = async () => {
         const lists = await AsyncStorage.getItem(ALL_LISTS);
@@ -11,8 +9,7 @@ export function useItems() {
         return JSON.parse(lists) ?? [];
     };
 
-    const searchLists = async (text) => {
-        console.log('searchLists', type)
+    const searchLists = async (text, type) => {
         const lists = await getListsByType(type);
         const shoppingList = lists.filter(list => {
             if (list.name?.includes(text)) return true;
