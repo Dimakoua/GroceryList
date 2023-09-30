@@ -3,11 +3,14 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native
 import { useItems } from '../services/useItems';
 import { useFocusEffect } from '@react-navigation/native';
 import HeaderComponent from '../components/HeaderComponent';
+import { useType } from '../services/useType';
 
 function ShoppingListScreen({ navigation }) {
-    const { getAllLists, searchLists, getListsByType, SHOPPING_ITEMS } = useItems();
+    // const nestedComponents = useSelector(state => state.screen.nestedComponents.filter(widget => !excludeWidgets.includes(widget.name)), shallowEqual);
+
+    const {type, setType} = useType();
+    const { getAllLists, searchLists, getListsByType } = useItems();
     const [list, setList] = useState(null);
-    const [type, setType] = useState(SHOPPING_ITEMS);
 
 
     const fetchAllLists = async () => {
@@ -23,6 +26,8 @@ function ShoppingListScreen({ navigation }) {
 
     useFocusEffect(
         React.useCallback(() => {
+        console.log('useCallback', type)
+
             getListsByTypeWrap(type);
         }, [])
     );
@@ -33,6 +38,7 @@ function ShoppingListScreen({ navigation }) {
     }
 
     const handleHeaderPress = async (listType) => {
+        console.log('handleHeaderPress', listType)
         setType(listType);
         getListsByTypeWrap(listType);
     }

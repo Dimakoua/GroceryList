@@ -15,14 +15,14 @@ import BackButton from '../components/BackBtn';
 import TrashBtn from '../components/TrashBtn';
 import ResetBtn from '../components/ResetBtn';
 import PinBtn from '../components/PinBtn';
+import { useType } from '../services/useType';
 
 const AddDishScreen = ({ route }) => {
-  const { SHOPPING_ITEMS, upsertList } = useItems()
+  const { upsertList } = useItems()
+  const {type, setType} = useType();
 
-  const [render, setRender] = useState(false);
   const [id, setId] = useState(null);
   const [name, setName] = useState(null);
-  const [type, setType] = useState(SHOPPING_ITEMS);
   const [isPinned, setIsPinned] = useState(false);
   const [items, setItems] = useState(null);
 
@@ -55,7 +55,7 @@ const AddDishScreen = ({ route }) => {
       setId(id);
     }
 
-    console.log(type)
+    console.log('initialSetUp', type)
   }
 
   const isEmptyList = () => {
@@ -73,7 +73,7 @@ const AddDishScreen = ({ route }) => {
     if (!isEmptyList()) {
       save();
     }
-  }, [render, name, items, isPinned]);
+  }, [name, items, isPinned]);
 
   const addNewLine = () => {
     const list = items ?? [];

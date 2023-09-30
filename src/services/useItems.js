@@ -1,15 +1,9 @@
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const ALL_LISTS = 'all_lists';
-const SHOPPING_ITEMS = 'shopping_items';
-const DISHES = 'dishes';
-const CONST_LIST = [
-    SHOPPING_ITEMS,
-    DISHES
-];
+import { useType } from './useType';
 
 export function useItems() {
+    const { ALL_LISTS, SHOPPING_ITEMS, DISHES, CONST_LIST, type } = useType();
 
     const getAllLists = async () => {
         const lists = await AsyncStorage.getItem(ALL_LISTS);
@@ -18,15 +12,16 @@ export function useItems() {
     };
 
     const searchLists = async (text) => {
-        const lists = await getAllLists();
+        console.log('searchLists', type)
+        const lists = await getListsByType(type);
         const shoppingList = lists.filter(list => {
             if (list.name?.includes(text)) return true;
 
-            const nestedList = list.items.filter(element => {
+            const nestedList = list.items?.filter(element => {
                 if (element.text?.includes(text)) return true;
             });
 
-            if (nestedList.length) return true;
+            if (nestedList && nestedList.length) return true;
 
         });
         return shoppingList;
@@ -47,7 +42,7 @@ export function useItems() {
     };
 
     const getListsByType = async (type) => {
-        if(type == ALL_LISTS){
+        if (type == ALL_LISTS) {
             const lists = await getAllLists();
             return lists;
         }
@@ -112,8 +107,8 @@ export function useItems() {
         deleteListById,
         searchLists,
         getListsByType,
-        SHOPPING_ITEMS,
-        DISHES,
-        ALL_LISTS
+        // SHOPPING_ITEMS,
+        // DISHES,
+        // ALL_LISTS
     };
 }

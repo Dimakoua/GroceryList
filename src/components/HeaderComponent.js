@@ -1,10 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Image } from 'react-native';
-import { useItems } from '../services/useItems';
+import { useType } from '../services/useType';
+import { useDispatch } from 'react-redux';
+import { setType } from '../store/filters';
 
 
 const HeaderComponent = ({ onPress, onSearch }) => {
-    const {SHOPPING_ITEMS, DISHES, ALL_LISTS} = useItems();
+    const dispatch = useDispatch();
+    const {SHOPPING_ITEMS, DISHES, ALL_LISTS} = useType();
 
     const [isEditingSearch, setIsEditingSearch] = useState(false); // Додавання стану для визначення режиму редагування пошуку
     const [currentButtonPressed, setCurrentButtonPressed] = useState(ALL_LISTS); // Додавання стану для визначення режиму редагування пошуку
@@ -19,6 +22,7 @@ const HeaderComponent = ({ onPress, onSearch }) => {
     };
 
     const handleButtonPress = (btnName) => {
+        dispatch(setType(btnName));
         onPress(btnName);
         setCurrentButtonPressed(btnName);
     }
