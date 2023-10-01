@@ -3,14 +3,12 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native
 import { useLists } from '../services/useLists';
 import { useFocusEffect } from '@react-navigation/native';
 import HeaderComponent from '../components/HeaderComponent';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { MIXED } from '../services/types';
-import { setUpActiveList } from '../store/activeList';
 
 function ShoppingListScreen({ navigation }) {
     const type = useSelector(state => state.filters.type);
     const lists = useSelector(state => state.lists.lists);
-    const dispatch = useDispatch();
 
     const { searchLists, getListsByType } = useLists();
     const [pinnedList, setPinnedList] = useState([]);
@@ -39,20 +37,20 @@ function ShoppingListScreen({ navigation }) {
     }
 
     const handleCardPress = (item) => {
-        dispatch(setUpActiveList(item));
-
         if (item.type === MIXED) {
-            navigation.navigate('createMixedList', { listId: item.id });
+            navigation.navigate('createMixedList', { item });
         } else {
-            navigation.navigate('addList', { listId: item.id });
+            navigation.navigate('addList', { item });
         }
     }
 
     const handleAddNewCardPress = () => {
+        const id = new Date().getTime().toString();
+
         if (type === MIXED) {
-            navigation.navigate('createMixedList');
+            navigation.navigate('createMixedList', { id });
         } else {
-            navigation.navigate('addList');
+            navigation.navigate('addList', { id });
         }
     }
 

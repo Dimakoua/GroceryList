@@ -16,20 +16,21 @@ import PinBtn from '../components/PinBtn';
 import { useSelector } from 'react-redux';
 import ListRow from '../components/ListRow';
 
-const AddListScreenCopy = ({ navigation, route, listId}) => {
+const AddListScreenCopy = ({ navigation, route }) => {
   const globalType = useSelector(state => state.filters.type);
-  const activeList = useSelector(state => state.activeList);
 
-  const { upsertList, deleteListById, getListById } = useLists()
+  const { upsertList, deleteListById } = useLists()
   const [id, setId] = useState(null);
   const [name, setName] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
   const [type, setType] = useState(globalType);
+  const [meals, setMeals] = useState([]);
   const [items, setItems] = useState([]);
 
   const textInputsRefs = useRef([]);
 
-  const currentListID = route?.params?.listId || listId;
+  const params = route?.params?.item;
+  const newId = route?.params?.id;
 
   const EMPTY_ITEM = {
     id: new Date().getTime().toString(),
@@ -40,31 +41,23 @@ const AddListScreenCopy = ({ navigation, route, listId}) => {
   };
 
   const initialSetUp = () => {
-    // set up data only if list is not empty
-    // do not remove this line
     if (!isEmptyList()) return;
 
-    if(currentListID){
-      const list = getListById(currentListID);
-      setUp(list);
-    } else {
-      if(id === null){
-        const id = new Date().getTime().toString();
-        setId(id);
-      }
+    if(newId){
+      setId(newId);
+    }
+    if (params) {
+      setId(params.id);
+      setName(params.name);
+      setItems(params.items);
+      setType(params.type);
+      setMeals(params.melas);
+      setIsPinned(params.pinned);
     }
   }
 
-  const setUp = (params) => {
-    setId(params.id);
-    setName(params.name);
-    setItems(params.items);
-    setType(params.type);
-    setIsPinned(params.pinned);
-  }
-
   const isEmptyList = () => {
-    if (name === null && items.length === 0) {
+    if (name === null && items.length === 0 && meals.length === 0) {
       return true;
     }
     return false;
@@ -73,13 +66,12 @@ const AddListScreenCopy = ({ navigation, route, listId}) => {
   useEffect(() => {
 
     initialSetUp();
-    console.log("useEffect", activeList)
 
     //save the list after each change.
     if (!isEmptyList()) {
       save();
     }
-  }, [name, items, isPinned, listId]);
+  }, [name, items, isPinned]);
 
 
   const addNewLine = () => {

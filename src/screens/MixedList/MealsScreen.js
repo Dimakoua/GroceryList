@@ -11,20 +11,39 @@ import {
   Dimensions,
 } from 'react-native';
 import { useLists } from '../../services/useLists';
-import { useMixedListContext } from '../../Context/MixedListContext';
 import { MIXED } from '../../services/types';
 
 const MealsScreen = ({ navigation, route }) => {
-  const { getMealsList } = useLists();
-  const [meals, setMeals] = useState(getMealsList());
-  const { state, dispatch } = useMixedListContext();
+  const { getMealsList, upsertList, getListById } = useLists();
+
+  const id = route.params.id;
+  const list = getListById(id);
+  const allMeals = getMealsList();
+
+  const [meals, setMeals] = useState(allMeals);
 
   useEffect(() => {
-    const filtered = meals.filter(x => x.checked)
-    dispatch({ type: 'SET_MEALS', payload: filtered});
+    const updatedMealList = allMeals.map(existingItem => {
+      const foundObject = list.meals.findIndex(item =>
+        item.id === existingItem.id
+      );
 
-    // const newList = { id: id, name: name, items: items, type: MIXED, pinned: isPinned };
-    // upsertList(newList);
+      if (foundObject !== -1) {
+        return { ...existingItem, checked: true }
+      }
+
+      return existingItem;
+    });
+
+    setMeals(updatedMealList);
+  }, [])
+
+  useEffect(() => {
+    const filtered = meals.filter(x => x.checked);
+
+    if (filtered.length) {
+      upsertList({ id: id, type: MIXED, meals: filtered });
+    }
   }, [meals])
 
   const toggleItem = (item) => {
@@ -38,7 +57,7 @@ const MealsScreen = ({ navigation, route }) => {
   };
   const incrementQuantity = (item) => {
     const updatedMeals = meals.map((meal) =>
-      meal.id === item.id ? { ...meal, quantity: (meal.quantity ??  1) + 1 } : meal
+      meal.id === item.id ? { ...meal, quantity: (meal.quantity ?? 1) + 1 } : meal
     );
     setMeals(updatedMeals);
   };
