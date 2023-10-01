@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setType } from '../store/filters';
-import { SHOPPING_ITEMS, DISHES, ALL_LISTS } from '../services/types';
+import { SHOPPING_ITEMS, DISHES, MIXED } from '../services/types';
 
 const HeaderComponent = ({ onPress, onSearch }) => {
     const dispatch = useDispatch();
@@ -34,8 +34,8 @@ const HeaderComponent = ({ onPress, onSearch }) => {
                     <Text style={styles.listTitle}>List</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={[currentButtonPressed === ALL_LISTS ? styles.active : null,]}
-                    onPress={() => handleButtonPress(ALL_LISTS)}
+                    style={[currentButtonPressed === MIXED ? styles.active : null,]}
+                    onPress={() => handleButtonPress(MIXED)}
 
                 >
                     <Text style={styles.listTitle}>All</Text>

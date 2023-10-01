@@ -14,7 +14,6 @@ import TrashBtn from '../components/TrashBtn';
 import ResetBtn from '../components/ResetBtn';
 import PinBtn from '../components/PinBtn';
 import { useSelector } from 'react-redux';
-import { ALL_LISTS, SHOPPING_ITEMS } from '../services/types';
 import ListRow from '../components/ListRow';
 
 const AddListScreen = ({ navigation, route }) => {
@@ -148,12 +147,7 @@ const AddListScreen = ({ navigation, route }) => {
   }
 
   const save = () => {
-    let localType = type;
-    if (localType === ALL_LISTS) {
-      localType = SHOPPING_ITEMS;
-    }
-
-    const newList = { id: id, name: name, items: items, type: localType, pinned: isPinned };
+    const newList = { id: id, name: name, items: items, type: type, pinned: isPinned };
     upsertList(newList);
   }
 

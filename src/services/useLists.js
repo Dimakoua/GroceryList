@@ -1,4 +1,4 @@
-import { ALL_LISTS, SHOPPING_ITEMS, DISHES, CONST_LIST } from './types';
+import { SHOPPING_ITEMS, DISHES, ALL_TYPES, MIXED } from './types';
 import { useDispatch, useSelector } from 'react-redux';
 import { remove, upsert } from '../store/lists';
 
@@ -38,11 +38,11 @@ export function useLists() {
     };
 
     const getListsByType = (type) => {
-        if (type == ALL_LISTS) {
+        if (type == MIXED) {
             return lists;
         }
 
-        const typeIndex = CONST_LIST.findIndex(item => item === type);
+        const typeIndex = ALL_TYPES.findIndex(item => item === type);
         if (typeIndex === -1) {
             throw new Error(`${type} is not allowed type`);
         }
@@ -57,6 +57,11 @@ export function useLists() {
     };
 
     const upsertList = (newList) => {
+        const typeIndex = ALL_TYPES.findIndex(item => item === newList.type);
+        if (typeIndex === -1) {
+            throw new Error(`${newList.type} is not allowed type`);
+        }
+
         dispatch(upsert(newList));
     }
 

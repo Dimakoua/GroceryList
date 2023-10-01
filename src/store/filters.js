@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { ALL_LISTS } from '../services/types';
+import { MIXED } from '../services/types';
 const initialState = {
-  type: ALL_LISTS,
+  type: MIXED,
   searchText: ''
 }
 

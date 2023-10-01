@@ -3,12 +3,14 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native
 import { useLists } from '../services/useLists';
 import { useFocusEffect } from '@react-navigation/native';
 import HeaderComponent from '../components/HeaderComponent';
-import { useSelector } from 'react-redux';
-import { ALL_LISTS, MIXED } from '../services/types';
+import { useDispatch, useSelector } from 'react-redux';
+import { MIXED } from '../services/types';
+import { setUpActiveList } from '../store/activeList';
 
 function ShoppingListScreen({ navigation }) {
     const type = useSelector(state => state.filters.type);
     const lists = useSelector(state => state.lists.lists);
+    const dispatch = useDispatch();
 
     const { searchLists, getListsByType } = useLists();
     const [pinnedList, setPinnedList] = useState([]);
@@ -36,12 +38,21 @@ function ShoppingListScreen({ navigation }) {
         getListsByTypeWrap(listType);
     }
 
-
     const handleCardPress = (item) => {
+        dispatch(setUpActiveList(item));
+
         if (item.type === MIXED) {
             navigation.navigate('createMixedList', { listId: item.id });
         } else {
             navigation.navigate('addList', { listId: item.id });
+        }
+    }
+
+    const handleAddNewCardPress = () => {
+        if (type === MIXED) {
+            navigation.navigate('createMixedList');
+        } else {
+            navigation.navigate('addList');
         }
     }
 
@@ -53,40 +64,17 @@ function ShoppingListScreen({ navigation }) {
         setNotPinnedList(notPinnedList);
     }
 
-    return (
-        <View style={styles.wrap}>
-            <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
-            {pinnedList.length ? (
-                <View>
-                    <Text>Pinned</Text>
-                    <View style={styles.container}>
-                        <FlatList
-                            data={pinnedList}
-                            keyExtractor={(item) => item.id}
-                            numColumns={2}
-                            contentContainerStyle={styles.flatListContainer}
-                            renderItem={({ item, index }) => (
-                                <TouchableOpacity
-                                    onPress={() => {handleCardPress(item)}}
-                                    style={[styles.shoppingList, index % 2 === 0 ? { marginRight: '5%' } : null,]}
-                                >
-                                    <Text style={styles.listTitle}>{item.name}</Text>
-                                </TouchableOpacity>
-                            )}
-                        />
-                    </View>
-                </View>
-            ) : null}
-            <Text>Other</Text>
+    const ListComponent = (data) => {
+        return (
             <View style={styles.container}>
                 <FlatList
-                    data={notPinnedList}
+                    data={data}
                     keyExtractor={(item) => item.id}
                     numColumns={2}
                     contentContainerStyle={styles.flatListContainer}
                     renderItem={({ item, index }) => (
                         <TouchableOpacity
-                            onPress={() => {handleCardPress(item)}}
+                            onPress={() => { handleCardPress(item) }}
                             style={[styles.shoppingList, index % 2 === 0 ? { marginRight: '5%' } : null,]}
                         >
                             <Text style={styles.listTitle}>{item.name}</Text>
@@ -94,17 +82,24 @@ function ShoppingListScreen({ navigation }) {
                     )}
                 />
             </View>
+        );
+    }
 
+    return (
+        <View style={styles.wrap}>
+            <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
+            {pinnedList.length ? (
+                <View>
+                    <Text>Pinned</Text>
+                    {ListComponent(pinnedList)}
+                </View>
+            ) : null}
+            <Text>Other</Text>
+            {ListComponent(notPinnedList)}
             <View style={styles.addButtonContainer}>
                 <TouchableOpacity
                     style={styles.addButton}
-                    onPress={() => {
-                        if (type === ALL_LISTS) {
-                            navigation.navigate('createMixedList');
-                        } else {
-                            navigation.navigate('addList');
-                        }
-                    }}
+                    onPress={handleAddNewCardPress}
                 >
                     <Text style={styles.buttonText}>+</Text>
                 </TouchableOpacity>

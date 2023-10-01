@@ -11,189 +11,22 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import AddListScreen from '../AddListScreen';
-import { MIXED } from '../../services/types';
-import { useDispatch, useSelector } from 'react-redux';
-import { useLists } from '../../services/useLists';
+
 import { useMixedListContext } from '../../Context/MixedListContext';
-import BackButton from '../../components/BackBtn';
-import PinBtn from '../../components/PinBtn';
-import ResetBtn from '../../components/ResetBtn';
-import TrashBtn from '../../components/TrashBtn';
-import ListRow from '../../components/ListRow';
+import AddListScreenCopy from '../AddListScreenCopy';
+import { useSelector } from 'react-redux';
 
 const FinalListScreen = ({ navigation, route }) => {
-  const [items, setItems] = useState([]);
-  const [name, setName] = useState(null);
-  const [isPinned, setIsPinned] = useState(false);
-
-  const { upsertList, deleteListById } = useLists()
-
-  const { state, dispatch } = useMixedListContext();
-  const { getListById } = useLists();
-
-  const textInputsRefs = useRef([]);
-
-  const EMPTY_ITEM = {
-    id: new Date().getTime().toString(),
-    checked: false,
-    text: '',
-    pinned: false,
-    quantity: 1,
-  };
-
+  const activeList = useSelector(state => state.activeList);
 
   useEffect(() => {
-    console.log('FinalListScreen', state)
-
-    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-      console.log('beforeRemove')
-      dispatch({ type: 'CLEAN' });
-    });
-
-    save();
-
-    return unsubscribe;
-  }, [navigation, items, name, isPinned]);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (state.meals.length === 0) {
-        setItems([]);
-        return;
-      }
-
-      const list = [];
-      state.meals.forEach(element => {
-        const meal = getListById(element.id);
-
-        const newMeal = meal.items.map((existedItem) => ({ ...existedItem, quantity: element.quantity ?? 1 }))
-        list.push(...newMeal)
-
-        setItems(list);
-      });
-    }, [state.meals])
-  );
-
-  const handleReset = () => {
-    const updatedItems = items.map((item) => ({
-      ...item,
-      checked: false,
-    }));
-
-    setItems(updatedItems);
-  };
-
-  const handleRemove = () => {
-    deleteListById(id);
-    navigation.goBack();
-  }
-
-  const setItemText = (item, text) => {
-    const updatedItems = items.map((existingItem) =>
-      existingItem.id === item.id ? { ...existingItem, text } : existingItem
-    );
-
-    setItems(updatedItems);
-  };
-
-  const setItemQuantity = (item, quantity) => {
-    const updatedItems = items.map((existingItem) =>
-      existingItem.id === item.id ? { ...existingItem, quantity: parseInt(quantity, 10) || 1 } : existingItem
-    );
-
-    setItems(updatedItems);
-  };
-
-  const handleEnterPress = (index) => {
-    if (index < items.length - 1) {
-      textInputsRefs.current[index + 1].focus(); // Focus on the next text input
-    } else {
-      addNewLine();
-    }
-  };
-
-  const addNewLine = () => {
-    const newLine = { ...EMPTY_ITEM };
-    setItems((prevItems) => {
-      const uncheckedItems = prevItems.filter((item) => !item.checked);
-      const checkedItems = prevItems.filter((item) => item.checked);
-      return [...uncheckedItems, newLine, ...checkedItems];
-    });
-    // setTimeout(() => textInputsRefs.current.pop().focus(), 200);
-  };
-
-  const removeItem = (item) => {
-    const newItems = items.filter((x) => x.id !== item.id);
-
-    setItems(newItems);
-  }
-
-  const toggleItem = (item) => {
-    const updatedItems = items.map((existingItem) =>
-      existingItem.id === item.id
-        ? { ...existingItem, checked: !existingItem.checked }
-        : existingItem
-    );
-
-    const uncheckedItems = updatedItems.filter((item) => !item.checked);
-    const checkedItems = updatedItems.filter((item) => item.checked);
-
-    const sortedItems = [...uncheckedItems, ...checkedItems];
-
-    setItems(sortedItems);
-  };
-
-  const save = () => {
-    const newList = { id: state.id, name: name, items: items, meals: state.meals, type: MIXED, pinned: isPinned };
-    upsertList(newList);
-  }
-
-  const ListEmptyComponent = useMemo(() => (
-    <TouchableOpacity onPress={() => addNewLine()}>
-      <Text> + Пункт списку </Text>
-    </TouchableOpacity>
-  ))
-
-  const ListHeaderComponent = useMemo(() => (
-    <TextInput
-      value={name}
-      onChangeText={(text) => setName(text)}
-      placeholder="Назва"
-      style={[styles.input, styles.title]}
-    />
-  ))
+    console.log("FinalListScreen", activeList);
+    
+    // console.log(state.id)
+  }, [])
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerRow}>
-        <BackButton />
-        <View style={styles.btnHeaderWrap}>
-          <PinBtn isActive={isPinned} onPress={() => setIsPinned(!isPinned)} />
-          <ResetBtn onPress={handleReset} />
-          <TrashBtn onPress={handleRemove} />
-        </View>
-      </View>
-
-      <FlatList
-        data={items}
-        keyExtractor={(item) => item.id}
-        ListHeaderComponent={ListHeaderComponent}
-        renderItem={({ index, item }) => (
-          <ListRow
-            index={index}
-            item={item}
-            textInputsRefs={textInputsRefs}
-            setItemText={setItemText}
-            handleEnterPress={handleEnterPress}
-            setItemQuantity={setItemQuantity}
-            removeItem={removeItem}
-            toggleItem={toggleItem}
-          />
-        )}
-      />
-      {ListEmptyComponent}
-    </View>
+    <AddListScreenCopy listId={'id'}/>
   );
 };
 

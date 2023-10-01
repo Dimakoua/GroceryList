@@ -14,11 +14,11 @@ import TrashBtn from '../components/TrashBtn';
 import ResetBtn from '../components/ResetBtn';
 import PinBtn from '../components/PinBtn';
 import { useSelector } from 'react-redux';
-import { ALL_LISTS, SHOPPING_ITEMS } from '../services/types';
 import ListRow from '../components/ListRow';
 
-const AddListScreenCopy = ({ navigation, route }) => {
+const AddListScreenCopy = ({ navigation, route, listId}) => {
   const globalType = useSelector(state => state.filters.type);
+  const activeList = useSelector(state => state.activeList);
 
   const { upsertList, deleteListById, getListById } = useLists()
   const [id, setId] = useState(null);
@@ -29,7 +29,7 @@ const AddListScreenCopy = ({ navigation, route }) => {
 
   const textInputsRefs = useRef([]);
 
-  const listId = route?.params?.listId;
+  const currentListID = route?.params?.listId || listId;
 
   const EMPTY_ITEM = {
     id: new Date().getTime().toString(),
@@ -44,8 +44,8 @@ const AddListScreenCopy = ({ navigation, route }) => {
     // do not remove this line
     if (!isEmptyList()) return;
 
-    if(listId){
-      const list = getListById(listId);
+    if(currentListID){
+      const list = getListById(currentListID);
       setUp(list);
     } else {
       if(id === null){
@@ -73,7 +73,7 @@ const AddListScreenCopy = ({ navigation, route }) => {
   useEffect(() => {
 
     initialSetUp();
-    console.log("useEffect")
+    console.log("useEffect", activeList)
 
     //save the list after each change.
     if (!isEmptyList()) {
@@ -152,12 +152,7 @@ const AddListScreenCopy = ({ navigation, route }) => {
   }
 
   const save = () => {
-    let localType = type;
-    if (localType === ALL_LISTS) {
-      localType = SHOPPING_ITEMS;
-    }
-
-    const newList = { id: id, name: name, items: items, type: localType, pinned: isPinned };
+    const newList = { id: id, name: name, items: items, type: type, pinned: isPinned };
     upsertList(newList);
   }
 

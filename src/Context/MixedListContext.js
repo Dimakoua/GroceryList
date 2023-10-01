@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useReducer } from 'react';
+import { MIXED } from '../services/types';
 
 // Define your initial state here
 const initialState = {
     // Add your global state properties here
     id: null,
+    type: MIXED,
     meals: []
 };
 
