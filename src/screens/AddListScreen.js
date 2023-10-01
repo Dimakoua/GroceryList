@@ -28,7 +28,8 @@ const AddListScreen = ({ navigation, route }) => {
   const [items, setItems] = useState([]);
 
   const textInputsRefs = useRef([]);
-  const params = route.params?.item;
+
+  const params = route?.params?.item;
 
   const EMPTY_ITEM = {
     id: new Date().getTime().toString(),
@@ -42,15 +43,21 @@ const AddListScreen = ({ navigation, route }) => {
     if (!isEmptyList()) return;
 
     if (params) {
-      setId(params.id);
-      setName(params.name);
-      setItems(params.items);
-      setType(params.type);
-      setIsPinned(params.pinned);
+      setUp(params);
     } else {
-      const id = new Date().getTime().toString();
-      setId(id);
+      if(id === null){
+        const id = new Date().getTime().toString();
+        setId(id);
+      }
     }
+  }
+
+  const setUp = (params) => {
+    setId(params.id);
+    setName(params.name);
+    setItems(params.items);
+    setType(params.type);
+    setIsPinned(params.pinned);
   }
 
   const isEmptyList = () => {

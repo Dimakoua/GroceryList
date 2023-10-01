@@ -11,13 +11,49 @@ import {
   Dimensions,
 } from 'react-native';
 import { useLists } from '../../services/useLists';
+import { useMixedListContext } from '../../Context/MixedListContext';
 
 const MealsScreen = ({ navigation, route }) => {
   const { getMealsList } = useLists();
-  const meals = getMealsList();
+  const [meals, setMeals] = useState(getMealsList());
+  const { state, dispatch } = useMixedListContext();
+
+  useEffect(() => {
+    console.log('MealsScreen', state)
+
+    return console.log("MealsScreen exirt")
+  })
 
   const toggleItem = (item) => {
-    console.log(item);
+    const updatedMeals = meals.map((existingItem) =>
+      existingItem.id === item.id
+        ? { ...existingItem, checked: !existingItem.checked }
+        : existingItem
+    );
+
+    setMeals(updatedMeals);
+
+    const meal = {id: item.id, name: item.name, type: item.type};
+    if(!item.checked){
+      dispatch({ type: 'ADD_MEAL', payload: meal});
+    } else {
+      dispatch({ type: 'REMOVE_MEAL', payload: meal});
+    }
+  };
+  const incrementQuantity = (item) => {
+    const updatedMeals = meals.map((meal) =>
+      meal.id === item.id ? { ...meal, quantity: (meal.quantity ??  1) + 1 } : meal
+    );
+    setMeals(updatedMeals);
+  };
+
+  const decrementQuantity = (item) => {
+    if (item.quantity > 0) {
+      const updatedMeals = meals.map((meal) =>
+        meal.id === item.id ? { ...meal, quantity: (meal.quantity ?? 1) - 1 } : meal
+      );
+      setMeals(updatedMeals);
+    }
   };
 
   const renderItem = ({ item, index }) => (
@@ -27,12 +63,19 @@ const MealsScreen = ({ navigation, route }) => {
       </View>
       <View style={styles.itemContent}>
         <Text style={styles.itemName}>{item.name}</Text>
-        <TextInput
-          value={`${item.quantity}`}
-          // onChangeText={(quantity) => setItemQuantity(item, quantity)}
-          keyboardType="numeric"
-          style={styles.quantityInput}
-        />
+        <View style={styles.quantityContainer}>
+          <TouchableOpacity onPress={() => decrementQuantity(item)} style={styles.quantityButton}>
+            <Text style={styles.quantityButtonText}>-</Text>
+          </TouchableOpacity>
+          <TextInput
+            value={`${item.quantity ?? 1}`}
+            keyboardType="numeric"
+            style={styles.quantityInput}
+          />
+          <TouchableOpacity onPress={() => incrementQuantity(item)} style={styles.quantityButton}>
+            <Text style={styles.quantityButtonText}>+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -87,6 +130,23 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  quantityButton: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'green',
+    borderRadius: 4,
+    marginLeft: 10,
+  },
+  quantityButtonText: {
+    color: 'white',
+    fontSize: 16,
   },
   quantityInput: {
     height: 40,
