@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import AddListScreen from '../screens/AddListScreen';
 import ShoppingListScreen from '../screens/ShoppingListScreen';
 import MixedListScreenTabNavigator from './MixedListScreenTabNavigator';
+import AddListScreenCopy from '../screens/AddListScreenCopy';
 
 const Stack = createStackNavigator();
 
@@ -18,7 +19,7 @@ function MainContainer() {
                 />
                 <Stack.Screen
                     name="addList"
-                    component={AddListScreen}
+                    component={AddListScreenCopy}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen

@@ -1,38 +1,35 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
   TouchableOpacity,
   StyleSheet,
   FlatList,
-  Image,
   Dimensions,
 } from 'react-native';
-import AddListScreen from '../AddListScreen';
-import { MIXED } from '../../services/types';
-import { useDispatch, useSelector } from 'react-redux';
-import { useLists } from '../../services/useLists';
-import { useMixedListContext } from '../../Context/MixedListContext';
-import BackButton from '../../components/BackBtn';
-import PinBtn from '../../components/PinBtn';
-import ResetBtn from '../../components/ResetBtn';
-import TrashBtn from '../../components/TrashBtn';
-import ListRow from '../../components/ListRow';
+import { useLists } from '../services/useLists';
+import BackButton from '../components/BackBtn';
+import TrashBtn from '../components/TrashBtn';
+import ResetBtn from '../components/ResetBtn';
+import PinBtn from '../components/PinBtn';
+import { useSelector } from 'react-redux';
+import { ALL_LISTS, SHOPPING_ITEMS } from '../services/types';
+import ListRow from '../components/ListRow';
 
-const FinalListScreen = ({ navigation, route }) => {
-  const [items, setItems] = useState([]);
+const AddListScreenCopy = ({ navigation, route }) => {
+  const globalType = useSelector(state => state.filters.type);
+
+  const { upsertList, deleteListById, getListById } = useLists()
+  const [id, setId] = useState(null);
   const [name, setName] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
-
-  const { upsertList, deleteListById } = useLists()
-
-  const { state, dispatch } = useMixedListContext();
-  const { getListById } = useLists();
+  const [type, setType] = useState(globalType);
+  const [items, setItems] = useState([]);
 
   const textInputsRefs = useRef([]);
+
+  const listId = route?.params?.listId;
 
   const EMPTY_ITEM = {
     id: new Date().getTime().toString(),
@@ -42,52 +39,58 @@ const FinalListScreen = ({ navigation, route }) => {
     quantity: 1,
   };
 
+  const initialSetUp = () => {
+    // set up data only if list is not empty
+    // do not remove this line
+    if (!isEmptyList()) return;
+
+    if(listId){
+      const list = getListById(listId);
+      setUp(list);
+    } else {
+      if(id === null){
+        const id = new Date().getTime().toString();
+        setId(id);
+      }
+    }
+  }
+
+  const setUp = (params) => {
+    setId(params.id);
+    setName(params.name);
+    setItems(params.items);
+    setType(params.type);
+    setIsPinned(params.pinned);
+  }
+
+  const isEmptyList = () => {
+    if (name === null && items.length === 0) {
+      return true;
+    }
+    return false;
+  }
 
   useEffect(() => {
-    console.log('FinalListScreen', state)
 
-    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-      console.log('beforeRemove')
-      dispatch({ type: 'CLEAN' });
+    initialSetUp();
+    console.log("useEffect")
+
+    //save the list after each change.
+    if (!isEmptyList()) {
+      save();
+    }
+  }, [name, items, isPinned, listId]);
+
+
+  const addNewLine = () => {
+    const newLine = { ...EMPTY_ITEM };
+    setItems((prevItems) => {
+      const uncheckedItems = prevItems.filter((item) => !item.checked);
+      const checkedItems = prevItems.filter((item) => item.checked);
+      return [...uncheckedItems, newLine, ...checkedItems];
     });
-
-    save();
-
-    return unsubscribe;
-  }, [navigation, items, name, isPinned]);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (state.meals.length === 0) {
-        setItems([]);
-        return;
-      }
-
-      const list = [];
-      state.meals.forEach(element => {
-        const meal = getListById(element.id);
-
-        const newMeal = meal.items.map((existedItem) => ({ ...existedItem, quantity: element.quantity ?? 1 }))
-        list.push(...newMeal)
-
-        setItems(list);
-      });
-    }, [state.meals])
-  );
-
-  const handleReset = () => {
-    const updatedItems = items.map((item) => ({
-      ...item,
-      checked: false,
-    }));
-
-    setItems(updatedItems);
+    // setTimeout(() => textInputsRefs.current.pop().focus(), 200);
   };
-
-  const handleRemove = () => {
-    deleteListById(id);
-    navigation.goBack();
-  }
 
   const setItemText = (item, text) => {
     const updatedItems = items.map((existingItem) =>
@@ -113,16 +116,6 @@ const FinalListScreen = ({ navigation, route }) => {
     }
   };
 
-  const addNewLine = () => {
-    const newLine = { ...EMPTY_ITEM };
-    setItems((prevItems) => {
-      const uncheckedItems = prevItems.filter((item) => !item.checked);
-      const checkedItems = prevItems.filter((item) => item.checked);
-      return [...uncheckedItems, newLine, ...checkedItems];
-    });
-    // setTimeout(() => textInputsRefs.current.pop().focus(), 200);
-  };
-
   const removeItem = (item) => {
     const newItems = items.filter((x) => x.id !== item.id);
 
@@ -144,8 +137,27 @@ const FinalListScreen = ({ navigation, route }) => {
     setItems(sortedItems);
   };
 
+  const handleReset = () => {
+    const updatedItems = items.map((item) => ({
+      ...item,
+      checked: false,
+    }));
+
+    setItems(updatedItems);
+  };
+
+  const handleRemove = () => {
+    deleteListById(id);
+    navigation.goBack();
+  }
+
   const save = () => {
-    const newList = { id: state.id, name: name, items: items, meals: state.meals, type: MIXED, pinned: isPinned };
+    let localType = type;
+    if (localType === ALL_LISTS) {
+      localType = SHOPPING_ITEMS;
+    }
+
+    const newList = { id: id, name: name, items: items, type: localType, pinned: isPinned };
     upsertList(newList);
   }
 
@@ -161,6 +173,7 @@ const FinalListScreen = ({ navigation, route }) => {
       onChangeText={(text) => setName(text)}
       placeholder="Назва"
       style={[styles.input, styles.title]}
+    // onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
     />
   ))
 
@@ -197,7 +210,6 @@ const FinalListScreen = ({ navigation, route }) => {
   );
 };
 
-
 const windowWidth = Dimensions.get('window').width;
 const maxWidth = windowWidth - 80; // Subtract 40 from each side
 
@@ -231,4 +243,5 @@ const styles = StyleSheet.create({
     width: '40%',
   },
 });
-export default FinalListScreen;
+
+export default AddListScreenCopy;

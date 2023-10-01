@@ -3,7 +3,7 @@ import React, { createContext, useContext, useReducer } from 'react';
 // Define your initial state here
 const initialState = {
     // Add your global state properties here
-    id: 0,
+    id: null,
     meals: []
 };
 
@@ -19,7 +19,7 @@ const appReducer = (state, action) => {
         case 'SET_MEALS': 
             return { ...state, meals: action.payload };
         case 'CLEAN': 
-            return { ...state, meals: [] };
+            return { ...state, id: null, meals: [] };
         default:
             return state;
     }

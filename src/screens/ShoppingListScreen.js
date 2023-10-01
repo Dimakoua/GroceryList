@@ -4,6 +4,7 @@ import { useLists } from '../services/useLists';
 import { useFocusEffect } from '@react-navigation/native';
 import HeaderComponent from '../components/HeaderComponent';
 import { useSelector } from 'react-redux';
+import { ALL_LISTS, MIXED } from '../services/types';
 
 function ShoppingListScreen({ navigation }) {
     const type = useSelector(state => state.filters.type);
@@ -35,6 +36,15 @@ function ShoppingListScreen({ navigation }) {
         getListsByTypeWrap(listType);
     }
 
+
+    const handleCardPress = (item) => {
+        if (item.type === MIXED) {
+            navigation.navigate('createMixedList', { listId: item.id });
+        } else {
+            navigation.navigate('addList', { listId: item.id });
+        }
+    }
+
     const onSearch = async (text) => {
         const data = await searchLists(text, type);
         const pinnedList = data.filter(x => x.pinned)
@@ -57,9 +67,7 @@ function ShoppingListScreen({ navigation }) {
                             contentContainerStyle={styles.flatListContainer}
                             renderItem={({ item, index }) => (
                                 <TouchableOpacity
-                                    onPress={() => {
-                                        navigation.navigate('addList', { item });
-                                    }}
+                                    onPress={() => {handleCardPress(item)}}
                                     style={[styles.shoppingList, index % 2 === 0 ? { marginRight: '5%' } : null,]}
                                 >
                                     <Text style={styles.listTitle}>{item.name}</Text>
@@ -78,9 +86,7 @@ function ShoppingListScreen({ navigation }) {
                     contentContainerStyle={styles.flatListContainer}
                     renderItem={({ item, index }) => (
                         <TouchableOpacity
-                            onPress={() => {
-                                navigation.navigate('addList', { item });
-                            }}
+                            onPress={() => {handleCardPress(item)}}
                             style={[styles.shoppingList, index % 2 === 0 ? { marginRight: '5%' } : null,]}
                         >
                             <Text style={styles.listTitle}>{item.name}</Text>
@@ -93,21 +99,15 @@ function ShoppingListScreen({ navigation }) {
                 <TouchableOpacity
                     style={styles.addButton}
                     onPress={() => {
-                        navigation.navigate('addList');
+                        if (type === ALL_LISTS) {
+                            navigation.navigate('createMixedList');
+                        } else {
+                            navigation.navigate('addList');
+                        }
                     }}
                 >
                     <Text style={styles.buttonText}>+</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={() => {
-                        navigation.navigate('createMixedList');
-                    }}
-                >
-                    <Text style={styles.buttonText}>+</Text>
-                </TouchableOpacity>
-
-                
             </View>
         </View>
     );

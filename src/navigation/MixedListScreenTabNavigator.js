@@ -10,7 +10,7 @@ const MixedListScreenTabNavigator = ({ navigation, route }) => {
     return (
         <AppProvider>
             <Tab.Navigator>
-                <Tab.Screen name="List" component={FinalListScreen} />
+                <Tab.Screen name="List"  component={FinalListScreen} />
                 <Tab.Screen name="Meals" component={MealsScreen} />
             </Tab.Navigator>
         </AppProvider>
