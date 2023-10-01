@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useLists } from '../../services/useLists';
 import { useMixedListContext } from '../../Context/MixedListContext';
+import { MIXED } from '../../services/types';
 
 const MealsScreen = ({ navigation, route }) => {
   const { getMealsList } = useLists();
@@ -19,10 +20,12 @@ const MealsScreen = ({ navigation, route }) => {
   const { state, dispatch } = useMixedListContext();
 
   useEffect(() => {
-    console.log('MealsScreen', state)
+    const filtered = meals.filter(x => x.checked)
+    dispatch({ type: 'SET_MEALS', payload: filtered});
 
-    return console.log("MealsScreen exirt")
-  })
+    // const newList = { id: id, name: name, items: items, type: MIXED, pinned: isPinned };
+    // upsertList(newList);
+  }, [meals])
 
   const toggleItem = (item) => {
     const updatedMeals = meals.map((existingItem) =>
@@ -32,13 +35,6 @@ const MealsScreen = ({ navigation, route }) => {
     );
 
     setMeals(updatedMeals);
-
-    const meal = {id: item.id, name: item.name, type: item.type};
-    if(!item.checked){
-      dispatch({ type: 'ADD_MEAL', payload: meal});
-    } else {
-      dispatch({ type: 'REMOVE_MEAL', payload: meal});
-    }
   };
   const incrementQuantity = (item) => {
     const updatedMeals = meals.map((meal) =>

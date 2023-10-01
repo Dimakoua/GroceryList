@@ -16,6 +16,8 @@ const appReducer = (state, action) => {
             return addMeal(state, action);
         case 'REMOVE_MEAL':
             return removeMeal(state, action);
+        case 'SET_MEALS': 
+            return { ...state, meals: action.payload };
         case 'CLEAN': 
             return { ...state, meals: [] };
         default:
