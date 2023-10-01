@@ -17,25 +17,27 @@ const MealsScreen = ({ navigation, route }) => {
   const { getMealsList, upsertList, getListById } = useLists();
 
   const id = route.params.id;
-  const list = getListById(id);
   const allMeals = getMealsList();
 
   const [meals, setMeals] = useState(allMeals);
 
   useEffect(() => {
-    const updatedMealList = allMeals.map(existingItem => {
-      const foundObject = list.meals.findIndex(item =>
-        item.id === existingItem.id
-      );
+    const list = getListById(id);
+    if (list && list.meals) {
+      const updatedMealList = allMeals.map(existingItem => {
+        const foundObject = list.meals.findIndex(item =>
+          item.id === existingItem.id
+        );
 
-      if (foundObject !== -1) {
-        return { ...existingItem, checked: true }
-      }
+        if (foundObject !== -1) {
+          return { ...existingItem, checked: true }
+        }
 
-      return existingItem;
-    });
+        return existingItem;
+      });
 
-    setMeals(updatedMealList);
+      setMeals(updatedMealList);
+    }
   }, [])
 
   useEffect(() => {
@@ -43,6 +45,8 @@ const MealsScreen = ({ navigation, route }) => {
 
     if (filtered.length) {
       upsertList({ id: id, type: MIXED, meals: filtered });
+    } else {
+      upsertList({ id: id, type: MIXED, meals: [] });
     }
   }, [meals])
 

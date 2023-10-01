@@ -38,9 +38,9 @@ function ShoppingListScreen({ navigation }) {
 
     const handleCardPress = (item) => {
         if (item.type === MIXED) {
-            navigation.navigate('createMixedList', { item });
+            navigation.navigate('createMixedList', { id: item.id, item });
         } else {
-            navigation.navigate('addList', { item });
+            navigation.navigate('addList', { id: item.id, item });
         }
     }
 

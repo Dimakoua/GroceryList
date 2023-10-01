@@ -12,12 +12,50 @@ import {
   Dimensions,
 } from 'react-native';
 
-// import { useMixedListContext } from '../../Context/MixedListContext';
 import AddListScreenCopy from '../AddListScreenCopy';
+import { useLists } from '../../services/useLists';
 
-const FinalListScreen = ({ route }) => {
+
+// useEffect(() => {
+//   // Obtain the current route params
+//   const { params } = route;
+
+//   // Update the params (mutate it as needed)
+//   const updatedParams = {
+//     ...params,
+//     newParam: 'UpdatedValue',
+//   };
+
+//   // Set the updated params back to the route
+//   navigation.setParams(updatedParams);
+
+//   // Clean up or perform other actions as needed
+//   return () => {
+//     // Cleanup code if necessary
+//   };
+// }, [navigation, route]);
+
+
+
+const FinalListScreen = ({ navigation, route }) => {
+  const { getListById } = useLists();
+
+  const { params } = route;
+  const list = getListById(params.id);
+
+  useFocusEffect(
+    useCallback(() => {
+      const updatedParams = {
+        ...params,
+        item: list,
+      };
+
+      navigation.setParams(updatedParams);
+    }, [list])
+  );
+
   return (
-    <AddListScreenCopy route={route}/>
+    <AddListScreenCopy route={route} />
   );
 };
 

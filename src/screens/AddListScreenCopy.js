@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -15,19 +15,24 @@ import ResetBtn from '../components/ResetBtn';
 import PinBtn from '../components/PinBtn';
 import { useSelector } from 'react-redux';
 import ListRow from '../components/ListRow';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
-const AddListScreenCopy = ({ navigation, route }) => {
+const AddListScreenCopy = ({ route }) => {
+  const { upsertList, getListById, deleteListById } = useLists()
   const globalType = useSelector(state => state.filters.type);
 
-  const { upsertList, deleteListById } = useLists()
+  const navigation = useNavigation();
+
   const [id, setId] = useState(null);
   const [name, setName] = useState(null);
-  const [isPinned, setIsPinned] = useState(false);
   const [type, setType] = useState(globalType);
+  const [isPinned, setIsPinned] = useState(false);
   const [meals, setMeals] = useState([]);
   const [items, setItems] = useState([]);
+  const [checkedItems, setCheckedItems] = useState([]);
 
   const textInputsRefs = useRef([]);
+  const list = getListById(id);
 
   const params = route?.params?.item;
   const newId = route?.params?.id;
@@ -41,18 +46,44 @@ const AddListScreenCopy = ({ navigation, route }) => {
   };
 
   const initialSetUp = () => {
-    if (!isEmptyList()) return;
-
-    if(newId){
+    if (newId) {
       setId(newId);
     }
+
     if (params) {
       setId(params.id);
       setName(params.name);
       setItems(params.items);
       setType(params.type);
-      setMeals(params.melas);
+      setMeals(params.meals);
       setIsPinned(params.pinned);
+
+      if (params.meals) {
+        const mealItems = [];
+        params.meals.forEach(element => {
+          element.items.forEach(item => {
+            const index = mealItems.findIndex(x => x.id === item.id);
+            if (index === -1) {
+              mealItems.push(item)
+            } else {
+              mealItems[index] = { ...item, quantity: item.quantity + 1 };
+            }
+          });
+        });
+
+        const uniqueObjectMap = {};
+        const mergedAndUniqueArray = [...mealItems, ...params.items].reduce((result, currentObject) => {
+          if (!uniqueObjectMap[currentObject.id]) {
+            // If the object with this 'id' is not already in the result array, add it
+            uniqueObjectMap[currentObject.id] = true;
+            result.push(currentObject);
+          }
+          return result;
+        }, []);
+
+
+        setItems(mergedAndUniqueArray);
+      }
     }
   }
 
@@ -64,14 +95,25 @@ const AddListScreenCopy = ({ navigation, route }) => {
   }
 
   useEffect(() => {
-
-    initialSetUp();
+    if (isEmptyList()) {
+      initialSetUp();
+    }
 
     //save the list after each change.
     if (!isEmptyList()) {
       save();
     }
   }, [name, items, isPinned]);
+
+  useFocusEffect(
+    useCallback(() => {
+      // list.meals
+      // console.log('useFocusEffect', list);
+      setMeals(list);
+
+
+    }, [list])
+  );
 
 
   const addNewLine = () => {
@@ -144,7 +186,15 @@ const AddListScreenCopy = ({ navigation, route }) => {
   }
 
   const save = () => {
-    const newList = { id: id, name: name, items: items, type: type, pinned: isPinned };
+    const newList = { 
+      id: id, 
+      name: name, 
+      type: type,
+      items: items, 
+      meals: meals, 
+      pinned: isPinned,
+      checkedItems: []
+     };
     upsertList(newList);
   }
 

@@ -15,7 +15,7 @@ export const lists = createSlice({
       if (index === -1) {
         state.lists.push(newValue);
       } else {
-        state.lists[index] = newValue;
+        state.lists[index] = { ...state.lists[index], ...newValue};
       }
     },
     remove: (state, value) => {
