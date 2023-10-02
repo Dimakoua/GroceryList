@@ -16,6 +16,7 @@ import PinBtn from '../components/PinBtn';
 import { useSelector } from 'react-redux';
 import ListRow from '../components/ListRow';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { MIXED } from '../services/types';
 
 const AddListScreenCopy = ({ route }) => {
   const { upsertList, getListById, deleteListById } = useLists()
@@ -29,6 +30,7 @@ const AddListScreenCopy = ({ route }) => {
   const [isPinned, setIsPinned] = useState(false);
   const [meals, setMeals] = useState([]);
   const [items, setItems] = useState([]);
+  const [mealItems, setMealItems] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
 
   const textInputsRefs = useRef([]);
@@ -39,51 +41,29 @@ const AddListScreenCopy = ({ route }) => {
 
   const EMPTY_ITEM = {
     id: new Date().getTime().toString(),
-    checked: false,
+    // checked: false,
     text: '',
     pinned: false,
     quantity: 1,
   };
 
-  const initialSetUp = () => {
-    if (newId) {
-      setId(newId);
-    }
+  const setFromRouteParams = () => {
+    setId(newId);
 
     if (params) {
-      setId(params.id);
       setName(params.name);
       setItems(params.items);
       setType(params.type);
       setMeals(params.meals);
       setIsPinned(params.pinned);
+    }
 
-      if (params.meals) {
-        const mealItems = [];
-        params.meals.forEach(element => {
-          element.items.forEach(item => {
-            const index = mealItems.findIndex(x => x.id === item.id);
-            if (index === -1) {
-              mealItems.push(item)
-            } else {
-              mealItems[index] = { ...item, quantity: item.quantity + 1 };
-            }
-          });
-        });
-
-        const uniqueObjectMap = {};
-        const mergedAndUniqueArray = [...mealItems, ...params.items].reduce((result, currentObject) => {
-          if (!uniqueObjectMap[currentObject.id]) {
-            // If the object with this 'id' is not already in the result array, add it
-            uniqueObjectMap[currentObject.id] = true;
-            result.push(currentObject);
-          }
-          return result;
-        }, []);
-
-
-        setItems(mergedAndUniqueArray);
-      }
+    if (params.meals) {
+      const mealItemList = [];
+      params.meals.forEach(element => {
+        mealItemList.push(...element.itesms)
+      });
+      setMealItems(mealItemList);
     }
   }
 
@@ -95,23 +75,30 @@ const AddListScreenCopy = ({ route }) => {
   }
 
   useEffect(() => {
-    if (isEmptyList()) {
-      initialSetUp();
-    }
+    // set up from router
+    setFromRouteParams();
+  }, []);
+
+  useEffect(() => {
+    console.log('checkedItems', checkedItems);
 
     //save the list after each change.
     if (!isEmptyList()) {
       save();
     }
-  }, [name, items, isPinned]);
+  }, [name, items, isPinned, checkedItems]);
 
   useFocusEffect(
     useCallback(() => {
-      // list.meals
-      // console.log('useFocusEffect', list);
-      setMeals(list);
-
-
+      if (list) {
+        console.log("LSLSLSLSLSL", list)
+        const mealItemList = [];
+        list.items.forEach(element => {
+          console.log(element)
+          mealItemList.push(element)
+        });
+        setMealItems(mealItemList);
+      }
     }, [list])
   );
 
@@ -119,9 +106,7 @@ const AddListScreenCopy = ({ route }) => {
   const addNewLine = () => {
     const newLine = { ...EMPTY_ITEM };
     setItems((prevItems) => {
-      const uncheckedItems = prevItems.filter((item) => !item.checked);
-      const checkedItems = prevItems.filter((item) => item.checked);
-      return [...uncheckedItems, newLine, ...checkedItems];
+      return [...prevItems, newLine];
     });
     // setTimeout(() => textInputsRefs.current.pop().focus(), 200);
   };
@@ -152,23 +137,17 @@ const AddListScreenCopy = ({ route }) => {
 
   const removeItem = (item) => {
     const newItems = items.filter((x) => x.id !== item.id);
-
     setItems(newItems);
   }
 
   const toggleItem = (item) => {
-    const updatedItems = items.map((existingItem) =>
-      existingItem.id === item.id
-        ? { ...existingItem, checked: !existingItem.checked }
-        : existingItem
-    );
+    const index = checkedItems.findIndex(x => x === item.id);
 
-    const uncheckedItems = updatedItems.filter((item) => !item.checked);
-    const checkedItems = updatedItems.filter((item) => item.checked);
-
-    const sortedItems = [...uncheckedItems, ...checkedItems];
-
-    setItems(sortedItems);
+    if (index === -1) {
+      setCheckedItems([...checkedItems, item.id]);
+    } else {
+      setCheckedItems(checkedItems.filter(x => x !== item.id));
+    }
   };
 
   const handleReset = () => {
@@ -186,15 +165,15 @@ const AddListScreenCopy = ({ route }) => {
   }
 
   const save = () => {
-    const newList = { 
-      id: id, 
-      name: name, 
+    const newList = {
+      id: id,
+      name: name,
       type: type,
-      items: items, 
-      meals: meals, 
+      items: items,
+      meals: meals,
       pinned: isPinned,
-      checkedItems: []
-     };
+      checkedItems: checkedItems
+    };
     upsertList(newList);
   }
 
@@ -224,9 +203,8 @@ const AddListScreenCopy = ({ route }) => {
           <TrashBtn onPress={handleRemove} />
         </View>
       </View>
-
       <FlatList
-        data={items}
+        data={mealItems}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={ListHeaderComponent}
         renderItem={({ index, item }) => (
@@ -234,6 +212,24 @@ const AddListScreenCopy = ({ route }) => {
             index={index}
             item={item}
             textInputsRefs={textInputsRefs}
+            checkedItems={checkedItems}
+            setItemText={setItemText}
+            handleEnterPress={handleEnterPress}
+            setItemQuantity={setItemQuantity}
+            removeItem={removeItem}
+            toggleItem={toggleItem}
+          />
+        )}
+      />
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item.id}
+        renderItem={({ index, item }) => (
+          <ListRow
+            index={index}
+            item={item}
+            textInputsRefs={textInputsRefs}
+            checkedItems={checkedItems}
             setItemText={setItemText}
             handleEnterPress={handleEnterPress}
             setItemQuantity={setItemQuantity}
@@ -282,3 +278,16 @@ const styles = StyleSheet.create({
 });
 
 export default AddListScreenCopy;
+
+
+
+// const updatedItems = items.map((existingItem) =>
+//   existingItem.id === item.id
+//     ? { ...existingItem, checked: !existingItem.checked }
+//     : existingItem
+// );
+
+// const uncheckedItems = updatedItems.filter((item) => !item.checked);
+// const checkedItems = updatedItems.filter((item) => item.checked);
+
+// const sortedItems = [...uncheckedItems, ...checkedItems];

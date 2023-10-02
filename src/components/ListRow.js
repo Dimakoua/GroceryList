@@ -1,18 +1,18 @@
 import React from 'react';
 import { View, TouchableWithoutFeedback, TextInput, Image, StyleSheet, Dimensions } from 'react-native';
 
-const ListRow = ({ index, item, textInputsRefs, setItemText, handleEnterPress, setItemQuantity, removeItem, toggleItem }) => {
+const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handleEnterPress, setItemQuantity, removeItem, toggleItem }) => {
     return (
         <View style={styles.checkboxWrap}>
             <TouchableWithoutFeedback onPress={() => toggleItem(item)}>
-                <View style={[styles.checkbox, { backgroundColor: item.checked ? 'green' : 'transparent' }]} />
+                <View style={[styles.checkbox, { backgroundColor: checkedItems.includes(item.id) ? 'green' : 'transparent' }]} />
             </TouchableWithoutFeedback>
             <TextInput
                 ref={(ref) => (textInputsRefs.current[index] = ref)} // Store the ref in the array
                 value={item.text}
                 onChangeText={(text) => setItemText(item, text)}
                 onSubmitEditing={() => handleEnterPress(index)}
-                style={[styles.input, { textDecorationLine: item.checked ? 'line-through' : 'none' }]}
+                style={[styles.input, { textDecorationLine: checkedItems.includes(item.id) ? 'line-through' : 'none' }]}
             />
             <TextInput
                 value={`${item.quantity}`}
