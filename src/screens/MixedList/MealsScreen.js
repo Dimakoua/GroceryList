@@ -19,7 +19,7 @@ const MealsScreen = ({ navigation, route }) => {
   const id = route.params.id;
   const allMeals = getMealsList();
 
-  const [meals, setMeals] = useState(allMeals);
+  const [meals, setMeals] = useState([]);
 
   useEffect(() => {
     const list = getListById(id);
@@ -41,6 +41,8 @@ const MealsScreen = ({ navigation, route }) => {
   }, [])
 
   useEffect(() => {
+    if(!meals.length) return;
+
     const filtered = meals.filter(x => x.checked);
 
     if (filtered.length) {

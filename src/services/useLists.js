@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 export function useLists() {
     const dispatch = useDispatch();
-    const lists = useSelector(state => state.lists.lists);
+    const lists = useSelector(state => state.lists.lists, shallowEqual);
 
     const getAllLists = () => {
         return lists;

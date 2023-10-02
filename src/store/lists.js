@@ -4,6 +4,14 @@ const initialState = {
   lists: []
 }
 
+const EMPTY_LIST = {
+    id: null,
+    name: null,
+    items: [],
+    meals: [],
+    isPinned: false
+}
+
 export const lists = createSlice({
   name: 'lists',
   initialState,
@@ -13,7 +21,7 @@ export const lists = createSlice({
       const index = state.lists.findIndex(item => item.id === newValue.id);
 
       if (index === -1) {
-        state.lists.push(newValue);
+        state.lists.push({...EMPTY_LIST, ...newValue});
       } else {
         state.lists[index] = { ...state.lists[index], ...newValue};
       }
