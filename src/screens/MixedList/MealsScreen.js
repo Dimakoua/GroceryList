@@ -34,6 +34,18 @@ const MealsScreen = ({ navigation, route }) => {
       }
     });
 
+
+    const newAllMeals = allMeals.map((existingItem) => {
+      const index = mealsFromParams.findIndex(x => x.id === existingItem.id);
+
+      if(index === -1){
+        return existingItem;
+      } else {
+        return { ...existingItem, quantity: mealsFromParams[index].quantity }
+      }
+    });
+
+    setMeals(newAllMeals);
     setChecked(newChecked);
     setLoading(false);
   }, [])
