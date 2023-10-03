@@ -16,8 +16,8 @@ const ResetBtn = ({ onPress }) => {
 
 const styles = StyleSheet.create({
     image: {
-        width: 35,
-        height: 35
+        width: 30,
+        height: 30
     }
 });
 
