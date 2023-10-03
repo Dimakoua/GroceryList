@@ -66,6 +66,9 @@ const HeaderComponent = ({ onPress, onSearch }) => {
                     setIsEditingSearch(!isEditingSearch);
                     if (!isEditingSearch) {
                         focusSearchInput();
+                    } else {
+                        setSearchText('');
+                        onSearch('');
                     }
 
                 }}
