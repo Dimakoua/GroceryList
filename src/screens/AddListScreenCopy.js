@@ -132,7 +132,7 @@ const AddListScreenCopy = ({ route }) => {
     setItems((prevItems) => {
       return [...prevItems, newLine];
     });
-    // setTimeout(() => textInputsRefs.current.pop().focus(), 200);
+    setTimeout(() => textInputsRefs.current.pop().focus(), 200);
   };
 
   const setItemText = (item, text) => {
@@ -213,6 +213,7 @@ const AddListScreenCopy = ({ route }) => {
     <TextInput
       value={name}
       onChangeText={(text) => setName(text)}
+      onSubmitEditing={addNewLine}
       placeholder="Назва"
       style={[styles.input, styles.title]}
     // onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
