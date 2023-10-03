@@ -85,7 +85,6 @@ const AddListScreen = ({ route }) => {
       const uniqueObjectMap = {};
       const mergedAndUniqueArray = [...mealItems, ...list.items].reduce((result, currentObject) => {
         if (!uniqueObjectMap[currentObject.id]) {
-          // If the object with this 'id' is not already in the result array, add it
           uniqueObjectMap[currentObject.id] = true;
           result.push(currentObject);
         }
@@ -104,12 +103,10 @@ const AddListScreen = ({ route }) => {
   };
 
   useEffect(() => {
-    // set up from router
     setFromRouteParams();
   }, []);
 
   useEffect(() => {
-    //save the list after each change.
     if (!isEmptyList()) {
       save();
     }
@@ -152,7 +149,7 @@ const AddListScreen = ({ route }) => {
 
   const handleEnterPress = (index) => {
     if (index < items.length - 1) {
-      textInputsRefs.current[index + 1].focus(); // Focus on the next text input
+      textInputsRefs.current[index + 1].focus();
     } else {
       addNewLine();
     }
@@ -199,7 +196,7 @@ const AddListScreen = ({ route }) => {
 
   const ListEmptyComponent = useMemo(() => (
     <TouchableOpacity onPress={() => addNewLine()}>
-      <Text> + Пункт списку </Text>
+      <Text style={styles.emptyListComponentText}> + Add Item </Text>
     </TouchableOpacity>
   ));
 
@@ -208,7 +205,7 @@ const AddListScreen = ({ route }) => {
       value={name}
       onChangeText={(text) => setName(text)}
       onSubmitEditing={addNewLine}
-      placeholder="Назва"
+      placeholder="Name"
       style={[styles.input, styles.title]}
     />
   ));
@@ -248,7 +245,7 @@ const AddListScreen = ({ route }) => {
 };
 
 const windowWidth = Dimensions.get('window').width;
-const maxWidth = windowWidth - 80; // Subtract 40 from each side
+const maxWidth = windowWidth - 80;
 
 const styles = StyleSheet.create({
   container: {
@@ -278,6 +275,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '40%',
+  },
+  emptyListComponentText: {
+    color: '#007BFF', // Adjust the color as needed
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingVertical: 8,
   },
 });
 
