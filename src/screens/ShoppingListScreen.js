@@ -62,83 +62,64 @@ function ShoppingListScreen({ navigation }) {
         setNotPinnedList(notPinnedList);
     }
 
-    const renderListItem = ({ item, index }) => (
-        <TouchableOpacity
-            onPress={() => handleCardPress(item)}
-            style={[
-                styles.shoppingList,
-                index % 2 === 0 ? { marginRight: '5%' } : null,
-            ]}
-        >
-            <Text style={styles.listTitle}>{item.name}</Text>
-        </TouchableOpacity>
-    );
+    const ListComponent = (data) => {
+        return (
+            <View style={styles.container}>
+                <FlatList
+                    data={data}
+                    keyExtractor={(item) => item.id}
+                    numColumns={2}
+                    contentContainerStyle={styles.flatListContainer}
+                    renderItem={({ item, index }) => (
+                        <TouchableOpacity
+                            onPress={() => { handleCardPress(item) }}
+                            style={[styles.shoppingList, index % 2 === 0 ? { marginRight: '5%' } : null,]}
+                        >
+                            <Text style={styles.listTitle}>{item.name}</Text>
+                        </TouchableOpacity>
+                    )}
+                />
+            </View>
+        );
+    }
 
     return (
-        <View style={styles.container}>
+        <View style={styles.wrap}>
             <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
-            <View style={styles.content}>
-                {pinnedList.length > 0 && (
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Pinned</Text>
-                        <FlatList
-                            data={pinnedList}
-                            keyExtractor={(item) => item.id}
-                            numColumns={2}
-                            renderItem={renderListItem}
-                            contentContainerStyle={styles.listContainer}
-                        />
-                    </View>
-                )}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Other</Text>
-                    <FlatList
-                        data={notPinnedList}
-                        keyExtractor={(item) => item.id}
-                        numColumns={2}
-                        renderItem={renderListItem}
-                        contentContainerStyle={styles.listContainer}
-                    />
+            {pinnedList.length ? (
+                <View>
+                    <Text>Pinned</Text>
+                    {ListComponent(pinnedList)}
                 </View>
+            ) : null}
+            <Text>Other</Text>
+            {ListComponent(notPinnedList)}
+            <View style={styles.addButtonContainer}>
+                <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={handleAddNewCardPress}
+                >
+                    <Text style={styles.buttonText}>+</Text>
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity
-                style={styles.addButton}
-                onPress={handleAddNewCardPress}
-            >
-                <Text style={styles.buttonText}>+</Text>
-            </TouchableOpacity>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        padding: 16,
         backgroundColor: '#f5f5f5',
-    },
-    content: {
-        flex: 1,
-        paddingHorizontal: 16,
-        paddingTop: 16,
-    },
-    section: {
-        marginBottom: 16,
-    },
-    sectionTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 8,
-    },
-    listContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexDirection: 'row', // Use row direction
+        flexWrap: 'wrap',     // Allow items to wrap to the next row
+        justifyContent: 'space-between', // Align items evenly between rows
+        // height: '100%'
     },
     shoppingList: {
-        flexBasis: '48%',
+        marginTop: 4,
         backgroundColor: 'white',
         borderRadius: 8,
         padding: 16,
-        marginBottom: 6,
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -147,16 +128,20 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 2,
         elevation: 2,
+        width: '48%', // Adjust item width for two columns
+        marginBottom: 6, // Add margin at the bottom of each item for spacing
     },
     listTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 8,
     },
-    addButton: {
+    addButtonContainer: {
         position: 'absolute',
         bottom: 16,
         right: 16,
+    },
+    addButton: {
         backgroundColor: 'rgb(222, 178, 150)',
         width: 54,
         height: 54,
@@ -176,6 +161,11 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 24,
     },
+    wrap: {
+        height: '100%'
+    }
 });
+
+
 
 export default ShoppingListScreen;
