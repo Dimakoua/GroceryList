@@ -173,12 +173,7 @@ const AddListScreen = ({ route }) => {
   };
 
   const handleReset = () => {
-    const updatedItems = items.map((item) => ({
-      ...item,
-      checked: false,
-    }));
-
-    setItems(updatedItems);
+    setCheckedItems([]);
   };
 
   const handleRemove = () => {

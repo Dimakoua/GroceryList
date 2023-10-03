@@ -2,7 +2,7 @@ import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import MealsScreen from '../screens/MealsScreen';
 import AddListScreenCopy from '../screens/AddListScreen';
-// const Tab = createBottomTabNavigator();
+
 const Tab = createMaterialTopTabNavigator();
 
 const MixedListScreenTabNavigator = ({ route }) => {

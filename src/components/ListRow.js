@@ -20,9 +20,12 @@ const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handl
                 keyboardType="numeric"
                 style={styles.quantityInput}
             />
-            <TouchableWithoutFeedback onPress={() => removeItem(item)}>
-                <Image source={require('./../../assets/icons8-close-24.png')} style={styles.closeBtn} />
-            </TouchableWithoutFeedback>
+            {item.mealItem ? null : (
+                <TouchableWithoutFeedback onPress={() => removeItem(item)}>
+                    <Image source={require('./../../assets/icons8-close-24.png')} style={styles.closeBtn} />
+                </TouchableWithoutFeedback>
+            )}
+
         </View>
     );
 };
