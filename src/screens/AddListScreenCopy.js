@@ -42,8 +42,7 @@ const AddListScreenCopy = ({ route }) => {
   const debouncedName = useDebounced(name, 500);
   const debouncedMeals = useDebounced(meals, 500);
   const debouncedCheckedItems = useDebounced(checkedItems, 500);
-  const debouncedItems = useDebounced(items, 200);
-  const debouncedList = useDebounced(list, 500);
+  const debouncedItems = useDebounced(items, 500);
 
   const EMPTY_ITEM = {
     id: new Date().getTime().toString(),
@@ -76,9 +75,9 @@ const AddListScreenCopy = ({ route }) => {
         meal.items.forEach(item => {
           const index = mealItems.findIndex(x => x.id === item.id);
           if (index === -1) {
-            mealItems.push({ ...item, mealItem: true })
+            mealItems.push({ ...item, quantity: meal.quantity, mealItem: true })
           } else {
-            mealItems[index] = { ...item, quantity: item.quantity + 1, mealItem: true };
+            mealItems[index] = { ...item, quantity: item.quantity * meal.quantity + 1, mealItem: true };
           }
         });
       });
@@ -110,7 +109,6 @@ const AddListScreenCopy = ({ route }) => {
   }, []);
 
   useEffect(() => {
-    console.log("useEffect")
     //save the list after each change.
     if (!isEmptyList()) {
       save();
@@ -119,13 +117,14 @@ const AddListScreenCopy = ({ route }) => {
 
   useFocusEffect(
     useCallback(() => {
-      if (debouncedList) {
-        if (shallowEqual(debouncedList.meals, meals)) return;
-        console.log('useCallback', debouncedList.meals)
-        setMeals(debouncedList.meals);
-        calculateCombinedList(debouncedList);
+      if (list) {
+        if (shallowEqual(list.meals, meals)) return;
+
+        console.log("useCallback")
+        setMeals(list.meals);
+        calculateCombinedList(list);
       }
-    }, [debouncedList])
+    }, [list])
   );
 
   const addNewLine = () => {

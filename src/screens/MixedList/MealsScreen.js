@@ -25,14 +25,16 @@ const MealsScreen = ({ navigation, route }) => {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
+    const newChecked = [];
     mealsFromParams.forEach(meal => {
       const index = allMeals.findIndex(x => x.id === meal.id);
 
       if (index !== -1) {
-        setChecked([...checked, meal.id]);
+        newChecked.push(meal.id);
       }
     });
 
+    setChecked(newChecked);
     setLoading(false);
   }, [])
 
@@ -40,7 +42,6 @@ const MealsScreen = ({ navigation, route }) => {
     if (isLoading) return;
 
     const filtered = meals.filter(x => checked.includes(x.id));
-    console.log("FILTERED", filtered)
     upsertList({ id: id, type: MIXED, meals: filtered });
   }, [meals, checked])
 
