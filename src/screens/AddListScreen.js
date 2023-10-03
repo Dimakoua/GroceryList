@@ -20,7 +20,7 @@ import { MIXED } from '../services/types';
 import useDebounced from '../services/useDebounced';
 
 const AddListScreen = ({ route }) => {
-  const { upsertList, getListById, deleteListById } = useLists()
+  const { upsertList, getListById, deleteListById } = useLists();
   const globalType = useSelector(state => state.filters.type);
 
   const navigation = useNavigation();
@@ -85,7 +85,6 @@ const AddListScreen = ({ route }) => {
       const uniqueObjectMap = {};
       const mergedAndUniqueArray = [...mealItems, ...list.items].reduce((result, currentObject) => {
         if (!uniqueObjectMap[currentObject.id]) {
-          // If the object with this 'id' is not already in the result array, add it
           uniqueObjectMap[currentObject.id] = true;
           result.push(currentObject);
         }
@@ -97,19 +96,14 @@ const AddListScreen = ({ route }) => {
   }
 
   const isEmptyList = () => {
-    if (name === null && items.length === 0 && meals.length === 0) {
-      return true;
-    }
-    return false;
+    return name === null && items.length === 0 && meals.length === 0;
   }
 
   useEffect(() => {
-    // set up from router
     setFromRouteParams();
   }, []);
 
   useEffect(() => {
-    //save the list after each change.
     if (!isEmptyList()) {
       save();
     }
@@ -117,9 +111,7 @@ const AddListScreen = ({ route }) => {
 
   useFocusEffect(
     useCallback(() => {
-      if (list) {
-        if (shallowEqual(list.meals, meals)) return;
-
+      if (list && !shallowEqual(list.meals, meals)) {
         setMeals(list.meals);
         calculateCombinedList(list);
       }
@@ -128,14 +120,12 @@ const AddListScreen = ({ route }) => {
 
   const addNewLine = () => {
     const newLine = { ...EMPTY_ITEM };
-    setItems((prevItems) => {
-      return [...prevItems, newLine];
-    });
+    setItems(prevItems => [...prevItems, newLine]);
     setTimeout(() => textInputsRefs.current.pop().focus(), 200);
   };
 
   const setItemText = (item, text) => {
-    const updatedItems = items.map((existingItem) =>
+    const updatedItems = items.map(existingItem =>
       existingItem.id === item.id ? { ...existingItem, text } : existingItem
     );
 
@@ -143,7 +133,7 @@ const AddListScreen = ({ route }) => {
   };
 
   const setItemQuantity = (item, quantity) => {
-    const updatedItems = items.map((existingItem) =>
+    const updatedItems = items.map(existingItem =>
       existingItem.id === item.id ? { ...existingItem, quantity: parseInt(quantity, 10) || 1 } : existingItem
     );
 
@@ -152,14 +142,14 @@ const AddListScreen = ({ route }) => {
 
   const handleEnterPress = (index) => {
     if (index < items.length - 1) {
-      textInputsRefs.current[index + 1].focus(); // Focus on the next text input
+      textInputsRefs.current[index + 1].focus();
     } else {
       addNewLine();
     }
   };
 
   const removeItem = (item) => {
-    setItems(items.filter((x) => x.id !== item.id));
+    setItems(items.filter(x => x.id !== item.id));
   }
 
   const toggleItem = (item) => {
@@ -206,11 +196,10 @@ const AddListScreen = ({ route }) => {
   const ListHeaderComponent = useMemo(() => (
     <TextInput
       value={name}
-      onChangeText={(text) => setName(text)}
+      onChangeText={text => setName(text)}
       onSubmitEditing={addNewLine}
       placeholder="Назва"
       style={[styles.input, styles.title]}
-    // onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
     />
   ))
 
