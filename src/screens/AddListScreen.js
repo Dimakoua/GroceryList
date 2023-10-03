@@ -21,7 +21,7 @@ import useDebounced from '../services/useDebounced';
 
 const AddListScreen = ({ route }) => {
   const { upsertList, getListById, deleteListById } = useLists();
-  const globalType = useSelector(state => state.filters.type);
+  const globalType = useSelector((state) => state.filters.type);
 
   const navigation = useNavigation();
 
@@ -65,17 +65,17 @@ const AddListScreen = ({ route }) => {
     }
 
     calculateCombinedList(params);
-  }
+  };
 
   const calculateCombinedList = (list) => {
     if (type === MIXED && list) {
       const mealItems = [];
 
-      list.meals.forEach(meal => {
-        meal.items.forEach(item => {
-          const index = mealItems.findIndex(x => x.id === item.id);
+      list.meals.forEach((meal) => {
+        meal.items.forEach((item) => {
+          const index = mealItems.findIndex((x) => x.id === item.id);
           if (index === -1) {
-            mealItems.push({ ...item, quantity: meal.quantity, mealItem: true })
+            mealItems.push({ ...item, quantity: meal.quantity, mealItem: true });
           } else {
             mealItems[index] = { ...item, quantity: item.quantity * meal.quantity + 1, mealItem: true };
           }
@@ -85,25 +85,31 @@ const AddListScreen = ({ route }) => {
       const uniqueObjectMap = {};
       const mergedAndUniqueArray = [...mealItems, ...list.items].reduce((result, currentObject) => {
         if (!uniqueObjectMap[currentObject.id]) {
+          // If the object with this 'id' is not already in the result array, add it
           uniqueObjectMap[currentObject.id] = true;
           result.push(currentObject);
         }
         return result;
       }, []);
 
-      setItems(mergedAndUniqueArray)
+      setItems(mergedAndUniqueArray);
     }
-  }
+  };
 
   const isEmptyList = () => {
-    return name === null && items.length === 0 && meals.length === 0;
-  }
+    if (name === null && items.length === 0 && meals.length === 0) {
+      return true;
+    }
+    return false;
+  };
 
   useEffect(() => {
+    // set up from router
     setFromRouteParams();
   }, []);
 
   useEffect(() => {
+    //save the list after each change.
     if (!isEmptyList()) {
       save();
     }
@@ -111,7 +117,9 @@ const AddListScreen = ({ route }) => {
 
   useFocusEffect(
     useCallback(() => {
-      if (list && !shallowEqual(list.meals, meals)) {
+      if (list) {
+        if (shallowEqual(list.meals, meals)) return;
+
         setMeals(list.meals);
         calculateCombinedList(list);
       }
@@ -120,12 +128,14 @@ const AddListScreen = ({ route }) => {
 
   const addNewLine = () => {
     const newLine = { ...EMPTY_ITEM };
-    setItems(prevItems => [...prevItems, newLine]);
+    setItems((prevItems) => {
+      return [...prevItems, newLine];
+    });
     setTimeout(() => textInputsRefs.current.pop().focus(), 200);
   };
 
   const setItemText = (item, text) => {
-    const updatedItems = items.map(existingItem =>
+    const updatedItems = items.map((existingItem) =>
       existingItem.id === item.id ? { ...existingItem, text } : existingItem
     );
 
@@ -133,7 +143,7 @@ const AddListScreen = ({ route }) => {
   };
 
   const setItemQuantity = (item, quantity) => {
-    const updatedItems = items.map(existingItem =>
+    const updatedItems = items.map((existingItem) =>
       existingItem.id === item.id ? { ...existingItem, quantity: parseInt(quantity, 10) || 1 } : existingItem
     );
 
@@ -142,23 +152,23 @@ const AddListScreen = ({ route }) => {
 
   const handleEnterPress = (index) => {
     if (index < items.length - 1) {
-      textInputsRefs.current[index + 1].focus();
+      textInputsRefs.current[index + 1].focus(); // Focus on the next text input
     } else {
       addNewLine();
     }
   };
 
   const removeItem = (item) => {
-    setItems(items.filter(x => x.id !== item.id));
-  }
+    setItems(items.filter((x) => x.id !== item.id));
+  };
 
   const toggleItem = (item) => {
-    const index = checkedItems.findIndex(x => x === item.id);
+    const index = checkedItems.findIndex((x) => x === item.id);
 
     if (index === -1) {
       setCheckedItems([...checkedItems, item.id]);
     } else {
-      setCheckedItems(checkedItems.filter(x => x !== item.id));
+      setCheckedItems(checkedItems.filter((x) => x !== item.id));
     }
   };
 
@@ -169,10 +179,10 @@ const AddListScreen = ({ route }) => {
   const handleRemove = () => {
     deleteListById(id);
     navigation.goBack();
-  }
+  };
 
   const save = () => {
-    const filteredMealItems = items.filter(x => !x.mealItem);
+    const filteredMealItems = items.filter((x) => !x.mealItem);
 
     const newList = {
       id: id,
@@ -181,27 +191,27 @@ const AddListScreen = ({ route }) => {
       items: filteredMealItems,
       meals: meals,
       pinned: isPinned,
-      checkedItems: checkedItems
+      checkedItems: checkedItems,
     };
 
     upsertList(newList);
-  }
+  };
 
   const ListEmptyComponent = useMemo(() => (
     <TouchableOpacity onPress={() => addNewLine()}>
       <Text> + Пункт списку </Text>
     </TouchableOpacity>
-  ))
+  ));
 
   const ListHeaderComponent = useMemo(() => (
     <TextInput
       value={name}
-      onChangeText={text => setName(text)}
+      onChangeText={(text) => setName(text)}
       onSubmitEditing={addNewLine}
       placeholder="Назва"
       style={[styles.input, styles.title]}
     />
-  ))
+  ));
 
   return (
     <View style={styles.container}>
@@ -255,7 +265,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
-    fontSize: 16
+    fontSize: 16,
   },
   headerRow: {
     flexDirection: 'row',
