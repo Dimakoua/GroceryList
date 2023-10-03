@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { shallowEqual } from 'react-redux';
 
 const initialState = {
   lists: []
@@ -9,7 +10,8 @@ const EMPTY_LIST = {
     name: null,
     items: [],
     meals: [],
-    isPinned: false
+    isPinned: false,
+    quantity: 1 
 }
 
 export const lists = createSlice({
@@ -23,6 +25,9 @@ export const lists = createSlice({
       if (index === -1) {
         state.lists.push({...EMPTY_LIST, ...newValue});
       } else {
+        //if nothing changed do not save
+        if(shallowEqual(state.lists[index], newValue)) return;
+
         state.lists[index] = { ...state.lists[index], ...newValue};
       }
     },

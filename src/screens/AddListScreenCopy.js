@@ -17,6 +17,7 @@ import { shallowEqual, useSelector } from 'react-redux';
 import ListRow from '../components/ListRow';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { MIXED } from '../services/types';
+import useDebounced from '../services/useDebounced';
 
 const AddListScreenCopy = ({ route }) => {
   const { upsertList, getListById, deleteListById } = useLists()
@@ -37,6 +38,12 @@ const AddListScreenCopy = ({ route }) => {
   const newId = route?.params?.id;
 
   const list = getListById(id);
+
+  const debouncedName = useDebounced(name, 500);
+  const debouncedMeals = useDebounced(meals, 500);
+  const debouncedCheckedItems = useDebounced(checkedItems, 500);
+  const debouncedItems = useDebounced(items, 200);
+  const debouncedList = useDebounced(list, 500);
 
   const EMPTY_ITEM = {
     id: new Date().getTime().toString(),
@@ -103,31 +110,23 @@ const AddListScreenCopy = ({ route }) => {
   }, []);
 
   useEffect(() => {
+    console.log("useEffect")
     //save the list after each change.
     if (!isEmptyList()) {
       save();
     }
-  }, [name, items, isPinned, meals, checkedItems]);
+  }, [debouncedName, debouncedItems, isPinned, debouncedMeals, debouncedCheckedItems]);
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (list) {
-  //       if (shallowEqual(list.meals.length, meals.length)) return;
-  //       setMeals(list.meals);
-  //       calculateCombinedList(list);
-  //     }
-  //   }, [list])
-  // );
-
-  useFocusEffect(() => {
-    if (list) {
-      console.log(list.meals.length, meals.length)
-      if (shallowEqual(list.meals.length, meals.length)) return;
-      setMeals(list.meals);
-      calculateCombinedList(list);
-    }
-  })
-
+  useFocusEffect(
+    useCallback(() => {
+      if (debouncedList) {
+        if (shallowEqual(debouncedList.meals, meals)) return;
+        console.log('useCallback', debouncedList.meals)
+        setMeals(debouncedList.meals);
+        calculateCombinedList(debouncedList);
+      }
+    }, [debouncedList])
+  );
 
   const addNewLine = () => {
     const newLine = { ...EMPTY_ITEM };

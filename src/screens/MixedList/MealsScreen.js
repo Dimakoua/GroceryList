@@ -17,53 +17,46 @@ const MealsScreen = ({ navigation, route }) => {
   const { getMealsList, upsertList, getListById } = useLists();
 
   const id = route.params.id;
+  const mealsFromParams = route.params?.item?.meals ?? [];
   const allMeals = getMealsList();
 
-  const [meals, setMeals] = useState([]);
+  const [meals, setMeals] = useState(allMeals);
+  const [checked, setChecked] = useState([]);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    const list = getListById(id);
-    if (list && list.meals) {
-      const updatedMealList = allMeals.map(existingItem => {
-        const foundObject = list.meals.findIndex(item =>
-          item.id === existingItem.id
-        );
+    mealsFromParams.forEach(meal => {
+      const index = allMeals.findIndex(x => x.id === meal.id);
 
-        if (foundObject !== -1) {
-          return { ...existingItem, checked: true }
-        }
+      if (index !== -1) {
+        setChecked([...checked, meal.id]);
+      }
+    });
 
-        return existingItem;
-      });
-
-      setMeals(updatedMealList);
-    }
+    setLoading(false);
   }, [])
 
   useEffect(() => {
-    if(!meals.length) return;
+    if (isLoading) return;
 
-    const filtered = meals.filter(x => x.checked);
-
-    if (filtered.length) {
-      upsertList({ id: id, type: MIXED, meals: filtered });
-    } else {
-      upsertList({ id: id, type: MIXED, meals: [] });
-    }
-  }, [meals])
+    const filtered = meals.filter(x => checked.includes(x.id));
+    console.log("FILTERED", filtered)
+    upsertList({ id: id, type: MIXED, meals: filtered });
+  }, [meals, checked])
 
   const toggleItem = (item) => {
-    const updatedMeals = meals.map((existingItem) =>
-      existingItem.id === item.id
-        ? { ...existingItem, checked: !existingItem.checked }
-        : existingItem
-    );
+    const index = checked.findIndex(x => x === item.id);
 
-    setMeals(updatedMeals);
+    if (index === -1) {
+      setChecked([...checked, item.id]);
+    } else {
+      setChecked(checked.filter(x => x !== item.id));
+    }
   };
+
   const incrementQuantity = (item) => {
     const updatedMeals = meals.map((meal) =>
-      meal.id === item.id ? { ...meal, quantity: (meal.quantity ?? 1) + 1 } : meal
+      meal.id === item.id ? { ...meal, quantity: meal.quantity + 1 } : meal
     );
     setMeals(updatedMeals);
   };
@@ -71,7 +64,7 @@ const MealsScreen = ({ navigation, route }) => {
   const decrementQuantity = (item) => {
     if (item.quantity > 0) {
       const updatedMeals = meals.map((meal) =>
-        meal.id === item.id ? { ...meal, quantity: (meal.quantity ?? 1) - 1 } : meal
+        meal.id === item.id ? { ...meal, quantity: meal.quantity - 1 } : meal
       );
       setMeals(updatedMeals);
     }
@@ -80,7 +73,7 @@ const MealsScreen = ({ navigation, route }) => {
   const renderItem = ({ item, index }) => (
     <TouchableOpacity onPress={() => toggleItem(item)} style={styles.itemContainer}>
       <View style={styles.checkboxContainer}>
-        <View style={[styles.checkbox, { backgroundColor: item.checked ? 'green' : 'transparent' }]} />
+        <View style={[styles.checkbox, { backgroundColor: checked.includes(item.id) ? 'green' : 'transparent' }]} />
       </View>
       <View style={styles.itemContent}>
         <Text style={styles.itemName}>{item.name}</Text>
