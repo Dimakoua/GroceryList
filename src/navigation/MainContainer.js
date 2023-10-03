@@ -1,10 +1,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import AddListScreen from '../screens/AddListScreen';
 import ShoppingListScreen from '../screens/ShoppingListScreen';
 import MixedListScreenTabNavigator from './MixedListScreenTabNavigator';
-import AddListScreenCopy from '../screens/AddListScreenCopy';
+import AddListScreenCopy from '../screens/AddListScreen';
 
 const Stack = createStackNavigator();
 

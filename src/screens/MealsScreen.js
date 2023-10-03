@@ -1,17 +1,14 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
   TouchableOpacity,
   StyleSheet,
   FlatList,
-  Image,
-  Dimensions,
 } from 'react-native';
-import { useLists } from '../../services/useLists';
-import { MIXED } from '../../services/types';
+import { useLists } from '../services/useLists';
+import { MIXED } from '../services/types';
 
 const MealsScreen = ({ navigation, route }) => {
   const { getMealsList, upsertList, getListById } = useLists();

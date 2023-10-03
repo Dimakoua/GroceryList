@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import MealsScreen from '../screens/MixedList/MealsScreen';
-import FinalListScreen from '../screens/MixedList/FinalListScreen';
-import AddListScreenCopy from '../screens/AddListScreenCopy';
+import MealsScreen from '../screens/MealsScreen';
+import AddListScreenCopy from '../screens/AddListScreen';
 // const Tab = createBottomTabNavigator();
 const Tab = createMaterialTopTabNavigator();
 
