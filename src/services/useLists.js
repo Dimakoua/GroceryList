@@ -14,10 +14,10 @@ export function useLists() {
     const searchLists = async (text, type) => {
         const lists = await getListsByType(type);
         const shoppingList = lists.filter(list => {
-            if (list.name?.includes(text)) return true;
+            if (list.name?.toLowerCase().includes(text.toLowerCase())) return true;
 
             const nestedList = list.items?.filter(element => {
-                if (element.text?.includes(text)) return true;
+                if (element.text?.toLowerCase().includes(text.toLowerCase())) return true;
             });
 
             if (nestedList && nestedList.length) return true;
