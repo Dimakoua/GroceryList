@@ -29,8 +29,8 @@ function ShoppingListScreen({ navigation }) {
 
     const getListsByTypeWrap = () => {
         const data = getListsByType(type);
-        const pinnedList = data.filter(x => x.pinned)
-        const notPinnedList = data.filter(x => !x.pinned)
+        const pinnedList = data.filter(x => x.pinned);
+        const notPinnedList = data.filter(x => !x.pinned);
         setPinnedList(pinnedList);
         setNotPinnedList(notPinnedList);
     }
@@ -59,8 +59,8 @@ function ShoppingListScreen({ navigation }) {
 
     const onSearch = async (text) => {
         const data = await searchLists(text, type);
-        const pinnedList = data.filter(x => x.pinned)
-        const notPinnedList = data.filter(x => !x.pinned)
+        const pinnedList = data.filter(x => x.pinned);
+        const notPinnedList = data.filter(x => !x.pinned);
         setPinnedList(pinnedList);
         setNotPinnedList(notPinnedList);
     }
@@ -97,26 +97,17 @@ function ShoppingListScreen({ navigation }) {
         }
     };
 
-    const ListComponent = (data) => {
-        return (
-            <View style={styles.container}>
-                <FlatList
-                    data={data}
-                    keyExtractor={(item) => item.id}
-                    numColumns={2}
-                    contentContainerStyle={styles.flatListContainer}
-                    renderItem={({ item, index }) => (
-                        <TouchableOpacity
-                            onPress={() => { handleCardPress(item) }}
-                            style={[styles.shoppingList, index % 2 === 0 ? { marginRight: '5%' } : null,]}
-                        >
-                            <Text style={styles.listTitle}>{item.name}</Text>
-                        </TouchableOpacity>
-                    )}
-                />
-            </View>
-        );
-    }
+    const renderListItem = ({ item, index }) => (
+        <TouchableOpacity
+            onPress={() => handleCardPress(item)}
+            style={[
+                styles.shoppingList,
+                index % 2 === 0 ? styles.evenColumn : null,
+            ]}
+        >
+            <Text style={styles.listTitle}>{item.name}</Text>
+        </TouchableOpacity>
+    );
 
     return (
         <PanGestureHandler
@@ -126,17 +117,31 @@ function ShoppingListScreen({ navigation }) {
                 }
             }}
         >
-            <View style={styles.wrap}>
+            <View style={styles.container}>
                 <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
 
-                {pinnedList.length ? (
+                {pinnedList.length > 0 && (
                     <View>
-                        <Text>Pinned</Text>
-                        {ListComponent(pinnedList)}
+                        <Text style={styles.sectionTitle}>Pinned</Text>
+                        <FlatList
+                            data={pinnedList}
+                            keyExtractor={(item) => item.id}
+                            numColumns={2}
+                            contentContainerStyle={styles.flatListContainer}
+                            renderItem={renderListItem}
+                        />
                     </View>
-                ) : null}
-                <Text>Other</Text>
-                {ListComponent(notPinnedList)}
+                )}
+
+                <Text style={styles.sectionTitle}>Other</Text>
+                <FlatList
+                    data={notPinnedList}
+                    keyExtractor={(item) => item.id}
+                    numColumns={2}
+                    contentContainerStyle={styles.flatListContainer}
+                    renderItem={renderListItem}
+                />
+
                 <View style={styles.addButtonContainer}>
                     <TouchableOpacity
                         style={styles.addButton}
@@ -152,15 +157,12 @@ function ShoppingListScreen({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 16,
-        backgroundColor: '#f5f5f5',
-        flexDirection: 'row', // Use row direction
-        flexWrap: 'wrap',     // Allow items to wrap to the next row
-        justifyContent: 'space-between', // Align items evenly between rows
-        // height: '100%'
+        flex: 1,
+        backgroundColor: '#F3F4F6', // Updated background color
+        paddingHorizontal: 16,
     },
     shoppingList: {
-        marginTop: 4,
+        marginTop: 8, // Increased margin top for spacing
         backgroundColor: 'white',
         borderRadius: 8,
         padding: 16,
@@ -172,21 +174,32 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 2,
         elevation: 2,
-        width: '48%', // Adjust item width for two columns
-        marginBottom: 6, // Add margin at the bottom of each item for spacing
+        flex: 1,
+        margin: '1%',
+    },
+    evenColumn: {
+        marginRight: 0,
     },
     listTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 8,
+        color: '#333', // Updated text color
+    },
+    sectionTitle: {
+        fontSize: 20, // Increased font size
+        fontWeight: 'bold',
+        marginTop: 16, // Added margin top for spacing
+        marginBottom: 8, // Added margin bottom for spacing
+        color: '#333', // Updated text color
     },
     addButtonContainer: {
         position: 'absolute',
-        bottom: 16,
-        right: 16,
+        bottom: 24, // Increased bottom position
+        right: 24, // Increased right position
     },
     addButton: {
-        backgroundColor: 'rgb(222, 178, 150)',
+        backgroundColor: '#FF6B6B', // Updated button color
         width: 54,
         height: 54,
         borderRadius: 27,
@@ -205,11 +218,6 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 24,
     },
-    wrap: {
-        height: '100%'
-    }
 });
-
-
 
 export default ShoppingListScreen;
