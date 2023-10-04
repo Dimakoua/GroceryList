@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, TouchableWithoutFeedback, TextInput, Image, StyleSheet, Dimensions } from 'react-native';
 
 const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handleEnterPress, setItemQuantity, removeItem, toggleItem }) => {
-    return (
+    return useMemo(() => (
         <View style={styles.checkboxWrap}>
             <TouchableWithoutFeedback onPress={() => toggleItem(item)}>
                 <View style={[styles.checkbox, { backgroundColor: checkedItems.includes(item.id) ? 'green' : 'transparent' }]} />
@@ -27,7 +27,7 @@ const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handl
             )}
 
         </View>
-    );
+    ));
 };
 
 const windowWidth = Dimensions.get('window').width;

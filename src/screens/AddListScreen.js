@@ -126,12 +126,21 @@ const AddListScreen = ({ route }) => {
     }, [list])
   );
 
-  const addNewLine = () => {
+  const addNewLine = (index) => {
     const newLine = { ...EMPTY_ITEM };
     setItems((prevItems) => {
       return [...prevItems, newLine];
     });
-    setTimeout(() => textInputsRefs.current.pop().focus(), 200);
+
+    if (index) {
+      setTimeout(() => textInputsRefs.current[index + 1].focus(), 100);
+    } else {
+      setTimeout(() => {
+        if (textInputsRefs.current.pop()) {
+          textInputsRefs.current.pop().focus();
+        }
+      }, 100);
+    }
   };
 
   const setItemText = (item, text) => {
@@ -151,10 +160,12 @@ const AddListScreen = ({ route }) => {
   };
 
   const handleEnterPress = (index) => {
-    if (index < items.length - 1) {
+    if (index === -1 && textInputsRefs.current[0]) {
+      textInputsRefs.current[0].focus(); // Focus on the next text input
+    } else if (index < items.length - 1) {
       textInputsRefs.current[index + 1].focus(); // Focus on the next text input
     } else {
-      addNewLine();
+      addNewLine(index);
     }
   };
 
@@ -207,7 +218,7 @@ const AddListScreen = ({ route }) => {
     <TextInput
       value={name}
       onChangeText={(text) => setName(text)}
-      onSubmitEditing={addNewLine}
+      onSubmitEditing={() => handleEnterPress(-1)}
       placeholder="Назва"
       style={[styles.input, styles.title]}
     // onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
