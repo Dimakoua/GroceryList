@@ -126,25 +126,18 @@ const AddListScreen = ({ route }) => {
     }, [list])
   );
 
-  const addNewLine = (index) => {
+  const addNewLine = () => {
     const newLine = { ...EMPTY_ITEM };
     setItems((prevItems) => {
-      return [...prevItems, newLine];
+      return [newLine, ...prevItems];
     });
 
-    if (index) {
-      setTimeout(() => {
-        if (textInputsRefs.current[index + 1]) {
-          textInputsRefs.current[index + 1].focus()
-        }
-      }, 100);
-    } else {
-      setTimeout(() => {
-        if (textInputsRefs.current) {
-          textInputsRefs.current.pop().focus();
-        }
-      }, 100);
-    }
+    setTimeout(() => {
+      if (textInputsRefs.current[0]) {
+        textInputsRefs.current[0].focus()
+      }
+    }, 100);
+
   };
 
   const setItemText = (item, text) => {
@@ -161,16 +154,6 @@ const AddListScreen = ({ route }) => {
     );
 
     setItems(updatedItems);
-  };
-
-  const handleEnterPress = (index) => {
-    if (index === -1 && textInputsRefs.current[0]) {
-      textInputsRefs.current[0].focus(); // Focus on the next text input
-    } else if (index < items.length - 1) {
-      textInputsRefs.current[index + 1].focus(); // Focus on the next text input
-    } else {
-      addNewLine(index);
-    }
   };
 
   const removeItem = (item) => {
@@ -222,7 +205,7 @@ const AddListScreen = ({ route }) => {
     <TextInput
       value={name}
       onChangeText={(text) => setName(text)}
-      onSubmitEditing={() => handleEnterPress(-1)}
+      onSubmitEditing={() => addNewLine()}
       placeholder="Назва"
       style={[styles.input, styles.title]}
     // onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
@@ -251,7 +234,7 @@ const AddListScreen = ({ route }) => {
             textInputsRefs={textInputsRefs}
             checkedItems={checkedItems}
             setItemText={setItemText}
-            handleEnterPress={handleEnterPress}
+            handleEnterPress={addNewLine}
             setItemQuantity={setItemQuantity}
             removeItem={removeItem}
             toggleItem={toggleItem}
