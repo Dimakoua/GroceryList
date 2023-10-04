@@ -133,10 +133,14 @@ const AddListScreen = ({ route }) => {
     });
 
     if (index) {
-      setTimeout(() => textInputsRefs.current[index + 1].focus(), 100);
+      setTimeout(() => {
+        if (textInputsRefs.current[index + 1]) {
+          textInputsRefs.current[index + 1].focus()
+        }
+      }, 100);
     } else {
       setTimeout(() => {
-        if (textInputsRefs.current.pop()) {
+        if (textInputsRefs.current) {
           textInputsRefs.current.pop().focus();
         }
       }, 100);
