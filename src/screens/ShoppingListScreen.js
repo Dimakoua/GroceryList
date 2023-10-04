@@ -1,14 +1,17 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { useLists } from '../services/useLists';
 import { useFocusEffect } from '@react-navigation/native';
 import HeaderComponent from '../components/HeaderComponent';
-import { useSelector } from 'react-redux';
-import { MIXED } from '../services/types';
+import { useDispatch, useSelector } from 'react-redux';
+import { DISHES, MIXED, SHOPPING_ITEMS } from '../services/types';
+import { setType } from '../store/filters';
 
 function ShoppingListScreen({ navigation }) {
     const type = useSelector(state => state.filters.type);
     const lists = useSelector(state => state.lists.lists);
+    const dispatch = useDispatch();
 
     const { searchLists, getListsByType } = useLists();
     const [pinnedList, setPinnedList] = useState([]);
@@ -62,6 +65,38 @@ function ShoppingListScreen({ navigation }) {
         setNotPinnedList(notPinnedList);
     }
 
+    const onSwipeGesture = (nativeEvent) => {
+        if (nativeEvent.translationX > 50) {
+            switch (type) {
+                case MIXED:
+                    dispatch(setType(DISHES));
+                    break;
+                case SHOPPING_ITEMS:
+                    dispatch(setType(MIXED));
+                    break;
+                case DISHES:
+                    dispatch(setType(SHOPPING_ITEMS));
+                    break;
+                default:
+                    break;
+            }
+        } else if (nativeEvent.translationX < -50) {
+            switch (type) {
+                case MIXED:
+                    dispatch(setType(SHOPPING_ITEMS));
+                    break;
+                case SHOPPING_ITEMS:
+                    dispatch(setType(DISHES));
+                    break;
+                case DISHES:
+                    dispatch(setType(MIXED));
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
     const ListComponent = (data) => {
         return (
             <View style={styles.container}>
@@ -84,25 +119,34 @@ function ShoppingListScreen({ navigation }) {
     }
 
     return (
-        <View style={styles.wrap}>
-            <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
-            {pinnedList.length ? (
-                <View>
-                    <Text>Pinned</Text>
-                    {ListComponent(pinnedList)}
+        <PanGestureHandler
+            onHandlerStateChange={({ nativeEvent }) => {
+                if (nativeEvent.state === State.END) {
+                    onSwipeGesture(nativeEvent)
+                }
+            }}
+        >
+            <View style={styles.wrap}>
+                <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
+
+                {pinnedList.length ? (
+                    <View>
+                        <Text>Pinned</Text>
+                        {ListComponent(pinnedList)}
+                    </View>
+                ) : null}
+                <Text>Other</Text>
+                {ListComponent(notPinnedList)}
+                <View style={styles.addButtonContainer}>
+                    <TouchableOpacity
+                        style={styles.addButton}
+                        onPress={handleAddNewCardPress}
+                    >
+                        <Text style={styles.buttonText}>+</Text>
+                    </TouchableOpacity>
                 </View>
-            ) : null}
-            <Text>Other</Text>
-            {ListComponent(notPinnedList)}
-            <View style={styles.addButtonContainer}>
-                <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={handleAddNewCardPress}
-                >
-                    <Text style={styles.buttonText}>+</Text>
-                </TouchableOpacity>
             </View>
-        </View>
+        </PanGestureHandler>
     );
 }
 
