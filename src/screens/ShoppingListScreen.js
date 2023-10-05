@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, VirtualizedList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { useLists } from '../services/useLists';
 import { useFocusEffect } from '@react-navigation/native';
@@ -7,6 +7,7 @@ import HeaderComponent from '../components/HeaderComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { DISHES, MIXED, SHOPPING_ITEMS } from '../services/types';
 import { setType } from '../store/filters';
+import PagerView from 'react-native-pager-view';
 
 function ShoppingListScreen({ navigation }) {
     const type = useSelector(state => state.filters.type);
@@ -65,83 +66,72 @@ function ShoppingListScreen({ navigation }) {
         setNotPinnedList(notPinnedList);
     }
 
-    const onSwipeGesture = (event) => {
-        const offsetX = event.nativeEvent.translationX;
+    const handlePageChange = (event) => {
+        const { position } = event.nativeEvent;
 
-        if (offsetX > 50) {
-            switch (type) {
-                case MIXED:
-                    dispatch(setType(DISHES));
-                    break;
-                case SHOPPING_ITEMS:
-                    dispatch(setType(MIXED));
-                    break;
-                default:
-                    break;
-            }
-        } else if (offsetX < -50) {
-            switch (type) {
-                case MIXED:
-                    dispatch(setType(SHOPPING_ITEMS));
-                    break;
-                case DISHES:
-                    dispatch(setType(MIXED));
-                    break;
-                default:
-                    break;
-            }
+        const matcher = {
+            0: SHOPPING_ITEMS,
+            1: MIXED,
+            2: DISHES
         }
-    };
 
-    const renderListItem = ({ item, index }) => (
-        <TouchableOpacity
-            onPress={() => handleCardPress(item)}
-            style={[
-                styles.shoppingList,
-                index % 2 === 0 ? styles.evenColumn : null,
-            ]}
-        >
-            <Text style={styles.listTitle}>{item.name}</Text>
-        </TouchableOpacity>
+        dispatch(setType(matcher[position]));
+    }
+
+
+    const renderListItem = (item, index) => (
+        <View style={styles.flatListContainer} key={item.id}>
+            <TouchableOpacity
+
+                onPress={() => handleCardPress(item)}
+                style={[
+                    styles.shoppingList,
+                    index % 2 === 0 ? styles.evenColumn : null,
+                ]}
+            >
+                <Text style={styles.listTitle}>{item.name}</Text>
+            </TouchableOpacity>
+        </View>
     );
 
-    return (
-        <PanGestureHandler onEnded={onSwipeGesture}>
-            <View style={styles.container}>
-                <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
+    const renderMainList = (
+        <View>
+            <Text style={styles.sectionTitle}>Pinned</Text>
+            {
+                pinnedList.map((item, index) => renderListItem(item, index))
+            }
 
-                {pinnedList.length > 0 && (
-                    <View>
-                        <Text style={styles.sectionTitle}>Pinned</Text>
-                        <FlatList
-                            data={pinnedList}
-                            keyExtractor={(item) => item.id}
-                            numColumns={2}
-                            contentContainerStyle={styles.flatListContainer}
-                            renderItem={renderListItem}
-                        />
-                    </View>
-                )}
-
-                <Text style={styles.sectionTitle}>Other</Text>
-                <FlatList
-                    data={notPinnedList}
-                    keyExtractor={(item) => item.id}
-                    numColumns={2}
-                    contentContainerStyle={styles.flatListContainer}
-                    renderItem={renderListItem}
-                />
-
-                <View style={styles.addButtonContainer}>
-                    <TouchableOpacity
-                        style={styles.addButton}
-                        onPress={handleAddNewCardPress}
-                    >
-                        <Text style={styles.buttonText}>+</Text>
-                    </TouchableOpacity>
-                </View>
+            <Text style={styles.sectionTitle}>Other</Text>
+            {
+                notPinnedList.map((item, index) => renderListItem(item, index))
+            }
+            <View style={styles.addButtonContainer}>
+                <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={handleAddNewCardPress}
+                >
+                    <Text style={styles.buttonText}>+</Text>
+                </TouchableOpacity>
             </View>
-        </PanGestureHandler>
+        </View>
+    )
+
+    return (
+        <ScrollView style={styles.container}>
+            <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
+
+            <PagerView style={{ height: 800 }} onPageSelected={handlePageChange} initialPage={1}>
+                <View key="1">
+                    {renderMainList}
+                </View>
+                <View key="2">
+                    {renderMainList}
+                </View>
+                <View key="3">
+                    {renderMainList}
+                </View>
+            </PagerView>
+        </ScrollView>
     );
 }
 
@@ -207,7 +197,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontSize: 24,
-    },
+    }
 });
 
 export default ShoppingListScreen;
