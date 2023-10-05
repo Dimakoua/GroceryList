@@ -1,11 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { View, TouchableWithoutFeedback, TextInput, Image, StyleSheet, Dimensions, Animated } from 'react-native';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 
 const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handleEnterPress, setItemQuantity, removeItem, toggleItem }) => {
     const translateX = useRef(new Animated.Value(0)).current;
 
-    const RowItem = (
+    const RowItem = useMemo(() =>(
         <Animated.View style={[styles.checkboxWrap, { transform: [{ translateX }] }]}>
             <View style={styles.checkboxWrap}>
                 <TouchableWithoutFeedback onPress={() => toggleItem(item)}>
@@ -31,7 +31,7 @@ const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handl
                 )}
             </View>
         </Animated.View>
-    );
+    ));
 
     const onSwipeableClose = (event) => {
         const offsetX = event.nativeEvent.translationX;
