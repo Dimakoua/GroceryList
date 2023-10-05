@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, Text, FlatList, VirtualizedList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { useLists } from '../services/useLists';
@@ -18,12 +18,26 @@ function ShoppingListScreen({ navigation }) {
     const [pinnedList, setPinnedList] = useState([]);
     const [notPinnedList, setNotPinnedList] = useState([]);
 
+    const pagerRef = useRef(null);
+
     useEffect(() => {
         getListsByTypeWrap();
     }, []);
 
     useFocusEffect(
         useCallback(() => {
+
+            if (pagerRef) {
+                const matcher = {
+                    [SHOPPING_ITEMS]: 0,
+                    [MIXED]: 1,
+                    [DISHES]: 2
+                }
+
+                pagerRef.current.setPage(matcher[type]);
+            }
+
+
             getListsByTypeWrap();
         }, [type, lists])
     );
@@ -120,7 +134,7 @@ function ShoppingListScreen({ navigation }) {
         <ScrollView style={styles.container}>
             <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
 
-            <PagerView style={{ height: 800 }} onPageSelected={handlePageChange} initialPage={1}>
+            <PagerView style={{ height: 800 }} ref={pagerRef} onPageSelected={handlePageChange} initialPage={1}>
                 <View key="1">
                     {renderMainList}
                 </View>
