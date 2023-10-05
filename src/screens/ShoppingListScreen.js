@@ -119,22 +119,26 @@ function ShoppingListScreen({ navigation }) {
     )
 
     return (
-        <View>
-            <ScrollView style={styles.flexContainer}>
-                <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
+        <View style={styles.flexContainer}>
+            <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
 
-                <PagerView style={styles.pagerView} ref={pagerRef} onPageSelected={handlePageChange} initialPage={1}>
-                    <View key="1">
+            <PagerView style={styles.pagerView} ref={pagerRef} onPageSelected={handlePageChange} initialPage={1}>
+                <View key="1">
+                    <ScrollView style={styles.flexScrollView} contentContainerStyle={styles.scrollViewContent}>
                         {renderMainList}
-                    </View>
-                    <View key="2">
+                    </ScrollView>
+                </View>
+                <View key="2">
+                    <ScrollView style={styles.flexScrollView} contentContainerStyle={styles.scrollViewContent}>
                         {renderMainList}
-                    </View>
-                    <View key="3">
+                    </ScrollView>
+                </View>
+                <View key="3">
+                    <ScrollView style={styles.flexScrollView} contentContainerStyle={styles.scrollViewContent}>
                         {renderMainList}
-                    </View>
-                </PagerView>
-            </ScrollView>
+                    </ScrollView>
+                </View>
+            </PagerView>
 
             <TouchableOpacity
                 style={styles.addButton}
@@ -146,18 +150,23 @@ function ShoppingListScreen({ navigation }) {
     );
 }
 
-const windowHeight = Dimensions.get('window').height;
-
 const styles = StyleSheet.create({
+    flexContainer: {
+        flex: 1,
+    },
     container: {
+        flex: 1,
         backgroundColor: '#F3F4F6',
         paddingHorizontal: 16,
     },
-    flexContainer: {
-        // flex: 1
-    },
     pagerView: {
-        minHeight: windowHeight
+        flex: 1,
+    },
+    flexScrollView: {
+        flex: 1,
+    },
+    scrollViewContent: {
+        flexGrow: 1,
     },
     shoppingList: {
         flexBasis: '48%', // Adjust this value as needed to fit two columns
