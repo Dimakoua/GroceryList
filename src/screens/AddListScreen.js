@@ -200,8 +200,11 @@ const AddListScreen = ({ route }) => {
   }
 
   const ListEmptyComponent = useMemo(() => (
-    <TouchableOpacity onPress={() => addNewLine()}>
-      <Text> + Пункт списку </Text>
+    <TouchableOpacity
+      onPress={() => addNewLine()}
+      style={styles.addButton} // Add this style
+    >
+      <Text style={styles.addButtonLabel}>+ Пункт списку</Text>
     </TouchableOpacity>
   ))
 
@@ -281,6 +284,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '40%',
+  },
+  addButton: {
+    backgroundColor: '#007AFF', // Add your desired background color
+    padding: 10,
+    borderRadius: 5, // Add border radius for a rounded button
+    alignItems: 'center', // Center the text horizontally
+    marginTop: 10, // Adjust the spacing as needed
+  },
+
+  addButtonLabel: {
+    color: '#fff', // Text color for the button
+    fontWeight: 'bold',
   },
 });
 
