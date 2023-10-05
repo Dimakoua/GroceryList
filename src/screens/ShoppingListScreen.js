@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, Text, FlatList, VirtualizedList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { PanGestureHandler, State } from 'react-native-gesture-handler';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { useLists } from '../services/useLists';
 import { useFocusEffect } from '@react-navigation/native';
 import HeaderComponent from '../components/HeaderComponent';
@@ -92,125 +91,134 @@ function ShoppingListScreen({ navigation }) {
         dispatch(setType(matcher[position]));
     }
 
-
     const renderListItem = (item, index) => (
-        <View style={styles.flatListContainer} key={item.id}>
-            <TouchableOpacity
-
-                onPress={() => handleCardPress(item)}
-                style={[
-                    styles.shoppingList,
-                    index % 2 === 0 ? styles.evenColumn : null,
-                ]}
-            >
-                <Text style={styles.listTitle}>{item.name}</Text>
-            </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+            onPress={() => handleCardPress(item)}
+            style={[styles.shoppingList, index % 2 === 0 ? styles.evenColumn : null]}
+            key={item.id}
+        >
+            <Text style={styles.listTitle}>{item.name}</Text>
+        </TouchableOpacity>
     );
 
     const renderMainList = (
-        <View>
-            <Text style={styles.sectionTitle}>Pinned</Text>
-            {
-                pinnedList.map((item, index) => renderListItem(item, index))
-            }
+        <View style={styles.container}>
+            {pinnedList.length ? <Text style={styles.sectionTitle}>Pinned</Text> : null}
 
-            <Text style={styles.sectionTitle}>Other</Text>
-            {
-                notPinnedList.map((item, index) => renderListItem(item, index))
-            }
-            <View style={styles.addButtonContainer}>
-                <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={handleAddNewCardPress}
-                >
-                    <Text style={styles.buttonText}>+</Text>
-                </TouchableOpacity>
+            <View style={styles.columnContainer}>
+                {pinnedList.map((item, index) => renderListItem(item, index))}
+            </View>
+
+            {notPinnedList.length ? <Text style={styles.sectionTitle}>Other</Text>: null}
+            <View style={styles.columnContainer}>
+                {
+                    notPinnedList.map((item, index) => renderListItem(item, index))
+                }
             </View>
         </View>
     )
 
     return (
-        <ScrollView style={styles.container}>
-            <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
+        <View>
+            <ScrollView style={styles.flexContainer}>
+                <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
 
-            <PagerView style={{ height: 800 }} ref={pagerRef} onPageSelected={handlePageChange} initialPage={1}>
-                <View key="1">
-                    {renderMainList}
-                </View>
-                <View key="2">
-                    {renderMainList}
-                </View>
-                <View key="3">
-                    {renderMainList}
-                </View>
-            </PagerView>
-        </ScrollView>
+                <PagerView style={styles.pagerView} ref={pagerRef} onPageSelected={handlePageChange} initialPage={1}>
+                    <View key="1">
+                        {renderMainList}
+                    </View>
+                    <View key="2">
+                        {renderMainList}
+                    </View>
+                    <View key="3">
+                        {renderMainList}
+                    </View>
+                </PagerView>
+            </ScrollView>
+
+            <TouchableOpacity
+                style={styles.addButton}
+                onPress={handleAddNewCardPress}
+            >
+                <Text style={styles.buttonText}>+</Text>
+            </TouchableOpacity>
+        </View>
     );
 }
 
+const windowHeight = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#F3F4F6', // Updated background color
+        backgroundColor: '#F3F4F6',
         paddingHorizontal: 16,
     },
+    flexContainer: {
+        // flex: 1
+    },
+    pagerView: {
+        minHeight: windowHeight
+    },
     shoppingList: {
-        marginTop: 8, // Increased margin top for spacing
+        flexBasis: '48%', // Adjust this value as needed to fit two columns
+        marginTop: 16,
         backgroundColor: 'white',
-        borderRadius: 8,
+        borderRadius: 12,
         padding: 16,
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: 4,
         },
         shadowOpacity: 0.2,
-        shadowRadius: 2,
-        elevation: 2,
-        flex: 1,
-        margin: '1%',
+        shadowRadius: 4,
+        elevation: 4,
     },
     evenColumn: {
         marginRight: 0,
     },
     listTitle: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 8,
-        color: '#333', // Updated text color
+        color: '#333',
     },
     sectionTitle: {
-        fontSize: 20, // Increased font size
+        fontSize: 24,
         fontWeight: 'bold',
-        marginTop: 16, // Added margin top for spacing
-        marginBottom: 8, // Added margin bottom for spacing
-        color: '#333', // Updated text color
-    },
-    addButtonContainer: {
-        position: 'absolute',
-        bottom: 24, // Increased bottom position
-        right: 24, // Increased right position
+        marginTop: 24,
+        marginBottom: 16,
+        color: '#333',
     },
     addButton: {
-        backgroundColor: '#FF6B6B', // Updated button color
-        width: 54,
-        height: 54,
-        borderRadius: 27,
+        backgroundColor: '#FF6B6B',
+        width: 64,
+        height: 64,
+        borderRadius: 32,
         justifyContent: 'center',
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: 4,
         },
         shadowOpacity: 0.4,
-        shadowRadius: 2,
-        elevation: 4,
+        shadowRadius: 4,
+        elevation: 6,
+        marginBottom: 16,
+        marginRight: 16,
+        position: 'absolute',
+        bottom: 16,
+        right: 16
     },
     buttonText: {
         color: '#fff',
-        fontSize: 24,
+        fontSize: 32,
+    },
+    columnContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
     }
 });
 
