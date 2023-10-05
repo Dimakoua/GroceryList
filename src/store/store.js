@@ -13,9 +13,16 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 const store = configureStore({
     reducer: persistedReducer,
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: false, // Disable serializableCheck for Redux Persist
-        }),
+        // getDefaultMiddleware({
+        //     immutableCheck: false,
+        //     serializableCheck: false, // Disable serializableCheck for Redux Persist
+        // }),
+        process.env.NODE_ENV === 'development'
+            ? getDefaultMiddleware({
+                immutableCheck: false,
+                serializableCheck: false,
+            })
+            : getDefaultMiddleware()
 });
 
 const persistor = persistStore(store);
