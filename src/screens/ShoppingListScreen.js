@@ -65,8 +65,10 @@ function ShoppingListScreen({ navigation }) {
         setNotPinnedList(notPinnedList);
     }
 
-    const onSwipeGesture = (nativeEvent) => {
-        if (nativeEvent.translationX > 50) {
+    const onSwipeGesture = (event) => {
+        const offsetX = event.nativeEvent.translationX;
+
+        if (offsetX > 50) {
             switch (type) {
                 case MIXED:
                     dispatch(setType(DISHES));
@@ -74,19 +76,13 @@ function ShoppingListScreen({ navigation }) {
                 case SHOPPING_ITEMS:
                     dispatch(setType(MIXED));
                     break;
-                case DISHES:
-                    dispatch(setType(SHOPPING_ITEMS));
-                    break;
                 default:
                     break;
             }
-        } else if (nativeEvent.translationX < -50) {
+        } else if (offsetX < -50) {
             switch (type) {
                 case MIXED:
                     dispatch(setType(SHOPPING_ITEMS));
-                    break;
-                case SHOPPING_ITEMS:
-                    dispatch(setType(DISHES));
                     break;
                 case DISHES:
                     dispatch(setType(MIXED));
@@ -110,13 +106,7 @@ function ShoppingListScreen({ navigation }) {
     );
 
     return (
-        <PanGestureHandler
-            onHandlerStateChange={({ nativeEvent }) => {
-                if (nativeEvent.state === State.END) {
-                    onSwipeGesture(nativeEvent)
-                }
-            }}
-        >
+        <PanGestureHandler onEnded={onSwipeGesture}>
             <View style={styles.container}>
                 <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
 

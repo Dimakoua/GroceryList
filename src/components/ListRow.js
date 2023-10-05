@@ -51,11 +51,10 @@ const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handl
                 }).start();
             });
         }
-
     };
 
     return (
-        <PanGestureHandler onHandlerStateChange={onSwipeableClose}>
+        <PanGestureHandler onEnded={onSwipeableClose}>
             {RowItem}
         </PanGestureHandler>
     );
