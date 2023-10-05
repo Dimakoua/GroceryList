@@ -34,8 +34,9 @@ const AddListScreen = ({ route }) => {
   const [checkedItems, setCheckedItems] = useState([]);
 
   const textInputsRefs = useRef([]);
-  const params = route?.params?.item;
+  const titleInputRef = useRef([]);
   const newId = route?.params?.id;
+  const params = route?.params?.item ?? null;
 
   const list = getListById(id);
 
@@ -106,6 +107,10 @@ const AddListScreen = ({ route }) => {
   useEffect(() => {
     // set up from router
     setFromRouteParams();
+
+    if (params === null) {
+      setTimeout(() => { titleInputRef.current.focus() }, 100);
+    }
   }, []);
 
   useEffect(() => {
@@ -136,7 +141,7 @@ const AddListScreen = ({ route }) => {
       if (textInputsRefs.current[0]) {
         textInputsRefs.current[0].focus()
       }
-    }, 100);
+    }, 0);
 
   };
 
@@ -203,12 +208,12 @@ const AddListScreen = ({ route }) => {
 
   const ListHeaderComponent = useMemo(() => (
     <TextInput
+      ref={titleInputRef}
       value={name}
       onChangeText={(text) => setName(text)}
       onSubmitEditing={() => addNewLine()}
       placeholder="Назва"
       style={[styles.input, styles.title]}
-    // onSubmitEditing={() => textInputsRefs.current[0].focus()} // Focus on the first text input
     />
   ))
 
