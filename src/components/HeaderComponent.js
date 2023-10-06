@@ -1,27 +1,22 @@
 import React, { useState, useRef } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Image } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { setType } from '../store/filters';
 import { SHOPPING_ITEMS, DISHES, MIXED } from '../services/types';
 
 const HeaderComponent = ({ onPress, onSearch }) => {
-    const dispatch = useDispatch();
-
-    const currentButtonPressed = useSelector(state => state.filters.type);
-    const [isEditingSearch, setIsEditingSearch] = useState(false); // Додавання стану для визначення режиму редагування пошуку
-    const [searchText, setSearchText] = useState(''); // Додавання стану для текстового пошуку
-
+    const [isEditingSearch, setIsEditingSearch] = useState(false);
+    const [searchText, setSearchText] = useState('');
+    const [currentButtonPressed, setCurrentButtonPressed] = useState(MIXED);
     const searchInputRef = useRef();
 
     const focusSearchInput = () => {
         if (searchInputRef.current) {
-            setTimeout(() => searchInputRef.current.focus(), 100)
+            setTimeout(() => searchInputRef.current.focus(), 50)
         }
     };
 
     const handleButtonPress = (btnName) => {
-        dispatch(setType(btnName));
         onPress(btnName);
+        setCurrentButtonPressed(btnName);
     }
 
     return (

@@ -1,141 +1,60 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
-import { useLists } from '../services/useLists';
-import { useFocusEffect } from '@react-navigation/native';
+import React, { useState, useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import HeaderComponent from '../components/HeaderComponent';
-import { useDispatch, useSelector } from 'react-redux';
 import { DISHES, MIXED, SHOPPING_ITEMS } from '../services/types';
-import { setType } from '../store/filters';
 import PagerView from 'react-native-pager-view';
+import CardListComponent from '../components/CardListComponent';
+import useDebounced from '../services/useDebounced';
 
 function ShoppingListScreen({ navigation }) {
-    const type = useSelector(state => state.filters.type);
-    const lists = useSelector(state => state.lists.lists);
-    const dispatch = useDispatch();
-
-    const { searchLists, getListsByType } = useLists();
-    const [pinnedList, setPinnedList] = useState([]);
-    const [notPinnedList, setNotPinnedList] = useState([]);
-
+    const [searchString, setSearchString] = useState('');
+    const [type, setType] = useState(MIXED);
+    const debouncedSearchString = useDebounced(searchString, 200);
     const pagerRef = useRef(null);
 
-    useEffect(() => {
-        getListsByTypeWrap();
-    }, []);
+    const handleHeaderPress = (newType) => {
+        setType(newType);
 
-    useFocusEffect(
-        useCallback(() => {
-
-            if (pagerRef) {
-                const matcher = {
-                    [SHOPPING_ITEMS]: 0,
-                    [MIXED]: 1,
-                    [DISHES]: 2
-                }
-
-                pagerRef.current.setPage(matcher[type]);
+        if (pagerRef) {
+            const matcher = {
+                [SHOPPING_ITEMS]: 0,
+                [MIXED]: 1,
+                [DISHES]: 2
             }
 
-
-            getListsByTypeWrap();
-        }, [type, lists])
-    );
-
-    const getListsByTypeWrap = () => {
-        const data = getListsByType(type);
-        const pinnedList = data.filter(x => x.pinned);
-        const notPinnedList = data.filter(x => !x.pinned);
-        setPinnedList(pinnedList);
-        setNotPinnedList(notPinnedList);
-    }
-
-    const handleHeaderPress = (listType) => {
-        getListsByTypeWrap(listType);
-    }
-
-    const handleCardPress = (item) => {
-        if (item.type === MIXED) {
-            navigation.navigate('createMixedList', { id: item.id, item });
-        } else {
-            navigation.navigate('addList', { id: item.id, item });
+            pagerRef.current.setPage(matcher[newType]);
         }
     }
 
     const handleAddNewCardPress = () => {
+        console.log('handleAddNewCardPress', type);
         const id = new Date().getTime().toString();
 
         if (type === MIXED) {
-            navigation.navigate('createMixedList', { id });
+            navigation.navigate('createMixedList', { id, type });
         } else {
-            navigation.navigate('addList', { id });
+            navigation.navigate('addList', { id, type });
         }
     }
-
-    const onSearch = async (text) => {
-        const data = await searchLists(text, type);
-        const pinnedList = data.filter(x => x.pinned);
-        const notPinnedList = data.filter(x => !x.pinned);
-        setPinnedList(pinnedList);
-        setNotPinnedList(notPinnedList);
-    }
-
-    const handlePageChange = (event) => {
-        const { position } = event.nativeEvent;
-
-        const matcher = {
-            0: SHOPPING_ITEMS,
-            1: MIXED,
-            2: DISHES
-        }
-
-        dispatch(setType(matcher[position]));
-    }
-
-    const renderListItem = (item, index) => (
-        <TouchableOpacity
-            onPress={() => handleCardPress(item)}
-            style={[styles.shoppingList, index % 2 === 0 ? styles.evenColumn : null]}
-            key={item.id}
-        >
-            <Text style={styles.listTitle}>{item.name}</Text>
-        </TouchableOpacity>
-    );
-
-    const renderMainList = (
-        <View style={styles.container}>
-            {pinnedList.length ? <Text style={styles.sectionTitle}>Pinned</Text> : null}
-
-            <View style={styles.columnContainer}>
-                {pinnedList.map((item, index) => renderListItem(item, index))}
-            </View>
-
-            {notPinnedList.length ? <Text style={styles.sectionTitle}>Other</Text>: null}
-            <View style={styles.columnContainer}>
-                {
-                    notPinnedList.map((item, index) => renderListItem(item, index))
-                }
-            </View>
-        </View>
-    )
 
     return (
         <View style={styles.flexContainer}>
-            <HeaderComponent onPress={handleHeaderPress} onSearch={onSearch} />
+            <HeaderComponent onPress={handleHeaderPress} onSearch={setSearchString} />
 
-            <PagerView style={styles.pagerView} ref={pagerRef} onPageSelected={handlePageChange} initialPage={1}>
+            <PagerView style={styles.pagerView} ref={pagerRef} initialPage={1}>
                 <View key="1">
                     <ScrollView style={styles.flexScrollView} contentContainerStyle={styles.scrollViewContent}>
-                        {renderMainList}
+                        <CardListComponent type={SHOPPING_ITEMS} searchString={debouncedSearchString} />
                     </ScrollView>
                 </View>
                 <View key="2">
                     <ScrollView style={styles.flexScrollView} contentContainerStyle={styles.scrollViewContent}>
-                        {renderMainList}
+                        <CardListComponent type={MIXED} searchString={debouncedSearchString} />
                     </ScrollView>
                 </View>
                 <View key="3">
                     <ScrollView style={styles.flexScrollView} contentContainerStyle={styles.scrollViewContent}>
-                        {renderMainList}
+                        <CardListComponent type={DISHES} searchString={debouncedSearchString} />
                     </ScrollView>
                 </View>
             </PagerView>
@@ -154,50 +73,11 @@ const styles = StyleSheet.create({
     flexContainer: {
         flex: 1,
     },
-    container: {
-        flex: 1,
-        backgroundColor: '#F3F4F6',
-        paddingHorizontal: 16,
-    },
     pagerView: {
         flex: 1,
     },
     flexScrollView: {
         flex: 1,
-    },
-    scrollViewContent: {
-        flexGrow: 1,
-    },
-    shoppingList: {
-        flexBasis: '48%', // Adjust this value as needed to fit two columns
-        marginTop: 16,
-        backgroundColor: 'white',
-        borderRadius: 12,
-        padding: 16,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 4,
-    },
-    evenColumn: {
-        marginRight: 0,
-    },
-    listTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        color: '#333',
-    },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginTop: 24,
-        marginBottom: 16,
-        color: '#333',
     },
     addButton: {
         backgroundColor: '#FF6B6B',
@@ -223,11 +103,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontSize: 32,
-    },
-    columnContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
     }
 });
 

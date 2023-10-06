@@ -21,22 +21,21 @@ import useDebounced from '../services/useDebounced';
 
 const AddListScreen = ({ route }) => {
   const { upsertList, getListById, deleteListById } = useLists()
-  const globalType = useSelector(state => state.filters.type);
-
   const navigation = useNavigation();
-
-  const [id, setId] = useState(null);
-  const [name, setName] = useState(null);
-  const [type, setType] = useState(globalType);
-  const [isPinned, setIsPinned] = useState(false);
-  const [meals, setMeals] = useState([]);
-  const [items, setItems] = useState([]);
-  const [checkedItems, setCheckedItems] = useState([]);
 
   const textInputsRefs = useRef([]);
   const titleInputRef = useRef([]);
   const newId = route?.params?.id;
+  const paramType = route?.params?.type;
   const params = route?.params?.item ?? null;
+
+  const [id, setId] = useState(null);
+  const [name, setName] = useState(null);
+  const [type, setType] = useState(paramType);
+  const [isPinned, setIsPinned] = useState(false);
+  const [meals, setMeals] = useState([]);
+  const [items, setItems] = useState([]);
+  const [checkedItems, setCheckedItems] = useState([]);
 
   const list = getListById(id);
 
