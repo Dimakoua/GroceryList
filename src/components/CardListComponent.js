@@ -21,7 +21,6 @@ function CardListComponent({ type, searchString }) {
 
     useFocusEffect(
         useCallback(() => {
-            console.log("DLDLDLDLD")
             getListsByTypeWrap();
         }, [lists])
     );
@@ -118,31 +117,6 @@ const styles = StyleSheet.create({
         marginTop: 24,
         marginBottom: 16,
         color: '#333',
-    },
-    addButton: {
-        backgroundColor: '#FF6B6B',
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.4,
-        shadowRadius: 4,
-        elevation: 6,
-        marginBottom: 16,
-        marginRight: 16,
-        position: 'absolute',
-        bottom: 16,
-        right: 16
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 32,
     },
     columnContainer: {
         flexDirection: 'row',

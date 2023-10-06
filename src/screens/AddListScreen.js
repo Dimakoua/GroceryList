@@ -37,7 +37,7 @@ const AddListScreen = ({ route }) => {
   const [items, setItems] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
 
-  const list = getListById(id);
+  const list = getListById(newId);
 
   const debouncedName = useDebounced(name, 500);
   const debouncedMeals = useDebounced(meals, 500);
@@ -48,7 +48,6 @@ const AddListScreen = ({ route }) => {
     id: new Date().getTime().toString(),
     mealItem: false,
     text: '',
-    pinned: false,
     quantity: 1,
   };
 
@@ -122,10 +121,13 @@ const AddListScreen = ({ route }) => {
   useFocusEffect(
     useCallback(() => {
       if (list) {
-        if (shallowEqual(list.meals, meals)) return;
-
-        setMeals(list.meals);
-        calculateCombinedList(list);
+        if (!shallowEqual(list.meals, meals)) {
+          setMeals(list.meals);
+          calculateCombinedList(list);
+        }
+        if (!shallowEqual(list.checkedItems, checkedItems)) {
+          setCheckedItems(list.checkedItems);
+        }
       }
     }, [list])
   );
@@ -248,6 +250,14 @@ const AddListScreen = ({ route }) => {
         )}
       />
       {ListEmptyComponent}
+
+
+      <TouchableOpacity
+        style={styles.playButton}
+        onPress={() => navigation.navigate('playScreen', { items, checkedItems, listId: id })}
+      >
+        <Text style={styles.playButtonText}>Play</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -296,6 +306,31 @@ const styles = StyleSheet.create({
     color: '#fff', // Text color for the button
     fontWeight: 'bold',
   },
+  playButton: {
+    backgroundColor: '#FF6B6B',
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    elevation: 6,
+    marginBottom: 16,
+    marginRight: 16,
+    position: 'absolute',
+    bottom: 16,
+    right: 16
+  },
+  playButtonText: {
+    color: '#fff',
+    fontSize: 32,
+  }
 });
 
 export default AddListScreen;

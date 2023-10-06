@@ -1,17 +1,16 @@
 import { SHOPPING_ITEMS, DISHES, ALL_TYPES, MIXED } from './types';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { remove, upsert } from '../store/lists';
-import { useCallback } from 'react';
 
 export function useLists() {
     const dispatch = useDispatch();
     const lists = useSelector(state => state.lists.lists, shallowEqual);
 
-    const getAllLists = useCallback(() => {
+    const getAllLists = () => {
         return lists;
-    });
+    };
 
-    const searchLists = useCallback((text, type) => {
+    const searchLists = (text, type) => {
         const lists = getListsByType(type);
 
         const shoppingList = lists.filter(list => {
@@ -25,21 +24,21 @@ export function useLists() {
 
         });
         return shoppingList;
-    }, [lists])
+    };
 
-    const getShoppingLists = useCallback(() => {
+    const getShoppingLists = () => {
         const shoppingList = lists.filter(item => item.type === SHOPPING_ITEMS);
 
         return shoppingList;
-    });
+    };
 
-    const getMealsList = useCallback(() => {
+    const getMealsList = () => {
         const shoppingList = lists.filter(item => item.type === DISHES);
 
         return shoppingList;
-    });
+    };
 
-    const getListsByType = useCallback((type) => {
+    const getListsByType = (type) => {
         if (type == MIXED) {
             return lists;
         }
@@ -51,25 +50,30 @@ export function useLists() {
 
         const shoppingList = lists.filter(item => item.type === type);
         return shoppingList;
-    })
+    };
 
-    const getListById = useCallback((id) => {
-        const index = lists.findIndex(item => item.id === id);
-        return lists[index];
-    });
+    const getListById = (id) => {
+        if(!id) return {};
+        return lists.find(item => item.id === id);
+    };
 
-    const upsertList = useCallback((newList) => {
+    const toggleItemById = (listId, itemId) => {
+        const list = lists.find(x => x.id === listId);
+        dispatch(upsert({...list, checkedItems: [...list.checkedItems, itemId]}));
+    }
+
+    const upsertList = (newList) => {
         const typeIndex = ALL_TYPES.findIndex(item => item === newList.type);
         if (typeIndex === -1) {
             throw new Error(`${newList.type} is not allowed type`);
         }
 
         dispatch(upsert(newList));
-    })
+    };
 
-    const deleteListById = useCallback((id) => {
+    const deleteListById = (id) => {
         dispatch(remove(id));
-    })
+    };
 
 
     return {
@@ -81,5 +85,6 @@ export function useLists() {
         deleteListById,
         searchLists,
         getListsByType,
+        toggleItemById
     };
 }

@@ -27,7 +27,6 @@ function ShoppingListScreen({ navigation }) {
     }
 
     const handleAddNewCardPress = () => {
-        console.log('handleAddNewCardPress', type);
         const id = new Date().getTime().toString();
 
         if (type === MIXED) {
