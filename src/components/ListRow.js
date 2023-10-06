@@ -40,7 +40,7 @@ const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handl
     const onSwipeableClose = (event) => {
         const offsetX = event.nativeEvent.translationX;
 
-        if (offsetX > 50) {
+        if (offsetX > 10) {
             toggleItem(item);
 
             Animated.timing(translateX, {

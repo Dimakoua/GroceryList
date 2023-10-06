@@ -10,6 +10,7 @@ const EMPTY_LIST = {
     name: null,
     items: [],
     meals: [],
+    checkedItems: [],
     isPinned: false,
     quantity: 1 
 }

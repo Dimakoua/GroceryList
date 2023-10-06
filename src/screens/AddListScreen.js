@@ -142,7 +142,7 @@ const AddListScreen = ({ route }) => {
       if (textInputsRefs.current[0]) {
         textInputsRefs.current[0].focus()
       }
-    }, 100);
+    }, 200);
   };
 
   const setItemText = (item, text) => {
