@@ -36,11 +36,23 @@ function ShoppingListScreen({ navigation }) {
         }
     }
 
+    const handlePageChange = (event) => {
+        const { position } = event.nativeEvent;
+
+        const matcher = {
+            0: SHOPPING_ITEMS,
+            1: MIXED,
+            2: DISHES
+        }
+
+        setType(matcher[position]);
+    }
+
     return (
         <View style={styles.flexContainer}>
-            <HeaderComponent onPress={handleHeaderPress} onSearch={setSearchString} />
+            <HeaderComponent onPress={handleHeaderPress} onSearch={setSearchString} type={type} />
 
-            <PagerView style={styles.pagerView} ref={pagerRef} initialPage={1}>
+            <PagerView style={styles.pagerView} ref={pagerRef} onPageSelected={handlePageChange} initialPage={1}>
                 <View key="1">
                     <ScrollView style={styles.flexScrollView} contentContainerStyle={styles.scrollViewContent}>
                         <CardListComponent type={SHOPPING_ITEMS} searchString={debouncedSearchString} />

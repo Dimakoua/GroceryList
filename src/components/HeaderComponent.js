@@ -1,12 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { SHOPPING_ITEMS, DISHES, MIXED } from '../services/types';
 
-const HeaderComponent = ({ onPress, onSearch }) => {
+const HeaderComponent = ({ onPress, onSearch, type }) => {
     const [isEditingSearch, setIsEditingSearch] = useState(false);
     const [searchText, setSearchText] = useState('');
-    const [currentButtonPressed, setCurrentButtonPressed] = useState(MIXED);
+    const [currentButtonPressed, setCurrentButtonPressed] = useState(type);
     const searchInputRef = useRef();
+
+    useEffect(() => {
+        setCurrentButtonPressed(type);
+    }, [type])
 
     const focusSearchInput = () => {
         if (searchInputRef.current) {
