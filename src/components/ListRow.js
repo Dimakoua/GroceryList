@@ -5,7 +5,7 @@ import { PanGestureHandler } from 'react-native-gesture-handler';
 const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handleEnterPress, setItemQuantity, removeItem, toggleItem }) => {
     const translateX = useRef(new Animated.Value(0)).current;
 
-    const RowItem = useMemo(() =>(
+    const RowItem = useMemo(() => (
         <Animated.View style={[styles.checkboxWrap, { transform: [{ translateX }] }]}>
             <View style={styles.checkboxWrap}>
                 <TouchableWithoutFeedback onPress={() => toggleItem(item)}>
@@ -17,14 +17,18 @@ const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handl
                     onChangeText={(text) => setItemText(item, text)}
                     onSubmitEditing={() => handleEnterPress(index)}
                     style={[styles.input, { textDecorationLine: checkedItems.includes(item.id) ? 'line-through' : 'none' }]}
+                    // editable={!item.mealItem}
                 />
                 <TextInput
                     value={`${item.quantity}`}
                     onChangeText={(quantity) => setItemQuantity(item, quantity)}
                     keyboardType="numeric"
                     style={styles.quantityInput}
+                    // editable={!item.mealItem}
                 />
-                {item.mealItem ? null : (
+                {item.mealItem ? (
+                    <View style={styles.closeBtn}></View>
+                ) : (
                     <TouchableWithoutFeedback onPress={() => removeItem(item)}>
                         <Image source={require('./../../assets/icons8-close-24.png')} style={styles.closeBtn} />
                     </TouchableWithoutFeedback>
@@ -36,11 +40,11 @@ const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handl
     const onSwipeableClose = (event) => {
         const offsetX = event.nativeEvent.translationX;
 
-        if (offsetX < -30) {
+        if (offsetX > 50) {
             toggleItem(item);
 
             Animated.timing(translateX, {
-                toValue: -50,
+                toValue: 50,
                 duration: 500,
                 useNativeDriver: true,
             }).start(() => {
