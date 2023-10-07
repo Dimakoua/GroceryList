@@ -7,7 +7,16 @@ const Tab = createMaterialTopTabNavigator();
 
 const MixedListScreenTabNavigator = ({ route }) => {
     return (
-        <Tab.Navigator>
+        <Tab.Navigator
+            screenOptions={{
+                tabBarShowLabel: false,
+                tabBarStyle: {
+                    borderTopWidth: 0,
+                    elevation: 0,
+                    height: 3
+                }
+            }}
+        >
             <Tab.Screen name="List" initialParams={route.params} component={AddListScreenCopy} />
             <Tab.Screen name="Meals" initialParams={route.params} component={MealsScreen} />
         </Tab.Navigator>
