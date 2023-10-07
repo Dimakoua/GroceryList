@@ -30,6 +30,9 @@ const AddListScreen = ({ route }) => {
   const paramType = route?.params?.type;
   const params = route?.params?.item ?? null;
 
+  const flatListRef = useRef(null);
+
+
   const [id, setId] = useState(null);
   const [name, setName] = useState(null);
   const [type, setType] = useState(paramType);
@@ -133,6 +136,10 @@ const AddListScreen = ({ route }) => {
     }, [list])
   );
 
+  const scrollToIndex = (index) => {
+    flatListRef.current.scrollToIndex({ index });
+  };
+
   const addNewLine = () => {
     const newLine = { ...EMPTY_ITEM };
     setItems((prevItems) => {
@@ -141,7 +148,8 @@ const AddListScreen = ({ route }) => {
 
     setTimeout(() => {
       if (textInputsRefs.current[0]) {
-        textInputsRefs.current[0].focus()
+        textInputsRefs.current[0].focus();
+        scrollToIndex(0);
       }
     }, 200);
   };
@@ -234,6 +242,7 @@ const AddListScreen = ({ route }) => {
 
       <FlatList
         data={items}
+        ref={flatListRef}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={ListHeaderComponent}
         renderItem={({ index, item }) => (
