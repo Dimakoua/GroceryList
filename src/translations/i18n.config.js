@@ -3,7 +3,6 @@ import { initReactI18next } from "react-i18next";
 import { ua, en, es, fr, de, pt, zh, ja, ko, it } from "../translations";
 import { findBestLanguageTag, getLocales } from "react-native-localize";
 
-console.log(getLocales());
 //empty for now
 const resources = {
     'en': {
@@ -37,10 +36,8 @@ const resources = {
         translation: it,
     }
 };
-console.log(Object.keys(resources))
-const primaryLanguage = findBestLanguageTag(Object.keys(resources));
-console.log("primaryLanguage", primaryLanguage)
 
+const primaryLanguage = findBestLanguageTag(Object.keys(resources));
 
 i18n.use(initReactI18next).init({
     compatibilityJSON: 'v3',

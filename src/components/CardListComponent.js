@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#EBEFF3',
         paddingHorizontal: 16,
-        minHeight: windowHeight - 90
+        minHeight: windowHeight - 40
     },
     emptyListContainer: {
         flex: 1,
