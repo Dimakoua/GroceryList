@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,10 @@ import {
   Image
 } from 'react-native';
 import { useLists } from '../services/useLists';
-import { MIXED } from '../services/types';
+import { DISHES, MIXED, SHOPPING_ITEMS } from '../services/types';
 import { useTranslation } from 'react-i18next';
+import { useFocusEffect } from '@react-navigation/native';
+import { shallowEqual, useSelector } from 'react-redux';
 
 const MealsScreen = ({ navigation, route }) => {
   const { t } = useTranslation();
@@ -22,12 +24,12 @@ const MealsScreen = ({ navigation, route }) => {
   const allShopingLists = getShoppingLists();
 
   const composedList = [...allMeals, ...allShopingLists];
-
-  const [meals, setMeals] = useState(allMeals);
+  const [meals, setMeals] = useState(composedList);
   const [checked, setChecked] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const newChecked = [];
     mealsFromParams.forEach(meal => {
       const index = composedList.findIndex(x => x.id === meal.id);
@@ -51,7 +53,7 @@ const MealsScreen = ({ navigation, route }) => {
     setMeals(newAllMeals);
     setChecked(newChecked);
     setLoading(false);
-  }, [])
+  }, [composedList.length])
 
   useEffect(() => {
     if (isLoading) return;
@@ -110,11 +112,22 @@ const MealsScreen = ({ navigation, route }) => {
     </TouchableOpacity>
   );
 
+  const handleAddListPress = (type) => {
+    const id = new Date().getTime().toString();
+    navigation.navigate('addList', { id, type });
+  }
+
   const ListEmptyComponent = (
     <View style={styles.emptyListContainer}>
       <Image source={require('./../../assets/icons8-todo-list-100.png')} />
-      <Text>{t('add_new_shopping_list')}</Text>
-      <Text>{t('add_new_meal')}</Text>
+      <TouchableOpacity style={[styles.addNewButtonContainer, { marginBottom: 10 }]} onPress={() => { handleAddListPress(SHOPPING_ITEMS) }}>
+        <Text>{t('add_new_shopping_list')}</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.addNewButtonContainer} onPress={() => { handleAddListPress(DISHES) }}>
+        <Text>{t('add_new_meal')}</Text>
+      </TouchableOpacity>
+
     </View>
   )
 
@@ -138,7 +151,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#EBEFF3',
   },
   itemContainer: {
     flexDirection: 'row',
@@ -146,11 +159,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     backgroundColor: 'white',
     borderRadius: 8,
-    elevation: 2, // Додавання тіні (Android)
-    shadowColor: '#000', // Додавання тіні (iOS)
-    shadowOffset: { width: 0, height: 2 }, // Додавання тіні (iOS)
-    shadowOpacity: 0.2, // Додавання тіні (iOS)
-    shadowRadius: 2, // Додавання тіні (iOS)
+    elevation: 4, 
+    shadowColor: '#000',
+    shadowOffset: {
+        width: 0,
+        height: 4,
+    },
+    shadowOpacity: 0.2, 
+    shadowRadius: 2, 
   },
   checkboxContainer: {
     paddingHorizontal: 16,
@@ -186,6 +202,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     borderRadius: 4,
     marginLeft: 10,
+    marginRight: 10,
   },
   quantityButtonText: {
     color: 'white',
@@ -204,6 +221,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
+  addNewButtonContainer: {
+    padding: 10,
+    backgroundColor: 'rgba(182,180,181,0.2)',
+    borderRadius: 10
+  }
 });
 
 export default MealsScreen;

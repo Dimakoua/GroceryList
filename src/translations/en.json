@@ -5,7 +5,7 @@
     "pinned": "Pinned",
     "other": "Other",
     "add_new_line": "+ Item",
-    "add_new_shopping_list": "Add New Shopping List",
-    "add_new_meal": "Add New Meal",
+    "add_new_shopping_list": "+ Shopping List",
+    "add_new_meal": "+ Meal",
     "search": "Weekly List"
 }
