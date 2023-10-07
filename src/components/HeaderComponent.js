@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-evenly',
+        maxWidth: '80%'
     },
     searchContainer: {
         position: 'absolute',
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     },
     listTitle: {
         padding: 10,
-        fontSize: 16
+        fontSize: 14
     }
 });
 
