@@ -5,8 +5,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import { shallowEqual, useSelector } from 'react-redux';
 import { MIXED } from '../services/types';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 function CardListComponent({ type, searchString }) {
+    const { t } = useTranslation();
     const lists = useSelector(state => state.lists.lists, shallowEqual);
 
     const [pinnedList, setPinnedList] = useState([]);
@@ -53,13 +55,13 @@ function CardListComponent({ type, searchString }) {
 
     return (
         <View style={styles.container}>
-            {pinnedList.length ? <Text style={styles.sectionTitle}>Pinned</Text> : null}
+            {pinnedList.length ? <Text style={styles.sectionTitle}>{t('pinned')}</Text> : null}
 
             <View style={styles.columnContainer}>
                 {pinnedList.map((item, index) => renderListItem(item, index))}
             </View>
 
-            {notPinnedList.length ? <Text style={styles.sectionTitle}>Other</Text> : null}
+            {notPinnedList.length ? <Text style={styles.sectionTitle}>{t('other')}</Text> : null}
             <View style={styles.columnContainer}>
                 {
                     notPinnedList.map((item, index) => renderListItem(item, index))

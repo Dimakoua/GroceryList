@@ -19,8 +19,10 @@ import ListRow from '../components/ListRow';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { MIXED } from '../services/types';
 import useDebounced from '../services/useDebounced';
+import { useTranslation } from 'react-i18next';
 
 const AddListScreen = ({ route }) => {
+  const {t} = useTranslation();
   const { upsertList, getListById, deleteListById } = useLists()
   const navigation = useNavigation();
 
@@ -214,7 +216,7 @@ const AddListScreen = ({ route }) => {
       onPress={() => addNewLine()}
       style={styles.addButton} // Add this style
     >
-      <Text style={styles.addButtonLabel}>+ Пункт списку</Text>
+      <Text style={styles.addButtonLabel}>{t('add_new_line')}</Text>
     </TouchableOpacity>
   ))
 

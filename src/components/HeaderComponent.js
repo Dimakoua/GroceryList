@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { SHOPPING_ITEMS, DISHES, MIXED } from '../services/types';
+import { useTranslation } from 'react-i18next';
 
 const HeaderComponent = ({ onPress, onSearch, type }) => {
+    const { t } = useTranslation();
+
     const [isEditingSearch, setIsEditingSearch] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [currentButtonPressed, setCurrentButtonPressed] = useState(type);
@@ -30,21 +33,21 @@ const HeaderComponent = ({ onPress, onSearch, type }) => {
                     style={[currentButtonPressed === SHOPPING_ITEMS ? styles.active : null,]}
                     onPress={() => handleButtonPress(SHOPPING_ITEMS)}
                 >
-                    <Text style={styles.listTitle}>List</Text>
+                    <Text style={styles.listTitle}>{t('shopping_list')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[currentButtonPressed === MIXED ? styles.active : null,]}
                     onPress={() => handleButtonPress(MIXED)}
 
                 >
-                    <Text style={styles.listTitle}>All</Text>
+                    <Text style={styles.listTitle}>{t('all')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[currentButtonPressed === DISHES ? styles.active : null,]}
                     onPress={() => handleButtonPress(DISHES)}
 
                 >
-                    <Text style={styles.listTitle}>Meals</Text>
+                    <Text style={styles.listTitle}>{t('meals')}</Text>
                 </TouchableOpacity>
             </View>
             <View style={[styles.buttons, isEditingSearch ? null : styles.hidden,]}>

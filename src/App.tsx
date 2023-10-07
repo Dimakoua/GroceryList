@@ -10,6 +10,7 @@ import MainContainer from './navigation/MainContainer';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'; // Import PersistGate
 import { store, persistor } from './store/store';
+import './translations/i18n.config';
 
 function App() {
   return (
