@@ -81,7 +81,7 @@ const HeaderComponent = ({ onPress, onSearch, type }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#EBEFF3',
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         alignItems: 'center',
@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
     },
     buttons: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-evenly',
@@ -116,9 +115,12 @@ const styles = StyleSheet.create({
         display: 'none'
     },
     active: {
-        backgroundColor: 'red',
-        padding: 6,
-        borderRadius: 6
+        backgroundColor: 'rgba(182,180,181,0.5)',
+        borderRadius: 10
+    },
+    listTitle: {
+        padding: 10,
+        fontSize: 16
     }
 });
 

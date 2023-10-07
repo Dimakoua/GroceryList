@@ -11,11 +11,14 @@ import { useLists } from '../services/useLists';
 import { MIXED } from '../services/types';
 
 const MealsScreen = ({ navigation, route }) => {
-  const { getMealsList, upsertList, getListById } = useLists();
+  const { getMealsList, upsertList, getShoppingLists } = useLists();
 
   const id = route.params.id;
   const mealsFromParams = route.params?.item?.meals ?? [];
   const allMeals = getMealsList();
+  const allShopingLists = getShoppingLists();
+
+  const composedList = [...allMeals, ...allShopingLists];
 
   const [meals, setMeals] = useState(allMeals);
   const [checked, setChecked] = useState([]);
@@ -24,7 +27,7 @@ const MealsScreen = ({ navigation, route }) => {
   useEffect(() => {
     const newChecked = [];
     mealsFromParams.forEach(meal => {
-      const index = allMeals.findIndex(x => x.id === meal.id);
+      const index = composedList.findIndex(x => x.id === meal.id);
 
       if (index !== -1) {
         newChecked.push(meal.id);
@@ -32,7 +35,7 @@ const MealsScreen = ({ navigation, route }) => {
     });
 
 
-    const newAllMeals = allMeals.map((existingItem) => {
+    const newAllMeals = composedList.map((existingItem) => {
       const index = mealsFromParams.findIndex(x => x.id === existingItem.id);
 
       if(index === -1){

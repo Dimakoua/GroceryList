@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, Image } from 'react-native';
 import { useLists } from '../services/useLists';
 import { useFocusEffect } from '@react-navigation/native';
 import { shallowEqual, useSelector } from 'react-redux';
@@ -65,18 +65,30 @@ function CardListComponent({ type, searchString }) {
                     notPinnedList.map((item, index) => renderListItem(item, index))
                 }
             </View>
+            {notPinnedList.length === 0 && pinnedList.length === 0 ?
+                <View style={styles.emptyListContainer}>
+                    <Image source={require('./../../assets/icons8-todo-list-100.png')} />
+                </View>
+                : null}
+
         </View>
     );
 }
-
+const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
     flexContainer: {
         flex: 1,
     },
     container: {
         flex: 1,
-        backgroundColor: '#F3F4F6',
+        backgroundColor: '#EBEFF3',
         paddingHorizontal: 16,
+        minHeight: windowHeight - 90
+    },
+    emptyListContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     pagerView: {
         flex: 1,
@@ -90,7 +102,7 @@ const styles = StyleSheet.create({
     shoppingList: {
         flexBasis: '48%', // Adjust this value as needed to fit two columns
         marginTop: 16,
-        backgroundColor: 'white',
+        backgroundColor: '#F3F6F9',
         borderRadius: 12,
         padding: 16,
         shadowColor: '#000',
@@ -112,11 +124,9 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     sectionTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginTop: 24,
-        marginBottom: 16,
-        color: '#333',
+        fontSize: 12,
+        marginTop: 10,
+        color: '#8C9396',
     },
     columnContainer: {
         flexDirection: 'row',

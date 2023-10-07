@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  Image,
   Dimensions,
 } from 'react-native';
 import { useLists } from '../services/useLists';
@@ -251,13 +252,17 @@ const AddListScreen = ({ route }) => {
       />
       {ListEmptyComponent}
 
+      {items.length ? (
+        <TouchableOpacity
+          style={styles.playButton}
+          onPress={() => navigation.navigate('playScreen', { items, checkedItems, listId: id })}
+        >
+          <Text style={styles.playButtonText}>
+            <Image source={require('./../../assets/icons8-play-48.png')} />
+          </Text>
+        </TouchableOpacity>
+      ) : null}
 
-      <TouchableOpacity
-        style={styles.playButton}
-        onPress={() => navigation.navigate('playScreen', { items, checkedItems, listId: id })}
-      >
-        <Text style={styles.playButtonText}>Play</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -307,7 +312,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   playButton: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: '#98E0E4',
     width: 64,
     height: 64,
     borderRadius: 32,
@@ -321,7 +326,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 4,
     elevation: 6,
-    marginBottom: 16,
+    marginBottom: 50,
     marginRight: 16,
     position: 'absolute',
     bottom: 16,
@@ -329,7 +334,7 @@ const styles = StyleSheet.create({
   },
   playButtonText: {
     color: '#fff',
-    fontSize: 32,
+    fontSize: 64,
   }
 });
 

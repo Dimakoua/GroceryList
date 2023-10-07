@@ -17,14 +17,12 @@ const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handl
                     onChangeText={(text) => setItemText(item, text)}
                     onSubmitEditing={() => handleEnterPress(index)}
                     style={[styles.input, { textDecorationLine: checkedItems.includes(item.id) ? 'line-through' : 'none' }]}
-                    // editable={!item.mealItem}
                 />
                 <TextInput
                     value={`${item.quantity}`}
                     onChangeText={(quantity) => setItemQuantity(item, quantity)}
                     keyboardType="numeric"
                     style={styles.quantityInput}
-                    // editable={!item.mealItem}
                 />
                 {item.mealItem ? (
                     <View style={styles.closeBtn}></View>
@@ -40,7 +38,7 @@ const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handl
     const onSwipeableClose = (event) => {
         const offsetX = event.nativeEvent.translationX;
 
-        if (offsetX > 10) {
+        if (offsetX > 50) {
             toggleItem(item);
 
             Animated.timing(translateX, {

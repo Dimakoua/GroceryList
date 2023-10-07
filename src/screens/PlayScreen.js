@@ -6,6 +6,7 @@ import {
   StyleSheet,
   FlatList,
   Dimensions,
+  Image
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Swipeable } from 'react-native-gesture-handler';
@@ -23,6 +24,17 @@ const PlayScreen = ({ route }) => {
   useEffect(() => {
     const filtered = items.filter((x) => !checkedItems.includes(x.id));
     setUncheckedItems(filtered);
+
+    let timerId = null;
+    if (filtered.length === 0) {
+      timerId = setTimeout(() => navigation.goBack(), 1000);
+    }
+
+    return () => {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+    };
   }, [items]);
 
   const onSwipeableOpen = (item) => {
@@ -59,14 +71,25 @@ const PlayScreen = ({ route }) => {
     );
   };
 
+  const ListEmptyComponent = (
+    <View style={styles.emptyListContainer}>
+      <Image source={require('./../../assets/icons8-todo-list-100.png')} />
+    </View>
+  )
+
+  const FlatListComponent = (
+    <FlatList
+      data={uncheckedItems}
+      keyExtractor={(item) => item.id}
+      renderItem={renderItem}
+      inverted={true}
+    />
+  )
+
+
   return (
     <View style={styles.container}>
-      <FlatList
-        data={uncheckedItems}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        inverted={true}
-      />
+      {uncheckedItems.length ? FlatListComponent : ListEmptyComponent}
     </View>
   );
 };
@@ -77,14 +100,14 @@ const maxWidth = windowWidth - 80; // Subtract 40 from each side
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#EBEFF3',
     paddingHorizontal: 16,
   },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 8,
-    backgroundColor: 'white',
+    backgroundColor: '#F3F6F9',
     borderRadius: 8,
     elevation: 2,
     shadowColor: '#000',
@@ -93,6 +116,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     paddingVertical: 12,
     paddingHorizontal: 16,
+    height: 100
   },
   checkbox: {
     width: 30,
@@ -124,7 +148,12 @@ const styles = StyleSheet.create({
   },
   rightActionsContainer: {
     flex: 1
-  }
+  },
+  emptyListContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
 });
 
 export default PlayScreen;
