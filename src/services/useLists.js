@@ -39,10 +39,6 @@ export function useLists() {
     };
 
     const getListsByType = (type) => {
-        if (type == MIXED) {
-            return lists;
-        }
-
         const typeIndex = ALL_TYPES.findIndex(item => item === type);
         if (typeIndex === -1) {
             throw new Error(`${type} is not allowed type`);

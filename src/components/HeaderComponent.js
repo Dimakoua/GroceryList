@@ -54,7 +54,7 @@ const HeaderComponent = ({ onPress, onSearch, type }) => {
                 <TextInput
                     ref={searchInputRef}
                     style={styles.searchInput}
-                    placeholder={'search'}
+                    placeholder={t('search')}
                     value={searchText}
                     blurOnSubmit={false}
                     onChangeText={(text) => {

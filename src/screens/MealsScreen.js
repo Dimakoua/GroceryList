@@ -6,11 +6,14 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  Image
 } from 'react-native';
 import { useLists } from '../services/useLists';
 import { MIXED } from '../services/types';
+import { useTranslation } from 'react-i18next';
 
 const MealsScreen = ({ navigation, route }) => {
+  const { t } = useTranslation();
   const { getMealsList, upsertList, getShoppingLists } = useLists();
 
   const id = route.params.id;
@@ -38,7 +41,7 @@ const MealsScreen = ({ navigation, route }) => {
     const newAllMeals = composedList.map((existingItem) => {
       const index = mealsFromParams.findIndex(x => x.id === existingItem.id);
 
-      if(index === -1){
+      if (index === -1) {
         return existingItem;
       } else {
         return { ...existingItem, quantity: mealsFromParams[index].quantity }
@@ -107,13 +110,26 @@ const MealsScreen = ({ navigation, route }) => {
     </TouchableOpacity>
   );
 
+  const ListEmptyComponent = (
+    <View style={styles.emptyListContainer}>
+      <Image source={require('./../../assets/icons8-todo-list-100.png')} />
+      <Text>{t('add_new_shopping_list')}</Text>
+      <Text>{t('add_new_meal')}</Text>
+    </View>
+  )
+
+  const FlatListComponent = (
+    <FlatList
+      data={meals}
+      keyExtractor={(item) => item.id}
+      renderItem={renderItem}
+    />
+  )
+
   return (
     <View style={styles.container}>
-      <FlatList
-        data={meals}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-      />
+      {meals.length ? FlatListComponent : ListEmptyComponent}
+
     </View>
   );
 };
@@ -182,6 +198,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 4,
+  },
+  emptyListContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 });
 

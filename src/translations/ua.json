@@ -1,8 +1,11 @@
 {
-    "all": "All 1",
-    "meals": "Meals 2",
-    "shopping_list": "Shopping List 3",
-    "pinned": "Pinned 1",
-    "other": "Other 3",
-    "add_new_line": "+ Пункт списку"
+    "all": "Змішаний",
+    "meals": "Страви",
+    "shopping_list": "Список покупок",
+    "pinned": "Закріплені",
+    "other": "Інші",
+    "add_new_line": "+ Пункт",
+    "add_new_shopping_list": "Додати новий список покупок",
+    "add_new_meal": "Додати нову страву",
+    "search": "Тижневий список"
 }
