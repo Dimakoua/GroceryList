@@ -226,7 +226,7 @@ const AddListScreen = ({ route }) => {
       value={name}
       onChangeText={(text) => setName(text)}
       onSubmitEditing={() => addNewLine()}
-      placeholder="Назва"
+      placeholder={t('title')}
       style={[styles.input, styles.title]}
     />
   ))
