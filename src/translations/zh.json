@@ -8,5 +8,6 @@
     "add_new_shopping_list": "+ 购物清单",
     "add_new_meal": "+ 餐点",
     "search": "每周清单",
-    "title": "标题"
+    "title": "标题",
+    "receipe_placeholder": "在此输入您的食谱"
 }

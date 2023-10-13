@@ -8,6 +8,7 @@ const initialState = {
 const EMPTY_LIST = {
     id: null,
     name: null,
+    recipe: '',
     items: [],
     meals: [],
     checkedItems: [],

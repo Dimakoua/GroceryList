@@ -8,5 +8,6 @@
     "add_new_shopping_list": "+ Список покупок",
     "add_new_meal": "+ Страву",
     "search": "Тижневий список",
-    "title": "Назва"
+    "title": "Назва",
+    "receipe_placeholder": "Введіть рецепт тут"
 }

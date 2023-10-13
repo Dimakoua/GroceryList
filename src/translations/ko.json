@@ -8,5 +8,6 @@
     "add_new_shopping_list": "+ 쇼핑 목록",
     "add_new_meal": "+ 식사",
     "search": "주간 목록",
-    "title": "제목"
+    "title": "제목",
+    "receipe_placeholder": "여기에 레시피를 입력하세요"
 }

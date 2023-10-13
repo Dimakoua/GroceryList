@@ -8,5 +8,6 @@
     "add_new_shopping_list": "+ Lista de Compras",
     "add_new_meal": "+ Comida",
     "search": "Lista Semanal",
-    "title": "Título"
+    "title": "Título",
+    "receipe_placeholder": "Ingresa tu receta aquí"
 }

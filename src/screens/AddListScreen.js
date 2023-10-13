@@ -17,12 +17,12 @@ import PinBtn from '../components/PinBtn';
 import { shallowEqual, useSelector } from 'react-redux';
 import ListRow from '../components/ListRow';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { MIXED } from '../services/types';
+import { DISHES, MIXED } from '../services/types';
 import useDebounced from '../services/useDebounced';
 import { useTranslation } from 'react-i18next';
 
 const AddListScreen = ({ route }) => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const { upsertList, getListById, deleteListById } = useLists()
   const navigation = useNavigation();
 
@@ -42,6 +42,7 @@ const AddListScreen = ({ route }) => {
   const [meals, setMeals] = useState([]);
   const [items, setItems] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
+  const [recipe, setRecipe] = useState('');
 
   const list = getListById(newId);
 
@@ -49,6 +50,7 @@ const AddListScreen = ({ route }) => {
   const debouncedMeals = useDebounced(meals, 500);
   const debouncedCheckedItems = useDebounced(checkedItems, 500);
   const debouncedItems = useDebounced(items, 500);
+  const debouncedRecipe = useDebounced(recipe, 500);
 
   const EMPTY_ITEM = {
     id: new Date().getTime().toString(),
@@ -67,6 +69,7 @@ const AddListScreen = ({ route }) => {
       setMeals(params.meals);
       setIsPinned(params.pinned);
       setCheckedItems(params.checkedItems);
+      setRecipe(params.recipe);
     }
 
     calculateCombinedList(params);
@@ -102,7 +105,7 @@ const AddListScreen = ({ route }) => {
   }
 
   const isEmptyList = () => {
-    if (name === null && items.length === 0 && meals.length === 0) {
+    if (name === null && items.length === 0 && meals.length === 0 && recipe === '') {
       return true;
     }
     return false;
@@ -122,7 +125,7 @@ const AddListScreen = ({ route }) => {
     if (!isEmptyList()) {
       save();
     }
-  }, [debouncedName, debouncedItems, isPinned, debouncedMeals, debouncedCheckedItems]);
+  }, [debouncedName, debouncedItems, isPinned, debouncedMeals, debouncedCheckedItems, debouncedRecipe]);
 
   useFocusEffect(
     useCallback(() => {
@@ -204,6 +207,7 @@ const AddListScreen = ({ route }) => {
       type: type,
       items: filteredMealItems,
       meals: meals,
+      recipe: recipe,
       pinned: isPinned,
       checkedItems: checkedItems
     };
@@ -231,6 +235,20 @@ const AddListScreen = ({ route }) => {
     />
   ))
 
+  const RecipeTextArea = () => {
+    if (type === DISHES) {
+      return <TextInput
+        style={styles.textArea}
+        value={recipe}
+        multiline={true}
+        numberOfLines={4}
+        placeholder={t('receipe_placeholder')}
+        onChangeText={(text) => setRecipe(text)}
+      />
+    }
+    return null;
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
@@ -247,6 +265,7 @@ const AddListScreen = ({ route }) => {
         ref={flatListRef}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={ListHeaderComponent}
+        ListFooterComponent={RecipeTextArea()}
         renderItem={({ index, item }) => (
           <ListRow
             index={index}
@@ -261,6 +280,7 @@ const AddListScreen = ({ route }) => {
           />
         )}
       />
+
       {ListEmptyComponent}
 
       {items.length ? (
@@ -295,6 +315,7 @@ const styles = StyleSheet.create({
     maxWidth: maxWidth,
   },
   title: {
+    width: '100%',
     fontWeight: 'bold',
     fontSize: 16
   },
@@ -311,15 +332,15 @@ const styles = StyleSheet.create({
     width: '40%',
   },
   addButton: {
-    backgroundColor: '#007AFF', // Add your desired background color
+    backgroundColor: '#007AFF',
     padding: 10,
-    borderRadius: 5, // Add border radius for a rounded button
-    alignItems: 'center', // Center the text horizontally
-    marginTop: 10, // Adjust the spacing as needed
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
   },
 
   addButtonLabel: {
-    color: '#fff', // Text color for the button
+    color: '#fff',
     fontWeight: 'bold',
   },
   playButton: {
@@ -346,7 +367,15 @@ const styles = StyleSheet.create({
   playButtonText: {
     color: '#fff',
     fontSize: 64,
-  }
+  },
+  textArea: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 15,
+    padding: 10,
+    fontSize: 16,
+    minHeight: 100,
+  },
 });
 
 export default AddListScreen;

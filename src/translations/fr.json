@@ -8,5 +8,6 @@
     "add_new_shopping_list": "+ Liste de Courses",
     "add_new_meal": "+ Repas",
     "search": "Liste Hebdomadaire",
-    "title": "Titre"
+    "title": "Titre",
+    "receipe_placeholder": "Saisissez votre recette ici"
 }
