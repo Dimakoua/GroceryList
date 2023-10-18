@@ -1,4 +1,4 @@
-package com.grocerylist;
+package com.kwikcart;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

@@ -1,4 +1,4 @@
-package com.grocerylist;
+package com.kwikcart;
 
 import android.app.Application;
 import com.facebook.react.PackageList;
