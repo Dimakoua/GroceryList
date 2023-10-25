@@ -39,21 +39,25 @@ const ListRow = ({ index, item, textInputsRefs, checkedItems, setItemText, handl
         const offsetX = event.nativeEvent.translationX;
 
         if (offsetX > 50) {
-            toggleItem(item);
-
-            Animated.timing(translateX, {
-                toValue: 50,
-                duration: 500,
-                useNativeDriver: true,
-            }).start(() => {
-                Animated.timing(translateX, {
-                    toValue: 0,
-                    duration: 500,
-                    useNativeDriver: true,
-                }).start();
-            });
+            toggleAndAnimate(item);
         }
     };
+
+    const toggleAndAnimate = (item) => {
+        toggleItem(item);
+
+        Animated.timing(translateX, {
+            toValue: 50,
+            duration: 500,
+            useNativeDriver: true,
+        }).start(() => {
+            Animated.timing(translateX, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: true,
+            }).start();
+        });
+    }
 
     return (
         <PanGestureHandler onEnded={onSwipeableClose}>

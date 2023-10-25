@@ -14,16 +14,18 @@ import BackButton from '../components/BackBtn';
 import TrashBtn from '../components/TrashBtn';
 import ResetBtn from '../components/ResetBtn';
 import PinBtn from '../components/PinBtn';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual } from 'react-redux';
 import ListRow from '../components/ListRow';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { DISHES, MIXED } from '../services/types';
 import useDebounced from '../services/useDebounced';
 import { useTranslation } from 'react-i18next';
+import useErrors from '../services/useErrors';
 
 const AddListScreen = ({ route }) => {
   const { t } = useTranslation();
   const { upsertList, getListById, deleteListById } = useLists()
+  const { newError } = useErrors()
   const navigation = useNavigation();
 
   const textInputsRefs = useRef([]);
@@ -190,12 +192,25 @@ const AddListScreen = ({ route }) => {
   };
 
   const handleReset = () => {
+    if (checkedItems.length === 0) {
+      newError(t('no_one_element_is_checked'));
+    }
     setCheckedItems([]);
   };
 
   const handleRemove = () => {
     deleteListById(id);
+    newError(t('list_is_removed'));
     navigation.goBack();
+  }
+
+  const handlePin = () => {
+    if (!isPinned) {
+      newError(t('is_pinned'));
+    } else {
+      newError(t('is_unpinned'));
+    }
+    setIsPinned(!isPinned)
   }
 
   const save = () => {
@@ -254,7 +269,7 @@ const AddListScreen = ({ route }) => {
       <View style={styles.headerRow}>
         <BackButton />
         <View style={styles.btnHeaderWrap}>
-          <PinBtn isActive={isPinned} onPress={() => setIsPinned(!isPinned)} />
+          <PinBtn isActive={isPinned} onPress={handlePin} />
           <ResetBtn onPress={handleReset} />
           <TrashBtn onPress={handleRemove} />
         </View>
