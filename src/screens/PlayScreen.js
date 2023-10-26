@@ -11,17 +11,23 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { useLists } from '../services/useLists';
+import useErrors from '../services/useErrors';
+import { useTranslation } from 'react-i18next';
 
 const PlayScreen = ({ route }) => {
   const [uncheckedItems, setUncheckedItems] = useState([]);
   const navigation = useNavigation();
+  const { newError } = useErrors()
   const { toggleItemById } = useLists();
+  const { t } = useTranslation();
 
   const items = route.params?.items;
   const checkedItems = route.params?.checkedItems;
   const listId = route.params?.listId;
 
   useEffect(() => {
+    newError(t('Swipe items left or right'));
+
     const filtered = items.filter((x) => !checkedItems.includes(x.id));
     setUncheckedItems(filtered);
 
