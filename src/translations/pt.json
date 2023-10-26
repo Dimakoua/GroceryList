@@ -1,13 +1,18 @@
 {
-    "all": "Misturado",
+    "all": "Misto",
     "meals": "Refeições",
     "shopping_list": "Lista de Compras",
     "pinned": "Fixado",
-    "other": "Outros",
+    "other": "Outro",
     "add_new_line": "+ Item",
     "add_new_shopping_list": "+ Lista de Compras",
     "add_new_meal": "+ Refeição",
     "search": "Lista Semanal",
     "title": "Título",
-    "receipe_placeholder": "Digite sua receita aqui"
+    "recipe_placeholder": "Insira a receita aqui",
+    "empty_list_is_removed": "Lista vazia descartada",
+    "no_one_element_is_checked": "Nenhum item foi marcado",
+    "list_is_removed": "A lista foi removida",
+    "is_pinned": "Fixado",
+    "is_unpinned": "Não fixado"
 }

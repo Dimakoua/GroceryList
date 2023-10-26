@@ -9,5 +9,10 @@
     "add_new_meal": "+ 식사",
     "search": "주간 목록",
     "title": "제목",
-    "receipe_placeholder": "여기에 레시피를 입력하세요"
+    "recipe_placeholder": "레시피를 여기에 입력하세요",
+    "empty_list_is_removed": "빈 목록이 삭제되었습니다",
+    "no_one_element_is_checked": "아무 항목도 체크되지 않았습니다",
+    "list_is_removed": "목록이 삭제되었습니다",
+    "is_pinned": "고정됨",
+    "is_unpinned": "고정 해제됨"
 }

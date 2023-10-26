@@ -9,5 +9,10 @@
     "add_new_meal": "+ Meal",
     "search": "Weekly List",
     "title": "Title",
-    "receipe_placeholder": "Enter your recipe here"
+    "receipe_placeholder": "Enter the recipe here",
+    "empty_list_is_removed": "Empty List Discarded",
+    "no_one_element_is_checked": "No item has been checked",
+    "list_is_removed": "The list has been removed",
+    "is_pinned": "Pinned",
+    "is_unpinned": "Unpinned"
 }

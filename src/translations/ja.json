@@ -2,12 +2,17 @@
     "all": "混合",
     "meals": "食事",
     "shopping_list": "買い物リスト",
-    "pinned": "固定",
+    "pinned": "ピン留め済み",
     "other": "その他",
     "add_new_line": "+ 項目",
     "add_new_shopping_list": "+ 買い物リスト",
     "add_new_meal": "+ 食事",
     "search": "週間リスト",
     "title": "タイトル",
-    "receipe_placeholder": "ここにレシピを入力してください"
+    "recipe_placeholder": "ここにレシピを入力",
+    "empty_list_is_removed": "空のリストは削除されました",
+    "no_one_element_is_checked": "アイテムは1つもチェックされていません",
+    "list_is_removed": "リストは削除されました",
+    "is_pinned": "ピン留め済み",
+    "is_unpinned": "ピン留め解除"
 }

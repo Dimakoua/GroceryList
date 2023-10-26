@@ -9,5 +9,10 @@
     "add_new_meal": "+ Repas",
     "search": "Liste Hebdomadaire",
     "title": "Titre",
-    "receipe_placeholder": "Saisissez votre recette ici"
+    "recipe_placeholder": "Saisissez la recette ici",
+    "empty_list_is_removed": "Liste vide supprimée",
+    "no_one_element_is_checked": "Aucun élément n'a été coché",
+    "list_is_removed": "La liste a été supprimée",
+    "is_pinned": "Épinglé",
+    "is_unpinned": "Désépinglé"
 }

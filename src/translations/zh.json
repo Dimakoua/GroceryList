@@ -2,12 +2,17 @@
     "all": "混合",
     "meals": "餐点",
     "shopping_list": "购物清单",
-    "pinned": "固定",
+    "pinned": "已固定",
     "other": "其他",
     "add_new_line": "+ 项目",
     "add_new_shopping_list": "+ 购物清单",
     "add_new_meal": "+ 餐点",
-    "search": "每周清单",
+    "search": "周清单",
     "title": "标题",
-    "receipe_placeholder": "在此输入您的食谱"
+    "recipe_placeholder": "在此输入食谱",
+    "empty_list_is_removed": "空列表已删除",
+    "no_one_element_is_checked": "未选中任何项目",
+    "list_is_removed": "已删除列表",
+    "is_pinned": "已固定",
+    "is_unpinned": "未固定"
 }

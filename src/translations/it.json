@@ -2,12 +2,17 @@
     "all": "Misto",
     "meals": "Pasti",
     "shopping_list": "Lista della Spesa",
-    "pinned": "Pinned",
+    "pinned": "Fissato",
     "other": "Altro",
     "add_new_line": "+ Elemento",
     "add_new_shopping_list": "+ Lista della Spesa",
     "add_new_meal": "+ Pasto",
     "search": "Lista Settimanale",
     "title": "Titolo",
-    "receipe_placeholder": "Inserisci la tua ricetta qui"
+    "recipe_placeholder": "Inserisci la ricetta qui",
+    "empty_list_is_removed": "Lista vuota rimossa",
+    "no_one_element_is_checked": "Nessun elemento è stato selezionato",
+    "list_is_removed": "La lista è stata rimossa",
+    "is_pinned": "Fissato",
+    "is_unpinned": "Non fissato"
 }

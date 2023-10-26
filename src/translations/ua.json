@@ -9,5 +9,10 @@
     "add_new_meal": "+ Страву",
     "search": "Тижневий список",
     "title": "Назва",
-    "receipe_placeholder": "Введіть рецепт тут"
+    "receipe_placeholder": "Введіть рецепт тут",
+    "empty_list_is_removed": "Порожній список видалено",
+    "no_one_element_is_checked": "Жоден елемент не був відзначений",
+    "list_is_removed": "Список був видалений",
+    "is_pinned": "Закріплено",
+    "is_unpinned": "Відкріплено"
 }

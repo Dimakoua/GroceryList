@@ -9,5 +9,10 @@
     "add_new_meal": "+ Mahlzeit",
     "search": "Wochenliste",
     "title": "Titel",
-    "receipe_placeholder": "Geben Sie hier Ihr Rezept ein"
+    "recipe_placeholder": "Geben Sie hier das Rezept ein",
+    "empty_list_is_removed": "Leere Liste wurde entfernt",
+    "no_one_element_is_checked": "Kein Element wurde überprüft",
+    "list_is_removed": "Die Liste wurde entfernt",
+    "is_pinned": "Angeheftet",
+    "is_unpinned": "Nicht angeheftet"
 }
