@@ -8,6 +8,7 @@ import {
   FlatList,
   Image,
   Dimensions,
+  BackHandler,
 } from 'react-native';
 import { useLists } from '../services/useLists';
 import BackButton from '../components/BackBtn';
@@ -128,6 +129,22 @@ const AddListScreen = ({ route }) => {
       save();
     }
   }, [debouncedName, debouncedItems, isPinned, debouncedMeals, debouncedCheckedItems, debouncedRecipe]);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+
+    return () => {
+      backHandler.remove();
+    };
+  }, [id]);
+
+  const handleBackButton = () => {
+    if (isEmptyList()) {
+      deleteListById(id);
+      newError(t('empty_list_is_removed'));
+    }
+    return false;
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -267,7 +284,7 @@ const AddListScreen = ({ route }) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <BackButton />
+        <BackButton onPress={handleBackButton} />
         <View style={styles.btnHeaderWrap}>
           <PinBtn isActive={isPinned} onPress={handlePin} />
           <ResetBtn onPress={handleReset} />

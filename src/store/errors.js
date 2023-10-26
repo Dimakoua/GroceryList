@@ -15,6 +15,10 @@ export const errors = createSlice({
     removeError: (state) => {
       state.errors.shift();
     },
+    removeByIndex: (state, value) => {
+      const index = value.payload;
+      state.errors.splice(index, 1);
+    },
     dismissErrors: (state) => {
       state.errors = [];
     }
@@ -24,7 +28,8 @@ export const errors = createSlice({
 export const {
   addError,
   removeError,
-  dismissErrors
+  dismissErrors,
+  removeByIndex,
 } = errors.actions
 
 export default errors.reducer

@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, Text, FlatList } from 'react-native';
+import { View, StyleSheet, Text, FlatList , TouchableOpacity} from 'react-native';
 import { useSelector } from 'react-redux';
+import useErrors from '../services/useErrors';
 
 const ErrorComponent = ({ children }) => {
+  const { removeErrorByIndex } = useErrors();
   const errors = useSelector(state => state.errors.errors);
 
   return (
@@ -12,8 +14,10 @@ const ErrorComponent = ({ children }) => {
         <FlatList
           data={errors}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <Text style={styles.errorText}>{item}</Text>
+          renderItem={({ item, index }) => (
+            <TouchableOpacity onPress={() => removeErrorByIndex(index)}>
+              <Text style={styles.errorText}>{item}</Text>
+            </TouchableOpacity>
           )}
           inverted={true}
         />

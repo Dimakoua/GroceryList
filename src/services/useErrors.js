@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { addError, removeError } from '../store/errors';
+import { addError, removeByIndex, removeError } from '../store/errors';
 
 export default function useErrors() {
     const dispatch = useDispatch();
@@ -13,5 +13,9 @@ export default function useErrors() {
         }, 2000);
     }
 
-    return { newError };
+    const removeErrorByIndex = (index) => {
+        dispatch(removeByIndex(index));
+    }
+
+    return { newError, removeErrorByIndex };
 }

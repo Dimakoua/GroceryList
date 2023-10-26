@@ -2,12 +2,13 @@ import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
-const BackButton = () => {
+const BackButton = ({onPress}) => {
     const navigation = useNavigation();
 
     // Handle the "Back" button press to navigate back to the previous screen
     const handleBackPress = () => {
         navigation.goBack();
+        onPress();
     };
 
     return (
