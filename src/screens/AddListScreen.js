@@ -315,7 +315,7 @@ const AddListScreen = ({ route }) => {
 
       {ListEmptyComponent}
 
-      {items.length ? (
+      {items.length && checkedItems.length < items.length ? (
         <TouchableOpacity
           style={styles.playButton}
           onPress={() => navigation.navigate('playScreen', { items, checkedItems, listId: id })}
