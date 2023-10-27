@@ -126,7 +126,7 @@ const AddListScreen = ({ route }) => {
 
   useEffect(() => {
     //save the list after each change.
-    if (!isEmptyList()) {
+    if (isFocused && !isEmptyList()) {
       save();
     }
   }, [debouncedName, debouncedItems, isPinned, debouncedMeals, debouncedCheckedItems, debouncedRecipe]);
