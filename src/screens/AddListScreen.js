@@ -136,7 +136,7 @@ const AddListScreen = ({ route }) => {
     return () => {
       backHandler.remove();
     };
-  }, [id]);
+  }, [id, debouncedName, debouncedItems, debouncedMeals]);
 
   const handleBackButton = () => {
     if (isEmptyList()) {
