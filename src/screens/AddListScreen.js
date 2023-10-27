@@ -46,6 +46,7 @@ const AddListScreen = ({ route }) => {
   const [items, setItems] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
   const [recipe, setRecipe] = useState('');
+  const [isFocused, setIsFocused] = useState(true);
 
   const list = getListById(newId);
 
@@ -136,10 +137,10 @@ const AddListScreen = ({ route }) => {
     return () => {
       backHandler.remove();
     };
-  }, [id, debouncedName, debouncedItems, debouncedMeals]);
+  }, [id, name, items, meals, isFocused]);
 
   const handleBackButton = () => {
-    if (isEmptyList()) {
+    if (isFocused && isEmptyList()) {
       deleteListById(id);
       newError(t('empty_list_is_removed'));
     }
@@ -148,6 +149,7 @@ const AddListScreen = ({ route }) => {
 
   useFocusEffect(
     useCallback(() => {
+      setIsFocused(true);
       if (list) {
         if (!shallowEqual(list.meals, meals)) {
           setMeals(list.meals);
@@ -157,6 +159,10 @@ const AddListScreen = ({ route }) => {
           setCheckedItems(list.checkedItems);
         }
       }
+
+      return () => {
+        setIsFocused(false);
+      };
     }, [list])
   );
 
