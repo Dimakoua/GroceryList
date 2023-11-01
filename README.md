@@ -11,6 +11,8 @@ Editing: Easily edit your shopping list and meal plans to update or remove items
 This app is designed for everyone, from busy parents to culinary enthusiasts. It will help you save time and money by simplifying the management of your grocery list and recipes.
 
 Let our grocery list and meal management app make your daily life easier and more organized.
+
+[View on Google Play](https://play.google.com/store/apps/details?id=com.kwikcart)
 <div>
    <img src="https://play-lh.googleusercontent.com/BQ5UUu5lOfJrHGLoSA3zUEAoVN94A9OOA6kkETy-_xLLV1BBHS9LOku74XhO1531BZI=w2560-h1440-rw" width="300"/>
    <img src="https://play-lh.googleusercontent.com/Hp8NRts4om3ZVsuvlk4EK3PPep_8_qdDDUNkPrpvtaqlZZ1xWkRdfYoco_NdCw-DTQ=w2560-h1440-rw" width="300"/>
