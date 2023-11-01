@@ -1,3 +1,22 @@
+# Kwik Cart
+
+Our grocery list and meal management app is the perfect tool to streamline your daily life. It allows you to organize your shopping list and meal planning for easy and convenient shopping and meal preparation.
+
+Key Features:
+
+Shopping List: Add the products you need to purchase and check them off after buying.
+Meal List: Plan what to cook by adding recipes and ingredients.
+Editing: Easily edit your shopping list and meal plans to update or remove items.
+
+This app is designed for everyone, from busy parents to culinary enthusiasts. It will help you save time and money by simplifying the management of your grocery list and recipes.
+
+Let our grocery list and meal management app make your daily life easier and more organized.
+<div>
+   <img src="https://play-lh.googleusercontent.com/BQ5UUu5lOfJrHGLoSA3zUEAoVN94A9OOA6kkETy-_xLLV1BBHS9LOku74XhO1531BZI=w2560-h1440-rw" width="300"/>
+   <img src="https://play-lh.googleusercontent.com/Hp8NRts4om3ZVsuvlk4EK3PPep_8_qdDDUNkPrpvtaqlZZ1xWkRdfYoco_NdCw-DTQ=w2560-h1440-rw" width="300"/>
+   <img src="https://play-lh.googleusercontent.com/vkb5VNptNZHBRkCLVzgCeRBIlw4ZSRq1AyB7wJFpWSWQhLYbIgXGkmPjlX4CSDZz-4c=w2560-h1440-rw" width="300"/>
+</div>
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
@@ -16,6 +35,9 @@ npm start
 
 # OR using Yarn
 yarn start
+
+#npx
+npx react-native init GroceryList
 ```
 
 ## Step 2: Start your Application
@@ -30,6 +52,9 @@ npm run android
 
 # OR using Yarn
 yarn android
+
+#npx
+
 ```
 
 ### For iOS
@@ -40,6 +65,9 @@ npm run ios
 
 # OR using Yarn
 yarn ios
+
+#npx
+npx react-native run-android
 ```
 
 If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
@@ -77,20 +105,3 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
-
-
------
-npx react-native init GroceryList
-
-
-
- Run instructions for Android:
-    • Have an Android emulator running (quickest way to get started), or a device connected.
-    • cd "C:\Users\Dmytro\Documents\project\GroceryList" && npx react-native run-android
-  
-  Run instructions for Windows:
-    • See https://aka.ms/ReactNativeGuideWindows for the latest up-to-date instructions.
-
-
-
-    ////one storage diff types
