@@ -14,9 +14,9 @@ Let our grocery list and meal management app make your daily life easier and mor
 
 [View on Google Play](https://play.google.com/store/apps/details?id=com.kwikcart)
 <div>
-   <img src="https://play-lh.googleusercontent.com/BQ5UUu5lOfJrHGLoSA3zUEAoVN94A9OOA6kkETy-_xLLV1BBHS9LOku74XhO1531BZI=w2560-h1440-rw" width="300"/>
-   <img src="https://play-lh.googleusercontent.com/Hp8NRts4om3ZVsuvlk4EK3PPep_8_qdDDUNkPrpvtaqlZZ1xWkRdfYoco_NdCw-DTQ=w2560-h1440-rw" width="300"/>
-   <img src="https://play-lh.googleusercontent.com/vkb5VNptNZHBRkCLVzgCeRBIlw4ZSRq1AyB7wJFpWSWQhLYbIgXGkmPjlX4CSDZz-4c=w2560-h1440-rw" width="300"/>
+   <img src="https://play-lh.googleusercontent.com/BQ5UUu5lOfJrHGLoSA3zUEAoVN94A9OOA6kkETy-_xLLV1BBHS9LOku74XhO1531BZI=w2560-h1440-rw" width="200"/>
+   <img src="https://play-lh.googleusercontent.com/Hp8NRts4om3ZVsuvlk4EK3PPep_8_qdDDUNkPrpvtaqlZZ1xWkRdfYoco_NdCw-DTQ=w2560-h1440-rw" width="200"/>
+   <img src="https://play-lh.googleusercontent.com/vkb5VNptNZHBRkCLVzgCeRBIlw4ZSRq1AyB7wJFpWSWQhLYbIgXGkmPjlX4CSDZz-4c=w2560-h1440-rw" width="200"/>
 </div>
 
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
