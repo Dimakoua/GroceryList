@@ -22,10 +22,12 @@ import { DISHES, MIXED } from '../services/types';
 import useDebounced from '../services/useDebounced';
 import { useTranslation } from 'react-i18next';
 import useErrors from '../services/useErrors';
+import useDate from '../services/useDate';
 
 const AddListScreen = ({ route }) => {
   const { t } = useTranslation();
   const { upsertList, getListById, deleteListById } = useLists()
+  const { getCurrentDay } = useDate()
   const { newError } = useErrors()
   const navigation = useNavigation();
 
@@ -37,6 +39,7 @@ const AddListScreen = ({ route }) => {
 
   const flatListRef = useRef(null);
 
+  const currDate = getCurrentDay();
 
   const [id, setId] = useState(null);
   const [name, setName] = useState(null);
@@ -47,6 +50,7 @@ const AddListScreen = ({ route }) => {
   const [checkedItems, setCheckedItems] = useState([]);
   const [recipe, setRecipe] = useState('');
   const [isFocused, setIsFocused] = useState(true);
+  const [subHeaders, setSubHeaders] = useState([currDate, "new list", "grocery list"]);
 
   const list = getListById(newId);
 
@@ -262,15 +266,37 @@ const AddListScreen = ({ route }) => {
     </TouchableOpacity>
   ))
 
-  const ListHeaderComponent = useMemo(() => (
-    <TextInput
-      ref={titleInputRef}
-      value={name}
-      onChangeText={(text) => setName(text)}
-      onSubmitEditing={() => addNewLine()}
-      placeholder={t('title')}
-      style={[styles.input, styles.title]}
+  const ListSubHeaderComponent = () => {
+    if (name) {
+      return null;
+    }
+
+    return <FlatList
+      data={subHeaders}
+      keyExtractor={(item) => item}
+      horizontal
+      renderItem={({ item }) => (
+        <TouchableOpacity style={styles.subHeader} onPress={() => setName(item)} >
+          <Text style={styles.subHeaderText}>{item}</Text>
+        </TouchableOpacity>
+      )}
     />
+  }
+
+  const ListHeaderComponent = useMemo(() => (
+    <View>
+      <TextInput
+        ref={titleInputRef}
+        value={name}
+        onChangeText={(text) => setName(text)}
+        onSubmitEditing={() => addNewLine()}
+        placeholder={t('title')}
+        style={[styles.input, styles.title]}
+      />
+
+      <ListSubHeaderComponent>
+      </ListSubHeaderComponent>
+    </View>
   ))
 
   const RecipeTextArea = () => {
@@ -376,7 +402,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-
   addButtonLabel: {
     color: '#fff',
     fontWeight: 'bold',
@@ -413,6 +438,18 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 16,
     minHeight: 100,
+  },
+  subHeader: {
+    backgroundColor: '#3498db',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    margin: 5,
+  },
+  subHeaderText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
