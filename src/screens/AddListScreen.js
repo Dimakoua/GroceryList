@@ -198,7 +198,7 @@ const AddListScreen = ({ route }) => {
 
   const setItemQuantity = (item, quantity) => {
     const updatedItems = items.map((existingItem) =>
-      existingItem.id === item.id ? { ...existingItem, quantity: parseInt(quantity, 10) || 1 } : existingItem
+      existingItem.id === item.id ? { ...existingItem, quantity: parseInt(quantity, 10) || '' } : existingItem
     );
 
     setItems(updatedItems);
