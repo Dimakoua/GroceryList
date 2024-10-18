@@ -3059,9 +3059,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-navigation/material-top-tabs@npm:^6.6.4":
-  version: 6.6.4
-  resolution: "@react-navigation/material-top-tabs@npm:6.6.4"
+"@react-navigation/material-top-tabs@npm:^6.6.14":
+  version: 6.6.14
+  resolution: "@react-navigation/material-top-tabs@npm:6.6.14"
   dependencies:
     color: "npm:^4.2.3"
     warn-once: "npm:^0.1.0"
@@ -3071,7 +3071,7 @@ __metadata:
     react-native: "*"
     react-native-pager-view: ">= 4.0.0"
     react-native-tab-view: ">= 3.0.0"
-  checksum: 10c0/4ca34d865666445fdff8c0e3f9427d4068c081f5cb30841adc38964163f78f1b591339bf916fe11e78a32761d20804d876f2f78ab1ab695159bf2451aae019da
+  checksum: 10c0/eb4adab3fe3b311dd51e71abb8ed040e5e0d7aa7aea04822e7f0dafa1e0cc73a4145d558fa9ae71b5f9ec0b36f74cf60bf61476dce1c758a8cb95943303c0747
   languageName: node
   linkType: hard
 
@@ -3591,7 +3591,7 @@ __metadata:
     "@react-native/metro-config": "npm:0.75.4"
     "@react-native/typescript-config": "npm:0.75.4"
     "@react-navigation/bottom-tabs": "npm:^6.5.8"
-    "@react-navigation/material-top-tabs": "npm:^6.6.4"
+    "@react-navigation/material-top-tabs": "npm:^6.6.14"
     "@react-navigation/native": "npm:^6.1.8"
     "@react-navigation/stack": "npm:^6.3.17"
     "@reduxjs/toolkit": "npm:^1.9.6"

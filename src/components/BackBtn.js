@@ -8,7 +8,7 @@ const BackButton = ({onPress}) => {
     // Handle the "Back" button press to navigate back to the previous screen
     const handleBackPress = () => {
         navigation.goBack();
-        onPress();
+        onPress && onPress();
     };
 
     return (

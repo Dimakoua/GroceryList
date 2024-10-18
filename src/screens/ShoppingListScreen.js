@@ -52,19 +52,19 @@ function ShoppingListScreen({ navigation }) {
         <View style={styles.flexContainer}>
             <HeaderComponent onPress={handleHeaderPress} onSearch={setSearchString} type={type} />
 
-            <PagerView style={styles.pagerView} ref={pagerRef} onPageSelected={handlePageChange} initialPage={1}>
+            <PagerView style={styles.pagerView} ref={pagerRef} onPageSelected={handlePageChange} initialPage={0}>
                 <View key="1">
-                    <ScrollView style={styles.flexScrollView} contentContainerStyle={styles.scrollViewContent}>
+                    <ScrollView>
                         <CardListComponent type={SHOPPING_ITEMS} searchString={debouncedSearchString} />
                     </ScrollView>
                 </View>
                 <View key="2">
-                    <ScrollView style={styles.flexScrollView} contentContainerStyle={styles.scrollViewContent}>
+                    <ScrollView>
                         <CardListComponent type={MIXED} searchString={debouncedSearchString} />
                     </ScrollView>
                 </View>
                 <View key="3">
-                    <ScrollView style={styles.flexScrollView} contentContainerStyle={styles.scrollViewContent}>
+                    <ScrollView>
                         <CardListComponent type={DISHES} searchString={debouncedSearchString} />
                     </ScrollView>
                 </View>
@@ -85,9 +85,6 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     pagerView: {
-        flex: 1,
-    },
-    flexScrollView: {
         flex: 1,
     },
     addButton: {
