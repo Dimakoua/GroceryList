@@ -352,9 +352,12 @@ const AddListScreen = ({ route }) => {
           style={styles.playButton}
           onPress={() => navigation.navigate('playScreen', { items, checkedItems, listId: id })}
         >
-          <Text style={styles.playButtonText}>
-            <Image source={require('./../../assets/icons8-play-48.png')} />
-          </Text>
+          {/* play button */}
+          <Image
+            source={require('./../../assets/icons8-play-48.png')}
+            style={{ width: 32, height: 32 }}
+            resizeMode="contain" // Optional: adjust as needed
+          />
         </TouchableOpacity>
       ) : null}
 
@@ -408,9 +411,12 @@ const styles = StyleSheet.create({
   },
   playButton: {
     backgroundColor: '#98E0E4',
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    opacity: 0.7,
+    width: 48,
+    height: 48,
+    borderRadius: 48,
+    borderColor: "#98E0E4",
+    // borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -420,16 +426,11 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.4,
     shadowRadius: 4,
-    elevation: 6,
     marginBottom: 50,
     marginRight: 16,
     position: 'absolute',
     bottom: 16,
-    right: 16
-  },
-  playButtonText: {
-    color: '#fff',
-    fontSize: 64,
+    right: 16,
   },
   textArea: {
     borderWidth: 1,
