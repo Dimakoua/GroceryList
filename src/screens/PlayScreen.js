@@ -13,6 +13,7 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { useLists } from '../services/useLists';
 import useErrors from '../services/useErrors';
 import { useTranslation } from 'react-i18next';
+import BackButton from '../components/BackBtn';
 
 const PlayScreen = ({ route }) => {
   const [uncheckedItems, setUncheckedItems] = useState([]);
@@ -95,6 +96,10 @@ const PlayScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.headerRow}>
+        <BackButton />
+      </View>
+
       {uncheckedItems.length ? FlatListComponent : ListEmptyComponent}
     </View>
   );
@@ -108,6 +113,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#EBEFF3',
     paddingHorizontal: 16,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 15,
+    paddingTop: 15,
+    width: '100%',
+    justifyContent: 'space-between',
   },
   itemContainer: {
     flexDirection: 'row',

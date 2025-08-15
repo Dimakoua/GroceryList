@@ -11,8 +11,6 @@ import {
 import { useLists } from '../services/useLists';
 import { DISHES, MIXED, SHOPPING_ITEMS } from '../services/types';
 import { useTranslation } from 'react-i18next';
-import { useFocusEffect } from '@react-navigation/native';
-import { shallowEqual, useSelector } from 'react-redux';
 
 const MealsScreen = ({ navigation, route }) => {
   const { t } = useTranslation();
@@ -189,6 +187,7 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 16,
     fontWeight: 'bold',
+    maxWidth: '60%'
   },
   quantityContainer: {
     flexDirection: 'row',
